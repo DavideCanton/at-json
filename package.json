@@ -1,5 +1,5 @@
 {
-  "name": "jsonmapper",
+  "name": "at-json",
   "version": "0.0.1",
   "description": "A declarative mapper to and from JSON.",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DavideCanton/jsonmapper.git"
+    "url": "git+https://github.com/DavideCanton/at-json.git"
   },
   "keywords": [
     "json",
@@ -17,9 +17,9 @@
   "author": "Davide Canton",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DavideCanton/jsonmapper/issues"
+    "url": "https://github.com/DavideCanton/at-json/issues"
   },
-  "homepage": "https://github.com/DavideCanton/jsonmapper#readme",
+  "homepage": "https://github.com/DavideCanton/at-json#readme",
   "dependencies": {
     "reflect-metadata": "^0.1.12",
     "symbol": "^0.3.1"
