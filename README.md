@@ -1,2 +1,5 @@
-# jsonmapper
-A declarative mapper to and from JSON
+# at-json
+
+A declarative mapper to and from JSON.
+
+Docs incoming.
