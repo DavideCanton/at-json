@@ -1,0 +1,23 @@
+{
+  "name": "jsonmapper",
+  "version": "0.0.1",
+  "description": "A declarative mapper to and from JSON.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavideCanton/jsonmapper.git"
+  },
+  "keywords": [
+    "json",
+    "mapper"
+  ],
+  "author": "Davide Canton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavideCanton/jsonmapper/issues"
+  },
+  "homepage": "https://github.com/DavideCanton/jsonmapper#readme"
+}
