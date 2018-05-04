@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import * as Symbol from 'es6-symbol';
 
 const mappingMetadataKey = Symbol('mappingMetadataKey');
 
