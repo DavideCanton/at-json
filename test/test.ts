@@ -1,7 +1,10 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 
-import { JsonClass, JsonProperty, SerializeFn, JsonArrayOfComplexProperty, JsonMapper, JsonSerializable, JsonComplexProperty, JsonArray } from '../index';
+import {
+  JsonClass, JsonProperty, SerializeFn, JsonArrayOfComplexProperty,
+  JsonMapper, JsonSerializable, JsonComplexProperty, JsonArray
+} from '../index';
 
 @JsonClass
 class Address {
@@ -12,6 +15,12 @@ class Address {
   line2 = '';
 
   serialize: SerializeFn;
+}
+
+@JsonClass
+class AddressExtended extends Address {
+  @JsonProperty()
+  line3 = '';
 }
 
 enum Sesso {
@@ -35,8 +44,8 @@ class Person {
   @JsonArray()
   numbers: number[] = [];
 
-  @JsonComplexProperty(Address)
-  address: Address = new Address();
+  @JsonComplexProperty(AddressExtended, 'aa')
+  address: AddressExtended = new AddressExtended();
 
   @JsonArrayOfComplexProperty(Address)
   prevAddresses: Address[] = [];
@@ -57,9 +66,10 @@ describe('Mapper tests', () => {
       eta: 16,
       sex: 1,
       numbers: [1, 2, 3],
-      address: {
+      aa: {
         line1: 'a',
-        line2: 'b'
+        line2: 'b',
+        line3: 'c'
       },
       prevAddresses: [
         {
@@ -79,7 +89,7 @@ describe('Mapper tests', () => {
     expect(p.address).to.be.not.null;
 
     expect(p instanceof Person).to.be.true;
-    expect(p.address instanceof Address).to.be.true;
+    expect(p.address instanceof AddressExtended).to.be.true;
 
     expect(p.firstName).to.equal(obj.firstName);
     expect(p.lastName).to.equal(obj.lastName.toUpperCase());
@@ -92,8 +102,9 @@ describe('Mapper tests', () => {
     expect(p.numbers[1]).to.equal(obj.numbers[1]);
     expect(p.numbers[2]).to.equal(obj.numbers[2]);
 
-    expect(p.address.line1).to.equal(obj.address.line1);
-    expect(p.address.line2).to.equal(obj.address.line2);
+    expect(p.address.line1).to.equal(obj.aa.line1);
+    expect(p.address.line2).to.equal(obj.aa.line2);
+    expect(p.address.line3).to.equal(obj.aa.line3);
 
     expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
 
@@ -111,9 +122,10 @@ describe('Mapper tests', () => {
       eta: 16,
       sex: 1,
       numbers: [1, 2, 3],
-      address: {
+      aa: {
         line1: 'a',
-        line2: 'b'
+        line2: 'b',
+        line3: 'c'
       },
       prevAddresses: [
         {
@@ -143,6 +155,7 @@ describe('Mapper tests', () => {
     expect(p2.numbers[2]).to.equal(p.numbers[2]);
     expect(p2.address.line1).to.equal(p.address.line1);
     expect(p2.address.line2).to.equal(p.address.line2);
+    expect(p2.address.line3).to.equal(p.address.line3);
     expect(p2.prevAddresses.length).to.equal(p.prevAddresses.length);
     expect(p2.prevAddresses[0].line1).to.equal(p.prevAddresses[0].line1);
     expect(p2.prevAddresses[0].line2).to.equal(p.prevAddresses[0].line2);
