@@ -21,7 +21,7 @@ export type SerializeFn = () => string;
  * @template T the constructed type
  */
 export interface Constructable<T> {
-    new (...args: any[]): T;
+    new(...args: any[]): T;
 }
 /**
  * Interface for serializable object. Auto-implemented by @see JsonClass Decorator.
@@ -72,8 +72,10 @@ function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOption
  * @param {Constructable<any>} constructor the constructor type of the property.
  * @returns the decorator for the property.
  */
-export function JsonComplexProperty<T>(constructor: Constructable<T>) {
+export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string = null) {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
+    if (name)
+        opts.name = name;
     return Reflect.metadata(mappingMetadataKey, opts);
 }
 
@@ -85,8 +87,10 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>) {
  * @param {Constructable<any>} constructor the constructor type of the array items.
  * @returns the decorator for the property.
  */
-export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>) {
+export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null) {
     const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
+    if (name)
+        opts.name = name;
     return Reflect.metadata(mappingMetadataKey, opts);
 }
 
