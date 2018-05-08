@@ -79,7 +79,8 @@ describe('Mapper tests', () => {
         {
           line1: 'e',
           line2: 'f'
-        }
+        },
+        null
       ]
     };
 
@@ -113,6 +114,8 @@ describe('Mapper tests', () => {
 
     expect(p.prevAddresses[1].line1).to.equal(obj.prevAddresses[1].line1);
     expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
+
+    expect(p.prevAddresses[2]).to.be.null;
   });
 
   it('should serialize', () => {
@@ -135,7 +138,8 @@ describe('Mapper tests', () => {
         {
           line1: 'e',
           line2: 'f'
-        }
+        },
+        null
       ]
     };
 
@@ -161,5 +165,6 @@ describe('Mapper tests', () => {
     expect(p2.prevAddresses[0].line2).to.equal(p.prevAddresses[0].line2);
     expect(p2.prevAddresses[1].line1).to.equal(p.prevAddresses[1].line1);
     expect(p2.prevAddresses[1].line2).to.equal(p.prevAddresses[1].line2);
+    expect(p2.prevAddresses[2]).to.be.null;
   });
 });
