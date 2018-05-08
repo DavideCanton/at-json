@@ -234,7 +234,9 @@ export class JsonMapper {
             const name = opt.name || propName;
 
             if (opt.isArray)
-                obj[propName] = jsonObj[name] ? (jsonObj[name] as Array<any>).map(e => JsonMapper.deserializeValue(opt, e)) : null;
+                obj[propName] = Array.isArray(jsonObj[name]) ?
+                    jsonObj[name].map(e => JsonMapper.deserializeValue(opt, e)) :
+                    null;
             else
                 obj[propName] = JsonMapper.deserializeValue<T>(opt, jsonObj, name);
         });
@@ -246,8 +248,12 @@ export class JsonMapper {
         const mapValue = name ? jsonObj[name] : jsonObj;
 
         let value;
-        if (opt.complexType)
-            value = this.deserialize(opt.complexType, mapValue);
+        if (opt.complexType) {
+            if (mapValue)
+                value = this.deserialize(opt.complexType, mapValue);
+            else
+                value = null;
+        }
         else if (opt.mappingFn)
             value = opt.mappingFn(mapValue);
         else
