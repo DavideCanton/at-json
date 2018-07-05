@@ -113,7 +113,7 @@ describe('Mapper tests', () => {
     expect(p.lastName).to.equal(obj.lastName.toUpperCase());
     expect(p.age).to.equal(obj.eta);
     expect(p.sex).to.equal(Sesso.F);
-    expect(dateEquals(p.date, new Date(2012, 2, 12))).to.be.true;
+    expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
 
     expect(p.numbers.length).to.equal(obj.numbers.length);
 
@@ -134,6 +134,96 @@ describe('Mapper tests', () => {
     expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
 
     expect(p.prevAddresses[2]).to.be.null;
+  });
+
+  it('should deserialize array', () => {
+    const objs = [{
+      firstName: 'Piero',
+      lastName: 'Gorgi',
+      eta: 16,
+      date: '2012',
+      sex: 1,
+      numbers: [1, 2, 3],
+      aa: {
+        line1: 'a',
+        line2: 'b',
+        line3: 'c'
+      },
+      prevAddresses: [
+        {
+          line1: 'c',
+          line2: 'd'
+        },
+        {
+          line1: 'e',
+          line2: 'f'
+        },
+        null
+      ]
+    }, {
+      firstName: 'aaa',
+      lastName: 'bbb',
+      eta: 21,
+      date: '2015',
+      sex: 0,
+      numbers: [3, 4, 5],
+      aa: {
+        line1: 'g',
+        line2: 'j',
+        line3: 'k'
+      },
+      prevAddresses: [
+        {
+          line1: 'f',
+          line2: 's'
+        },
+        {
+          line1: 'c',
+          line2: 'c'
+        },
+        null
+      ]
+    }];
+
+    const ps = JsonMapper.deserializeArray(Person, objs);
+
+    expect(ps.length).to.equal(objs.length);
+
+    ps.forEach((p, i) => {
+      const obj = objs[i];
+
+      expect(p).to.be.not.null;
+      expect(p.address).to.be.not.null;
+
+      expect(p instanceof Person).to.be.true;
+      expect(p.address instanceof AddressExtended).to.be.true;
+
+      expect(p.firstName).to.equal(obj.firstName);
+      expect(p.lastName).to.equal(obj.lastName.toUpperCase());
+      expect(p.age).to.equal(obj.eta);
+      expect(p.sex).to.equal(obj.sex);
+      expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
+
+      expect(p.numbers.length).to.equal(obj.numbers.length);
+
+      expect(p.numbers[0]).to.equal(obj.numbers[0]);
+      expect(p.numbers[1]).to.equal(obj.numbers[1]);
+      expect(p.numbers[2]).to.equal(obj.numbers[2]);
+
+      expect(p.address.line1).to.equal(obj.aa.line1);
+      expect(p.address.line2).to.equal(obj.aa.line2);
+      expect(p.address.line3).to.equal(obj.aa.line3);
+
+      expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
+
+      expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
+      expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+
+      expect(p.prevAddresses[1].line1).to.equal(obj.prevAddresses[1].line1);
+      expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
+
+      expect(p.prevAddresses[2]).to.be.null;
+    });
   });
 
   it('should serialize', () => {

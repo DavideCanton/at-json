@@ -74,6 +74,19 @@ export class JsonMapper {
     }
 
     /**
+     * Deserializes an array. @see deserialize
+     * @static
+     * @template T the type of output object
+     * @param {Constructable<T>} ctor the destination constructor
+     * @param {*} jsonObj the value to be deserialized
+     * @returns {T} the deserialized object
+     * @memberof JsonMapper
+     */
+    static deserializeArray<T>(ctor: Constructable<T>, jsonArray: any[]): T[] {
+        return jsonArray.map(v => JsonMapper.deserialize(ctor, v));
+    }
+
+    /**
      * Deserialization method.
      * Deserialize `jsonObj` into an object built using `ctor`.
      *
