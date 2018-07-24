@@ -54,6 +54,9 @@ class Person {
   @JsonDateProperty()
   date: Date | null = null;
 
+  @JsonDateProperty('date22')
+  date2: Date | null = null;
+
   @JsonProperty()
   sex: Sesso = Sesso.M;
 
@@ -81,6 +84,7 @@ describe('Mapper tests', () => {
       lastName: 'Gorgi',
       eta: 16,
       date: '2012',
+      date22: '2014',
       sex: 1,
       numbers: [1, 2, 3],
       aa: {
@@ -114,6 +118,7 @@ describe('Mapper tests', () => {
     expect(p.age).to.equal(obj.eta);
     expect(p.sex).to.equal(Sesso.F);
     expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
+    expect(dateEquals(p.date2, new Date(+obj.date22, 2, 12))).to.be.true;
 
     expect(p.numbers.length).to.equal(obj.numbers.length);
 
@@ -142,6 +147,7 @@ describe('Mapper tests', () => {
       lastName: 'Gorgi',
       eta: 16,
       date: '2012',
+      date22: '2014',
       sex: 1,
       numbers: [1, 2, 3],
       aa: {
@@ -165,6 +171,7 @@ describe('Mapper tests', () => {
       lastName: 'bbb',
       eta: 21,
       date: '2015',
+      date22: '2017',
       sex: 0,
       numbers: [3, 4, 5],
       aa: {
@@ -203,6 +210,7 @@ describe('Mapper tests', () => {
       expect(p.age).to.equal(obj.eta);
       expect(p.sex).to.equal(obj.sex);
       expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
+      expect(dateEquals(p.date2, new Date(+obj.date22, 2, 12))).to.be.true;
 
       expect(p.numbers.length).to.equal(obj.numbers.length);
 

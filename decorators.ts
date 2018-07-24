@@ -103,8 +103,14 @@ export function JsonProperty<T, R>(params?: string | MappingFn<T, R> | IMappingO
  */
 export function makeCustomDecorator<T>(serializeFn: (t: T) => string, deserializeFn: (any) => T) {
 
-    return (params?: IMappingOptions<any, T>) => {
-        const actualParams: IMappingOptions<any, T> = { ...params, serializeFn, mappingFn: deserializeFn };
+    return (params?: string | IMappingOptions<any, T>) => {
+        let normalizedParams;
+        if (params)
+            normalizedParams = normalizeParams(params);
+        else
+            normalizedParams = {};
+
+        const actualParams: IMappingOptions<any, T> = { ...normalizedParams, serializeFn, mappingFn: deserializeFn };
         return Reflect.metadata(mappingMetadataKey, actualParams);
     };
 }
