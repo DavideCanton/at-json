@@ -33,10 +33,10 @@ export class JsonMapper {
      * @memberof JsonMapper
      */
     static serialize(val: any): string {
-        return JSON.stringify(JsonMapper.innerSerialize(val));
+        return JSON.stringify(JsonMapper.exportForSerialize(val));
     }
 
-    private static innerSerialize(val: any): any {
+    static exportForSerialize(val: any): any {
         if (val === null || val === undefined)
             return val;
 
@@ -64,7 +64,7 @@ export class JsonMapper {
 
         let value;
         if (opt.complexType)
-            value = JsonMapper.innerSerialize(mapValue);
+            value = JsonMapper.exportForSerialize(mapValue);
         else if (opt.serializeFn)
             value = opt.serializeFn(mapValue);
         else
