@@ -97,7 +97,7 @@ export function JsonProperty<T, R>(params?: string | MappingFn<T, R> | IMappingO
 
 /**
  * A custom decorator factory function, in order to allow defining custom reusable decorators.
- * 
+ *
  * @param serializeFn the function used for serializing the value.
  * @param deserializeFn the function used for deserializing the value.
  */
