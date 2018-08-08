@@ -7,7 +7,7 @@ import {
 } from '../index';
 
 const JsonDateProperty = makeCustomDecorator<Date>(
-  d => d.getFullYear().toString(),
+  d => d ? d.getFullYear().toString() : '',
   s => new Date(+s, 2, 12)
 );
 
@@ -22,10 +22,10 @@ function dateEquals(d: Date | null | undefined, d2: Date | null | undefined): bo
 @JsonClass
 class Address {
   @JsonProperty()
-  line1 = '';
+  line1 = 'line1';
 
   @JsonProperty()
-  line2 = '';
+  line2 = 'line2';
 
   serialize: SerializeFn;
 }
@@ -33,7 +33,7 @@ class Address {
 @JsonClass
 class AddressExtended extends Address {
   @JsonProperty()
-  line3 = '';
+  line3 = 'line3';
 }
 
 enum Sesso {
@@ -284,5 +284,19 @@ describe('Mapper tests', () => {
     expect(p2.prevAddresses[1].line1).to.equal(p.prevAddresses[1].line1);
     expect(p2.prevAddresses[1].line2).to.equal(p.prevAddresses[1].line2);
     expect(p2.prevAddresses[2]).to.be.null;
+  });
+
+  it('should not map undefined fields in input object', () => {
+    const obj = {
+      line1: 'ciao'
+    };
+
+    const addr = JsonMapper.deserialize(AddressExtended, obj);
+    const addrDefault = new AddressExtended();
+
+    expect(addr instanceof AddressExtended).to.be.true;
+    expect(addr.line1).to.equal(obj.line1);
+    expect(addr.line2).to.equal(addrDefault.line2);
+    expect(addr.line3).to.equal(addrDefault.line3);
   });
 });

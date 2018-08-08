@@ -115,6 +115,7 @@ export class JsonMapper {
             jsonObj = JSON.parse(jsonObj);
 
         const obj = new ctor();
+        const has = Object.prototype.hasOwnProperty;
 
         Object.keys(obj).forEach(propName => {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, obj, propName);
@@ -123,6 +124,9 @@ export class JsonMapper {
                 return;
 
             const name = opt.name || propName;
+
+            if (!has.call(jsonObj, name))
+                return;
 
             if (opt.isArray)
                 obj[propName] = Array.isArray(jsonObj[name]) ?
