@@ -129,9 +129,7 @@ export class JsonMapper {
                 return;
 
             if (opt.isArray)
-                obj[propName] = Array.isArray(jsonObj[name]) ?
-                    jsonObj[name].map(e => JsonMapper.deserializeValue(opt, e)) :
-                    null;
+                obj[propName] = Array.isArray(jsonObj[name]) ? jsonObj[name].map(e => JsonMapper.deserializeValue(opt, e)) : [];
             else
                 obj[propName] = JsonMapper.deserializeValue<T>(opt, jsonObj, name);
         });
