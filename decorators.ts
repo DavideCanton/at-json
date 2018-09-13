@@ -57,8 +57,8 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
  * @param {Constructable<any>} constructor the constructor type of the array items.
  * @returns the decorator for the property.
  */
-export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null) {
-    const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
+export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null, keepNullArray?: boolean) {
+    const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor, keepNullArray };
     if (name)
         opts.name = name;
     return Reflect.metadata(mappingMetadataKey, opts);
