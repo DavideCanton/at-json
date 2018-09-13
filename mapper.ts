@@ -128,8 +128,13 @@ export class JsonMapper {
             if (!has.call(jsonObj, name))
                 return;
 
-            if (opt.isArray)
-                obj[propName] = Array.isArray(jsonObj[name]) ? jsonObj[name].map(e => JsonMapper.deserializeValue(opt, e)) : [];
+            if (opt.isArray) {
+                const prop = jsonObj[name];
+                if (Array.isArray(prop))
+                    obj[propName] = prop.map(e => JsonMapper.deserializeValue(opt, e));
+                else
+                    obj[propName] = JsonMapper.getDefaultArrayValue(opt);
+            }
             else
                 obj[propName] = JsonMapper.deserializeValue<T>(opt, jsonObj, name);
         });
@@ -153,5 +158,9 @@ export class JsonMapper {
             value = mapValue;
 
         return value;
+    }
+
+    private static getDefaultArrayValue<R>(opt: IMappingOptions<any, R>): R[] | null {
+        return opt.isArray && !opt.keepNullArray ? [] : null;
     }
 }

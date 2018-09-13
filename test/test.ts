@@ -63,11 +63,17 @@ class Person {
   @JsonArray()
   numbers: number[] = [];
 
+  @JsonArray({ keepNullArray: true })
+  numbers2: number[] | null = null;
+
   @JsonComplexProperty(AddressExtended, 'aa')
   address: AddressExtended = new AddressExtended();
 
   @JsonArrayOfComplexProperty(Address)
   prevAddresses: Address[] = [];
+
+  @JsonArrayOfComplexProperty(Address, undefined, true)
+  nextAddresses: Address[] | null = null;
 
   serialize: SerializeFn;
 
@@ -298,5 +304,53 @@ describe('Mapper tests', () => {
     expect(addr.line1).to.equal(obj.line1);
     expect(addr.line2).to.equal(addrDefault.line2);
     expect(addr.line3).to.equal(addrDefault.line3);
+  });
+
+  it('should deserialize arrays', () => {
+    const obj = {
+      numbers: [1, 2, 3],
+      numbers2: [1, 2, 3],
+      prevAddresses: [
+        {
+          line1: 'c',
+          line2: 'd'
+        }
+      ],
+      nextAddresses: [
+        {
+          line1: 'e',
+          line2: 'f'
+        }
+      ]
+    };
+    const p = JsonMapper.deserialize(Person, obj);
+
+    expect(p.numbers.length).to.equal(obj.numbers.length);
+    expect(p.numbers[0]).to.equal(obj.numbers[0]);
+    expect(p.numbers[1]).to.equal(obj.numbers[1]);
+    expect(p.numbers[2]).to.equal(obj.numbers[2]);
+    expect(p.numbers2.length).to.equal(obj.numbers2.length);
+    expect(p.numbers2[0]).to.equal(obj.numbers2[0]);
+    expect(p.numbers2[1]).to.equal(obj.numbers2[1]);
+    expect(p.numbers2[2]).to.equal(obj.numbers2[2]);
+
+    expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
+    expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
+    expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+
+    expect(p.nextAddresses.length).to.equal(obj.nextAddresses.length);
+    expect(p.nextAddresses[0].line1).to.equal(obj.nextAddresses[0].line1);
+    expect(p.nextAddresses[0].line2).to.equal(obj.nextAddresses[0].line2);
+  });
+
+  it('should deserialize arrays correctly when null', () => {
+    const obj = {};
+    const p = JsonMapper.deserialize(Person, obj);
+
+    expect(p.numbers.length).to.equal(0);
+    expect(p.numbers2).to.be.null;
+
+    expect(p.prevAddresses.length).to.equal(0);
+    expect(p.nextAddresses).to.be.null;
   });
 });
