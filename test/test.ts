@@ -1,10 +1,9 @@
-import { describe } from 'mocha';
 import { expect } from 'chai';
+import { describe } from 'mocha';
 
-import {
-  JsonClass, JsonProperty, SerializeFn, JsonArrayOfComplexProperty,
-  JsonMapper, JsonSerializable, JsonComplexProperty, JsonArray, makeCustomDecorator
-} from '../index';
+import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty, makeCustomDecorator } from '../decorators';
+import { SerializeFn } from '../interfaces';
+import { JsonMapper } from '../mapper';
 
 const JsonDateProperty = makeCustomDecorator<Date>(
   d => d ? d.getFullYear().toString() : '',
@@ -19,7 +18,7 @@ function dateEquals(d: Date | null | undefined, d2: Date | null | undefined): bo
   return d.getTime() === d2.getTime();
 }
 
-@JsonClass
+@JsonClass(true)
 class Address {
   @JsonProperty()
   line1 = 'line1';
@@ -30,17 +29,21 @@ class Address {
   serialize: SerializeFn;
 }
 
-@JsonClass
+@JsonClass(false)
 class AddressExtended extends Address {
   @JsonProperty()
   line3 = 'line3';
+
+  serialize: SerializeFn;
+
+  [other: string]: any;
 }
 
 enum Sesso {
   M = 0, F = 1
 }
 
-@JsonClass
+@JsonClass()
 class Person {
   @JsonProperty()
   firstName = '';
@@ -96,12 +99,14 @@ describe('Mapper tests', () => {
       aa: {
         line1: 'a',
         line2: 'b',
-        line3: 'c'
+        line3: 'c',
+        line4: 'd'
       },
       prevAddresses: [
         {
           line1: 'c',
-          line2: 'd'
+          line2: 'd',
+          line4: 'x'
         },
         {
           line1: 'e',
@@ -118,6 +123,8 @@ describe('Mapper tests', () => {
 
     expect(p instanceof Person).to.be.true;
     expect(p.address instanceof AddressExtended).to.be.true;
+
+    expect(p.address.line4).to.equal('d');
 
     expect(p.firstName).to.equal(obj.firstName);
     expect(p.lastName).to.equal(obj.lastName.toUpperCase());
@@ -140,6 +147,7 @@ describe('Mapper tests', () => {
 
     expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
     expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+    expect((<any>p.prevAddresses[0]).line3).to.be.undefined;
 
     expect(p.prevAddresses[1].line1).to.equal(obj.prevAddresses[1].line1);
     expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
