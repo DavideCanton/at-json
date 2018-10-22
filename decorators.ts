@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, IMappingOptions, JsonSerializable, MappingFn, mappingMetadataKey } from './interfaces';
+import { Constructable, IMappingOptions, JsonSerializable, MappingFn, mappingMetadataKey, mappingIgnoreKey } from './interfaces';
 import { JsonMapper } from './mapper';
 
 /**
@@ -15,12 +15,16 @@ import { JsonMapper } from './mapper';
  * @param {T} constructor
  * @returns
  */
-export function JsonClass<T extends Constructable<JsonSerializable>>(constructor: T) {
-    constructor.prototype.serialize = function (this: JsonSerializable) {
-        return JsonMapper.serialize(this);
-    };
+export function JsonClass<T>(ignoreMissingFields = true) {
+    return <U extends Constructable<T>>(constructor: U) => {
 
-    return constructor;
+        constructor.prototype.serialize = function (this: JsonSerializable) {
+            return JsonMapper.serialize(this);
+        };
+        constructor.prototype[mappingIgnoreKey] = ignoreMissingFields;
+
+        return constructor;
+    };
 }
 
 function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOptions<T, R>): IMappingOptions<T, R> {

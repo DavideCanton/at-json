@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, IMappingOptions, mappingMetadataKey } from './interfaces';
+import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
@@ -116,12 +116,11 @@ export class JsonMapper {
 
         const obj = new ctor();
         const has = Object.prototype.hasOwnProperty;
+        const ignoreMissingProperties = ctor.prototype[mappingIgnoreKey];
+        const mapped = <string[]>[];
 
         Object.keys(obj).forEach(propName => {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, obj, propName);
-
-            if (opt === undefined)
-                return;
 
             const name = opt.name || propName;
 
@@ -137,7 +136,16 @@ export class JsonMapper {
             }
             else
                 obj[propName] = JsonMapper.deserializeValue<T>(opt, jsonObj, name);
+
+            mapped.push(name);
         });
+
+        if (!ignoreMissingProperties) {
+            Object.keys(jsonObj).forEach(propName => {
+                if (mapped.indexOf(propName) < 0)
+                    obj[propName] = jsonObj[propName];
+            });
+        }
 
         return obj;
     }

@@ -1,6 +1,7 @@
 import * as Symbol from 'es6-symbol';
 
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
+export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
 
 /**
  * Type alias for mapping function.
