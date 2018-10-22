@@ -122,6 +122,9 @@ export class JsonMapper {
         Object.keys(obj).forEach(propName => {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, obj, propName);
 
+            if (opt === undefined)
+                return;
+
             const name = opt.name || propName;
 
             if (!has.call(jsonObj, name))
