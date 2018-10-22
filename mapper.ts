@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey } from './interfaces';
+import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey, JsonSerializable } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
@@ -32,21 +32,26 @@ export class JsonMapper {
      * @returns {string} the serialized JSON string.
      * @memberof JsonMapper
      */
-    static serialize(val: any): string {
+    static serialize<T extends JsonSerializable>(val: T): string {
         return JSON.stringify(JsonMapper.exportForSerialize(val));
     }
 
-    static exportForSerialize(val: any): any {
+    static exportForSerialize<T extends JsonSerializable>(val: T): any {
         if (val === null || val === undefined)
             return val;
 
+        const ignoreMissingProperties = Object.getPrototypeOf(val)[mappingIgnoreKey];
         const obj = {};
 
         Object.keys(val).forEach(propName => {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, val, propName);
 
-            if (opt === undefined)
+            if (opt === undefined) {
+                if (!ignoreMissingProperties)
+                    obj[propName] = val[propName];
+
                 return;
+            }
 
             const name = opt.name || propName;
 
@@ -138,7 +143,7 @@ export class JsonMapper {
                     obj[propName] = JsonMapper.getDefaultArrayValue(opt);
             }
             else
-                obj[propName] = JsonMapper.deserializeValue<T>(opt, jsonObj, name);
+                obj[propName] = JsonMapper.deserializeValue(opt, jsonObj, name);
 
             mapped.push(name);
         });
@@ -153,7 +158,7 @@ export class JsonMapper {
         return obj;
     }
 
-    private static deserializeValue<T>(opt: IMappingOptions<any, any>, jsonObj: any, name?: string) {
+    private static deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string) {
         const mapValue = name ? jsonObj[name] : jsonObj;
 
         let value;

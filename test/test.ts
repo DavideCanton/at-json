@@ -259,12 +259,14 @@ describe('Mapper tests', () => {
       aa: {
         line1: 'a',
         line2: 'b',
-        line3: 'c'
+        line3: 'c',
+        line4: 'd'
       },
       prevAddresses: [
         {
           line1: 'c',
-          line2: 'd'
+          line2: 'd',
+          line3: 'e'
         },
         {
           line1: 'e',
@@ -292,9 +294,11 @@ describe('Mapper tests', () => {
     expect(p2.address.line1).to.equal(p.address.line1);
     expect(p2.address.line2).to.equal(p.address.line2);
     expect(p2.address.line3).to.equal(p.address.line3);
+    expect(p2.address.line4).to.equal(p.address.line4);
     expect(p2.prevAddresses.length).to.equal(p.prevAddresses.length);
     expect(p2.prevAddresses[0].line1).to.equal(p.prevAddresses[0].line1);
     expect(p2.prevAddresses[0].line2).to.equal(p.prevAddresses[0].line2);
+    expect((<any>p2.prevAddresses[0]).line3).to.equal((<any>p.prevAddresses[0]).line3);
     expect(p2.prevAddresses[1].line1).to.equal(p.prevAddresses[1].line1);
     expect(p2.prevAddresses[1].line2).to.equal(p.prevAddresses[1].line2);
     expect(p2.prevAddresses[2]).to.be.null;
