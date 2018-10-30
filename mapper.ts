@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-
-import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey, JsonSerializable } from './interfaces';
+import * as _ from 'lodash';
+import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey, JsonSerializable, AfterDeserialize } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
@@ -116,7 +116,7 @@ export class JsonMapper {
      * @memberof JsonMapper
      */
     static deserialize<T>(ctor: Constructable<T>, jsonObj: any): T {
-        if (typeof jsonObj === 'string')
+        if (_.isString(jsonObj))
             jsonObj = JSON.parse(jsonObj);
 
         const obj = new ctor();
@@ -137,7 +137,7 @@ export class JsonMapper {
 
             if (opt.isArray) {
                 const prop = jsonObj[name];
-                if (Array.isArray(prop))
+                if (_.isArray(prop))
                     obj[propName] = prop.map(e => JsonMapper.deserializeValue(opt, e));
                 else
                     obj[propName] = JsonMapper.getDefaultArrayValue(opt);
@@ -154,6 +154,10 @@ export class JsonMapper {
                     obj[propName] = jsonObj[propName];
             });
         }
+
+        const fn = obj[this.nameof<AfterDeserialize>('afterDeserialize')];
+        if (_.isFunction(fn))
+            fn.call(obj);
 
         return obj;
     }
@@ -178,5 +182,9 @@ export class JsonMapper {
 
     private static getDefaultArrayValue<R>(opt: IMappingOptions<any, R>): R[] | null {
         return opt.isArray && !opt.keepNullArray ? [] : null;
+    }
+
+    private static nameof<T>(k: keyof T): string {
+        return <string>k;
     }
 }

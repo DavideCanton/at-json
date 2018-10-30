@@ -1,9 +1,12 @@
-import { expect } from 'chai';
+import { expect, use, spy } from 'chai';
+import * as spies from 'chai-spies';
 import { describe } from 'mocha';
 
 import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty, makeCustomDecorator } from '../decorators';
-import { SerializeFn } from '../interfaces';
+import { SerializeFn, AfterDeserialize } from '../interfaces';
 import { JsonMapper } from '../mapper';
+
+use(spies);
 
 const JsonDateProperty = makeCustomDecorator<Date>(
   d => d ? d.getFullYear().toString() : '',
@@ -30,13 +33,15 @@ class Address {
 }
 
 @JsonClass(false)
-class AddressExtended extends Address {
+class AddressExtended extends Address implements AfterDeserialize {
   @JsonProperty()
   line3 = 'line3';
 
   serialize: SerializeFn;
 
   [other: string]: any;
+
+  afterDeserialize() {}
 }
 
 enum Sesso {
@@ -364,5 +369,19 @@ describe('Mapper tests', () => {
 
     expect(p.prevAddresses.length).to.equal(0);
     expect(p.nextAddresses).to.be.null;
+  });
+
+  it('should call afterDeserialize if implemented', () => {
+    const oldFn = AddressExtended.prototype.afterDeserialize;
+
+    const spyFn = spy.on(AddressExtended.prototype, 'afterDeserialize');
+
+    const obj = { line1: 'ciao' };
+
+    JsonMapper.deserialize(AddressExtended, obj);
+
+    expect(spyFn).to.have.been.called();
+
+    AddressExtended.prototype.afterDeserialize = oldFn;
   });
 });

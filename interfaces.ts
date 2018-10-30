@@ -23,6 +23,7 @@ export type SerializeFn = () => string;
 export interface Constructable<T> {
     new(...args: any[]): T;
 }
+
 /**
  * Interface for serializable object. Auto-implemented by @see JsonClass Decorator.
  *
@@ -33,6 +34,10 @@ export interface JsonSerializable {
     serialize(): string;
 }
 
+
+export interface AfterDeserialize {
+    afterDeserialize(): void;
+}
 
 /**
  * Mapping options.
