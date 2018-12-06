@@ -1,9 +1,9 @@
 {
   "name": "at-json",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A declarative mapper to and from JSON.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "mocha -r ts-node/register -R spec **/test.ts"
