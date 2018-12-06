@@ -1,10 +1,8 @@
-import { expect, use, spy } from 'chai';
+import { expect, spy, use } from 'chai';
 import * as spies from 'chai-spies';
 import { describe } from 'mocha';
 
-import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty, makeCustomDecorator } from '../decorators';
-import { SerializeFn, AfterDeserialize } from '../interfaces';
-import { JsonMapper } from '../mapper';
+import { AfterDeserialize, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, makeCustomDecorator, SerializeFn } from '../lib';
 
 use(spies);
 
