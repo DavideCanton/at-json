@@ -67,7 +67,7 @@ export class JsonMapper {
     private static serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string) {
         const mapValue = propName ? val[propName] : val;
 
-        let value;
+        let value: string;
         if (opt.complexType)
             value = JsonMapper.exportForSerialize(mapValue);
         else if (opt.serializeFn)
