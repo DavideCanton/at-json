@@ -155,7 +155,7 @@ export class JsonMapper {
             });
         }
 
-        const fn = obj[this.nameof<AfterDeserialize>('afterDeserialize')];
+        const fn = obj[JsonMapper.nameof<AfterDeserialize>('afterDeserialize')];
         if (_.isFunction(fn))
             fn.call(obj);
 
@@ -168,7 +168,7 @@ export class JsonMapper {
         let value;
         if (opt.complexType) {
             if (mapValue)
-                value = this.deserialize(opt.complexType, mapValue);
+                value = JsonMapper.deserialize(opt.complexType, mapValue);
             else
                 value = null;
         }
