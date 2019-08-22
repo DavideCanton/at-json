@@ -20,9 +20,7 @@ export type SerializeFn = () => string;
  * @interface Constructable
  * @template T the constructed type
  */
-export interface Constructable<T> {
-    new(...args: any[]): T;
-}
+export type Constructable<T> = new(...args: any[]) => T;
 
 /**
  * Interface for serializable object. Auto-implemented by @see JsonClass Decorator.
