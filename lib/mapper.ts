@@ -165,7 +165,7 @@ export class JsonMapper {
     private static deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string) {
         const mapValue = name ? jsonObj[name] : jsonObj;
 
-        let value;
+        let value: any;
         if (opt.complexType) {
             if (mapValue)
                 value = this.deserialize(opt.complexType, mapValue);
