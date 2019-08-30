@@ -1,6 +1,6 @@
 {
     "name": "at-json",
-    "version": "0.0.23",
+    "version": "0.0.24",
     "description": "A declarative mapper to and from JSON.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
