@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, IMappingOptions, JsonSerializable, MappingFn, mappingMetadataKey, mappingIgnoreKey } from './interfaces';
+import { Constructable, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
 import { JsonMapper } from './mapper';
 
 /**
@@ -112,7 +112,7 @@ export function JsonProperty<T, R>(params?: string | MappingFn<T, R> | IMappingO
  * @param serializeFn the function used for serializing the value.
  * @param deserializeFn the function used for deserializing the value.
  */
-export function makeCustomDecorator<T>(serializeFn: (t: T) => string, deserializeFn: (arg: any) => T)
+export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn: (arg: any) => T)
 {
 
     return (params?: string | IMappingOptions<any, T>) =>

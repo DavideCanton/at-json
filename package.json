@@ -1,44 +1,45 @@
 {
-  "name": "at-json",
-  "version": "0.0.22",
-  "description": "A declarative mapper to and from JSON.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "test": "mocha -r ts-node/register -R spec test/**/test.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DavideCanton/at-json.git"
-  },
-  "keywords": [
-    "json",
-    "mapper"
-  ],
-  "author": "Davide Canton",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/DavideCanton/at-json/issues"
-  },
-  "homepage": "https://github.com/DavideCanton/at-json#readme",
-  "dependencies": {
-    "es6-symbol": "^3.1.1",
-    "lodash": "^4.17.15",
-    "reflect-metadata": "^0.1.12",
-    "symbol": "^0.3.1"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.1.4",
-    "@types/chai-spies": "^1.0.0",
-    "@types/lodash": "^4.14.137",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.5.7",
-    "chai": "^4.1.2",
-    "chai-spies": "^1.0.0",
-    "mocha": "^5.2.0",
-    "ts-node": "^7.0.0",
-    "tslint": "^5.17.0",
-    "typescript": "^3.0.1"
-  }
+    "name": "at-json",
+    "version": "0.0.23",
+    "description": "A declarative mapper to and from JSON.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "prepublish": "npm run build",
+        "build": "tsc",
+        "test": "mocha -r ts-node/register -R spec test/**/test.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DavideCanton/at-json.git"
+    },
+    "keywords": [
+        "json",
+        "mapper"
+    ],
+    "author": "Davide Canton",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/DavideCanton/at-json/issues"
+    },
+    "homepage": "https://github.com/DavideCanton/at-json#readme",
+    "dependencies": {
+        "es6-symbol": "^3.1.1",
+        "lodash": "^4.17.15",
+        "reflect-metadata": "^0.1.12",
+        "symbol": "^0.3.1"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.1.4",
+        "@types/chai-spies": "^1.0.0",
+        "@types/lodash": "^4.14.137",
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^10.5.7",
+        "chai": "^4.1.2",
+        "chai-spies": "^1.0.0",
+        "mocha": "^5.2.0",
+        "ts-node": "^7.0.0",
+        "tslint": "^5.17.0",
+        "typescript": "^3.0.1"
+    }
 }
