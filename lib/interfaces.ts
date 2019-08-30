@@ -65,10 +65,10 @@ export interface IMappingOptions<T, R> {
     /**
      * Serialization function.
      *
-     * @type {MappingFn<T, string>}
+     * @type {MappingFn<T, any>}
      * @memberof IMappingOptions
      */
-    serializeFn?: MappingFn<T, string>;
+    serializeFn?: MappingFn<T, any>;
 
     /**
      * Complex type constructor for complex properties.

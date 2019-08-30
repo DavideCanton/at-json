@@ -1,6 +1,8 @@
 import 'reflect-metadata';
+
 import * as _ from 'lodash';
-import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey, JsonSerializable, AfterDeserialize } from './interfaces';
+
+import { AfterDeserialize, Constructable, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
@@ -8,7 +10,8 @@ import { Constructable, IMappingOptions, mappingMetadataKey, mappingIgnoreKey, J
  * @export
  * @class JsonMapper
  */
-export class JsonMapper {
+export class JsonMapper
+{
 
     /**
      * Serialization method.
@@ -32,22 +35,26 @@ export class JsonMapper {
      * @returns {string} the serialized JSON string.
      * @memberof JsonMapper
      */
-    static serialize<T extends JsonSerializable>(val: T): string {
+    static serialize<T extends JsonSerializable>(val: T): string
+    {
         return JSON.stringify(JsonMapper.exportForSerialize(val));
     }
 
-    static exportForSerialize<T extends JsonSerializable>(val: T): any {
-        if (val === null || val === undefined)
+    static exportForSerialize<T extends JsonSerializable>(val: T): any
+    {
+        if(val === null || val === undefined)
             return val;
 
         const ignoreMissingProperties = Object.getPrototypeOf(val)[mappingIgnoreKey];
         const obj = {};
 
-        Object.keys(val).forEach(propName => {
+        Object.keys(val).forEach(propName =>
+        {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, val, propName);
 
-            if (opt === undefined) {
-                if (!ignoreMissingProperties)
+            if(opt === undefined)
+            {
+                if(!ignoreMissingProperties)
                     obj[propName] = val[propName];
 
                 return;
@@ -55,7 +62,7 @@ export class JsonMapper {
 
             const name = opt.name || propName;
 
-            if (opt.isArray)
+            if(opt.isArray)
                 obj[name] = val[propName] ? (val[propName] as Array<any>).map(el => JsonMapper.serializeValue(opt, el)) : null;
             else
                 obj[name] = JsonMapper.serializeValue(opt, val, propName);
@@ -64,14 +71,15 @@ export class JsonMapper {
         return obj;
     }
 
-    private static serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string) {
+    private static serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string): any
+    {
         const mapValue = propName ? val[propName] : val;
 
         let value: string;
-        if (opt.complexType)
-            value = JsonMapper.exportForSerialize(mapValue);
-        else if (opt.serializeFn)
+        if(opt.serializeFn)
             value = opt.serializeFn(mapValue);
+        else if(opt.complexType)
+            value = JsonMapper.exportForSerialize(mapValue);
         else
             value = mapValue;
 
@@ -87,7 +95,8 @@ export class JsonMapper {
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
-    static deserializeArray<T>(ctor: Constructable<T>, jsonArray: any[]): T[] {
+    static deserializeArray<T>(ctor: Constructable<T>, jsonArray: any[]): T[]
+    {
         return jsonArray.map(v => JsonMapper.deserialize(ctor, v));
     }
 
@@ -115,8 +124,9 @@ export class JsonMapper {
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
-    static deserialize<T>(ctor: Constructable<T>, jsonObj: any): T {
-        if (_.isString(jsonObj))
+    static deserialize<T>(ctor: Constructable<T>, jsonObj: any): T
+    {
+        if(_.isString(jsonObj))
             jsonObj = JSON.parse(jsonObj);
 
         const obj = new ctor();
@@ -124,20 +134,22 @@ export class JsonMapper {
         const ignoreMissingProperties = ctor.prototype[mappingIgnoreKey];
         const mapped = <string[]>[];
 
-        Object.keys(obj).forEach(propName => {
+        Object.keys(obj).forEach(propName =>
+        {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, obj, propName);
 
-            if (opt === undefined)
+            if(opt === undefined)
                 return;
 
             const name = opt.name || propName;
 
-            if (!has.call(jsonObj, name))
+            if(!has.call(jsonObj, name))
                 return;
 
-            if (opt.isArray) {
+            if(opt.isArray)
+            {
                 const prop = jsonObj[name];
-                if (_.isArray(prop))
+                if(_.isArray(prop))
                     obj[propName] = prop.map(e => JsonMapper.deserializeValue(opt, e));
                 else
                     obj[propName] = JsonMapper.getDefaultArrayValue(opt);
@@ -148,43 +160,49 @@ export class JsonMapper {
             mapped.push(name);
         });
 
-        if (!ignoreMissingProperties) {
-            Object.keys(jsonObj).forEach(propName => {
-                if (mapped.indexOf(propName) < 0)
+        if(!ignoreMissingProperties)
+        {
+            Object.keys(jsonObj).forEach(propName =>
+            {
+                if(mapped.indexOf(propName) < 0)
                     obj[propName] = jsonObj[propName];
             });
         }
 
         const fn = obj[this.nameof<AfterDeserialize>('afterDeserialize')];
-        if (_.isFunction(fn))
+        if(_.isFunction(fn))
             fn.call(obj);
 
         return obj;
     }
 
-    private static deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string) {
+    private static deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string)
+    {
         const mapValue = name ? jsonObj[name] : jsonObj;
 
         let value: any;
-        if (opt.complexType) {
-            if (mapValue)
+        if(opt.mappingFn)
+            value = opt.mappingFn(mapValue);
+        else if(opt.complexType)
+        {
+            if(mapValue)
                 value = this.deserialize(opt.complexType, mapValue);
             else
                 value = null;
         }
-        else if (opt.mappingFn)
-            value = opt.mappingFn(mapValue);
         else
             value = mapValue;
 
         return value;
     }
 
-    private static getDefaultArrayValue<R>(opt: IMappingOptions<any, R>): R[] | null {
+    private static getDefaultArrayValue<R>(opt: IMappingOptions<any, R>): R[] | null
+    {
         return opt.isArray && !opt.keepNullArray ? [] : null;
     }
 
-    private static nameof<T>(k: keyof T): string {
+    private static nameof<T>(k: keyof T): string
+    {
         return <string>k;
     }
 }
