@@ -9,6 +9,7 @@
         "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
         "build": "tsc",
         "build:test": "tsc -b test/tsconfig.json",
+        "clean": "rimraf dist && rimraf dist-test",
         "test": "mocha -r ts-node/register -R spec test/**/test.ts"
     },
     "repository": {
@@ -41,6 +42,7 @@
         "chai": "^4.1.2",
         "chai-spies": "^1.0.0",
         "mocha": "^5.2.0",
+        "rimraf": "^3.0.0",
         "ts-node": "^7.0.0",
         "tslint": "^5.17.0",
         "typescript": "^3.7.2"

@@ -5,6 +5,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
+        "sourceMap": true,
         "outDir": "./dist",
         "lib": [
             "es6"
