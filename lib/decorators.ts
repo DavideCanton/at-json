@@ -19,7 +19,7 @@ export function JsonClass<T>(ignoreMissingFields = true): <U extends Constructab
 {
     return <U extends Constructable<T & JsonSerializable>>(constructor: U) =>
     {
-        constructor.prototype.serialize = function (this: JsonSerializable)
+        constructor.prototype.serialize = function(this: JsonSerializable)
         {
             return JsonMapper.serialize(this);
         };
@@ -31,14 +31,16 @@ export function JsonClass<T>(ignoreMissingFields = true): <U extends Constructab
 
 function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOptions<T, R>): IMappingOptions<T, R>
 {
-    if (!params)
-        params = {};
-    if (typeof params === 'string')
-        params = { name: params };
-    else if (typeof params === 'function')
-        params = { mappingFn: params };
+    let resolvedParams: IMappingOptions<T, R>;
 
-    return params;
+    if(typeof params === 'string')
+        resolvedParams = { name: params };
+    else if(typeof params === 'function')
+        resolvedParams = { mappingFn: params };
+    else
+        resolvedParams = params || {};
+
+    return resolvedParams;
 }
 
 /**
@@ -52,7 +54,7 @@ function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOption
 export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string = null)
 {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
-    if (name)
+    if(name)
         opts.name = name;
     return Reflect.metadata(mappingMetadataKey, opts);
 }
@@ -68,7 +70,7 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
 export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null, keepNullArray?: boolean)
 {
     const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor, keepNullArray };
-    if (name)
+    if(name)
         opts.name = name;
     return Reflect.metadata(mappingMetadataKey, opts);
 }
@@ -118,7 +120,7 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
     return (params?: string | IMappingOptions<any, T>) =>
     {
         let normalizedParams: IMappingOptions<any, T>;
-        if (params)
+        if(params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};

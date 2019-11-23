@@ -1,4 +1,4 @@
-import * as Symbol from 'es6-symbol';
+import 'core-js/features/symbol';
 
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
