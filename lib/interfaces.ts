@@ -2,6 +2,7 @@ import 'core-js/features/symbol';
 
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
+export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
 
 /**
  * Type alias for mapping function.
@@ -85,16 +86,4 @@ export interface IMappingOptions<T, R> {
      * @memberof IMappingOptions
      */
     isArray?: boolean;
-
-    /**
-     * If the property is an array, by default null arrays will be deserialized as [].
-     *
-     * Use this property to keep null value.
-     *
-     * Unused if isArray is false.
-     *
-     * @type {boolean}
-     * @memberof IMappingOptions
-    */
-    keepNullArray?: boolean;
 }

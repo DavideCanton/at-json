@@ -1,5 +1,5 @@
 import * as Benchmark from 'benchmark';
-import _ = require('lodash');
+import { map, range } from 'lodash';
 
 import { JsonClass, JsonMapper, JsonProperty, SerializeFn } from '../../lib';
 
@@ -38,7 +38,7 @@ suite
 
 const suite2 = new Benchmark.Suite('Array', { 'async': true });
 
-const data2 = _.map(_.range(10000), i => ({
+const data2 = map(range(10000), i => ({
     line1: `${i}`,
     line2: `${i}`,
 }));
@@ -49,10 +49,10 @@ suite2
         const deserialized = JsonMapper.deserializeArray(Address, data2);
     })
     .add('deserialize single item with lib', function () {
-        const deserialized = _.map(data2, v => JsonMapper.deserialize(Address, v));
+        const deserialized = map(data2, v => JsonMapper.deserialize(Address, v));
     })
     .add('deserialize manually', function () {
-        const deserialized = _.map(data2, v => ({ ...v }));
+        const deserialized = map(data2, v => ({ ...v }));
     })
     // add listeners
     .on('cycle', function (event) {
