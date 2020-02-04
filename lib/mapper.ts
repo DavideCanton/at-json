@@ -1,14 +1,6 @@
 import 'reflect-metadata';
 
-import {
-    AfterDeserialize,
-    Constructable,
-    IMappingOptions,
-    JsonSerializable,
-    mappingIgnoreKey,
-    mappingMetadataKey,
-    fieldsMetadataKey,
-} from './interfaces';
+import { AfterDeserialize, Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
