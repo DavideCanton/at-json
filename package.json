@@ -28,7 +28,7 @@
     "homepage": "https://github.com/DavideCanton/at-json#readme",
     "dependencies": {
         "core-js": "^3.4.2",
-        "reflect-metadata": "^0.1.12"
+        "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
         "@types/benchmark": "^1.0.31",
