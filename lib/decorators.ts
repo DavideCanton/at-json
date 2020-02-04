@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
+import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
 import { JsonMapper } from './mapper';
 
 /**
@@ -19,11 +19,11 @@ export function JsonClass<T>(ignoreMissingFields = true): <U extends Constructab
 {
     return <U extends Constructable<T & JsonSerializable>>(constructor: U) =>
     {
-        constructor.prototype.serialize = function(this: JsonSerializable)
+        constructor.prototype.serialize = function (this: JsonSerializable)
         {
             return JsonMapper.serialize(this);
         };
-        constructor.prototype[mappingIgnoreKey] = ignoreMissingFields;
+        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, constructor.prototype);
 
         return constructor;
     };
@@ -33,9 +33,9 @@ function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOption
 {
     let resolvedParams: IMappingOptions<T, R>;
 
-    if(typeof params === 'string')
+    if (typeof params === 'string')
         resolvedParams = { name: params };
-    else if(typeof params === 'function')
+    else if (typeof params === 'function')
         resolvedParams = { mappingFn: params };
     else
         resolvedParams = params || {};
@@ -54,9 +54,9 @@ function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOption
 export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string = null)
 {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
-    if(name)
+    if (name)
         opts.name = name;
-    return Reflect.metadata(mappingMetadataKey, opts);
+    return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
 
 /**
@@ -67,12 +67,12 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
  * @param {Constructable<any>} constructor the constructor type of the array items.
  * @returns the decorator for the property.
  */
-export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null, keepNullArray?: boolean)
+export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null)
 {
-    const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor, keepNullArray };
-    if(name)
+    const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
+    if (name)
         opts.name = name;
-    return Reflect.metadata(mappingMetadataKey, opts);
+    return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
 
 /**
@@ -105,7 +105,18 @@ export function JsonArray<T, R>(params?: string | MappingFn<T, R> | IMappingOpti
 export function JsonProperty<T, R>(params?: string | MappingFn<T, R> | IMappingOptions<T, R>)
 {
     params = normalizeParams(params);
-    return Reflect.metadata(mappingMetadataKey, params);
+    return wrapDecorator(Reflect.metadata(mappingMetadataKey, params));
+}
+
+function wrapDecorator(fn: (target: Object, propertyKey: string | symbol) => void)
+{
+    return function (target: Object, propertyKey: string | symbol)
+    {
+        const objMetadata = Reflect.getMetadata(fieldsMetadataKey, target) || [];
+        objMetadata.push(propertyKey);
+        Reflect.defineMetadata(fieldsMetadataKey, objMetadata, target);
+        return fn.call(null, target, propertyKey);
+    };
 }
 
 /**
@@ -120,7 +131,7 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
     return (params?: string | IMappingOptions<any, T>) =>
     {
         let normalizedParams: IMappingOptions<any, T>;
-        if(params)
+        if (params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};
@@ -130,6 +141,6 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
             serializeFn,
             mappingFn: deserializeFn
         };
-        return Reflect.metadata(mappingMetadataKey, actualParams);
+        return wrapDecorator(Reflect.metadata(mappingMetadataKey, actualParams));
     };
 }
