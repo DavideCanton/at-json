@@ -76,7 +76,7 @@ class Person
     @JsonComplexProperty(AddressExtended, 'aa')
     address: AddressExtended;
 
-    @JsonArrayOfComplexProperty(Address)
+    @JsonArrayOfComplexProperty(Address, 'prevs')
     prevAddresses: Address[] = [];
 
     @JsonArrayOfComplexProperty(Address)
@@ -109,7 +109,7 @@ describe('Mapper tests', () =>
                 line3: 'c',
                 line4: 'd'
             },
-            prevAddresses: [
+            prevs: [
                 {
                     line1: 'c',
                     line2: 'd',
@@ -150,16 +150,44 @@ describe('Mapper tests', () =>
         expect(p.address.line2).to.equal(obj.aa.line2);
         expect(p.address.line3).to.equal(obj.aa.line3);
 
-        expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
+        expect(p.prevAddresses.length).to.equal(obj.prevs.length);
 
-        expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
-        expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+        expect(p.prevAddresses[0].line1).to.equal(obj.prevs[0].line1);
+        expect(p.prevAddresses[0].line2).to.equal(obj.prevs[0].line2);
         expect((<any>p.prevAddresses[0]).line4).to.be.undefined;
 
-        expect(p.prevAddresses[1].line1).to.equal(obj.prevAddresses[1].line1);
-        expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
+        expect(p.prevAddresses[1].line1).to.equal(obj.prevs[1].line1);
+        expect(p.prevAddresses[1].line2).to.equal(obj.prevs[1].line2);
 
         expect(p.prevAddresses[2]).to.be.null;
+    });
+
+    it('should deserialize as null if array property is not an array', () =>
+    {
+        @JsonClass()
+        class Y
+        {
+            @JsonProperty()
+            s: string;
+
+            serialize: SerializeFn;
+        }
+
+        @JsonClass()
+        class X
+        {
+            @JsonArray() x: number[];
+            @JsonArrayOfComplexProperty(Y) y: Y[];
+
+            serialize: SerializeFn;
+        }
+
+        const des = JsonMapper.deserialize(X, {
+            x: 1,
+            y: ''
+        });
+        expect(des.x).to.be.null;
+        expect(des.y).to.be.null;
     });
 
     it('should deserialize array', () =>
@@ -177,7 +205,7 @@ describe('Mapper tests', () =>
                 line2: 'b',
                 line3: 'c'
             },
-            prevAddresses: [
+            prevs: [
                 {
                     line1: 'c',
                     line2: 'd'
@@ -201,7 +229,7 @@ describe('Mapper tests', () =>
                 line2: 'j',
                 line3: 'k'
             },
-            prevAddresses: [
+            prevs: [
                 {
                     line1: 'f',
                     line2: 's'
@@ -245,13 +273,13 @@ describe('Mapper tests', () =>
             expect(p.address.line2).to.equal(obj.aa.line2);
             expect(p.address.line3).to.equal(obj.aa.line3);
 
-            expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
+            expect(p.prevAddresses.length).to.equal(obj.prevs.length);
 
-            expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
-            expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+            expect(p.prevAddresses[0].line1).to.equal(obj.prevs[0].line1);
+            expect(p.prevAddresses[0].line2).to.equal(obj.prevs[0].line2);
 
-            expect(p.prevAddresses[1].line1).to.equal(obj.prevAddresses[1].line1);
-            expect(p.prevAddresses[1].line2).to.equal(obj.prevAddresses[1].line2);
+            expect(p.prevAddresses[1].line1).to.equal(obj.prevs[1].line1);
+            expect(p.prevAddresses[1].line2).to.equal(obj.prevs[1].line2);
 
             expect(p.prevAddresses[2]).to.be.null;
         });
@@ -272,7 +300,7 @@ describe('Mapper tests', () =>
                 line3: 'c',
                 line4: 'd'
             },
-            prevAddresses: [
+            prevs: [
                 {
                     line1: 'c',
                     line2: 'd',
@@ -334,7 +362,7 @@ describe('Mapper tests', () =>
         const obj = {
             numbers: [1, 2, 3],
             numbers2: [1, 2, 3],
-            prevAddresses: [
+            prevs: [
                 {
                     line1: 'c',
                     line2: 'd'
@@ -358,9 +386,9 @@ describe('Mapper tests', () =>
         expect(p.numbers2[1]).to.equal(obj.numbers2[1]);
         expect(p.numbers2[2]).to.equal(obj.numbers2[2]);
 
-        expect(p.prevAddresses.length).to.equal(obj.prevAddresses.length);
-        expect(p.prevAddresses[0].line1).to.equal(obj.prevAddresses[0].line1);
-        expect(p.prevAddresses[0].line2).to.equal(obj.prevAddresses[0].line2);
+        expect(p.prevAddresses.length).to.equal(obj.prevs.length);
+        expect(p.prevAddresses[0].line1).to.equal(obj.prevs[0].line1);
+        expect(p.prevAddresses[0].line2).to.equal(obj.prevs[0].line2);
 
         expect(p.nextAddresses.length).to.equal(obj.nextAddresses.length);
         expect(p.nextAddresses[0].line1).to.equal(obj.nextAddresses[0].line1);
