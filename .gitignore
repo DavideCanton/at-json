@@ -64,3 +64,4 @@ typings/
 .vscode/
 dist/
 dist-test/
+tmp/
