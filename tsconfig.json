@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "commonjs",
+        "module": "es2015",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
         "sourceMap": true,
-        "outDir": "./tmp",
+        "outDir": "./dist",
         "lib": [
             "es6"
         ]

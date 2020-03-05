@@ -1,31 +1,24 @@
-import multi from '@rollup/plugin-multi-entry';
-import copy from 'rollup-plugin-copy';
 import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
 
-const pkg = require('./package.json')
+const pkg = require('./package.json');
 
 export default {
-    input: 'tmp/*.js',
-    output:
-        [
-            {
-                file: pkg.main,
-                format: 'cjs',
-                sourcemap: true
-            },
-            {
-                file: pkg.module,
-                format: 'es',
-                sourcemap: true
-            }
-        ],
+    input: 'lib/index.ts',
+    output: [
+        {
+            file: pkg.main,
+            format: 'cjs',
+            sourcemap: true
+        },
+        {
+            file: pkg.module,
+            format: 'es',
+            sourcemap: true
+        }
+    ],
     plugins: [
-        multi(),
-        terser(),
-        copy({
-            targets: [
-                {src: 'tmp/*.d.ts', dest: 'dist/'},
-            ]
-        })
+        typescript(),
+        terser()
     ]
 };
