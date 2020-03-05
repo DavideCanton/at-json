@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "es2015",
+        "module": "CommonJS",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
@@ -9,9 +9,6 @@
         "outDir": "./dist",
         "lib": [
             "es6"
-        ],
-        "types": [
-            "reflect-metadata"
         ]
     },
     "exclude": [

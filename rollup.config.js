@@ -20,6 +20,12 @@ export default {
         ...Object.keys(pkg.dependencies || {})
     ],
     plugins: [
-        typescript()
+        typescript({
+            tsconfigOverride:  {
+                compilerOptions: {
+                    module: "ES2015"
+                }
+            }
+        })
     ]
 };
