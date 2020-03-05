@@ -1,4 +1,3 @@
-import {terser} from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 const pkg = require('./package.json');
@@ -21,7 +20,6 @@ export default {
         ...Object.keys(pkg.dependencies || {})
     ],
     plugins: [
-        typescript(),
-        terser()
+        typescript()
     ]
 };
