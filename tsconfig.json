@@ -9,6 +9,9 @@
         "outDir": "./dist",
         "lib": [
             "es6"
+        ],
+        "types": [
+            "reflect-metadata"
         ]
     },
     "exclude": [
