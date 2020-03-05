@@ -29,12 +29,10 @@
     },
     "homepage": "https://github.com/DavideCanton/at-json#readme",
     "dependencies": {
-        "core-js": "^3.4.2",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
         "@rollup/plugin-multi-entry": "^3.0.0",
-        "@rollup/plugin-node-resolve": "^7.1.1",
         "@rollup/plugin-typescript": "^3.1.0",
         "@types/benchmark": "^1.0.31",
         "@types/chai": "^4.1.4",
