@@ -1,5 +1,3 @@
-import 'core-js/features/symbol';
-
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
 export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
