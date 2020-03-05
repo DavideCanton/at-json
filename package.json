@@ -1,15 +1,17 @@
 {
     "name": "at-json",
-    "version": "0.0.26",
+    "version": "0.0.27-rc.1",
     "description": "A declarative mapper to and from JSON.",
     "main": "dist/index.js",
+    "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
     "scripts": {
         "prepublishOnly": "npm run build",
         "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
-        "build": "tsc",
+        "prebuild": "npm run clean",
+        "build": "rollup -c",
         "build:test": "tsc -b test/tsconfig.json",
-        "clean": "rimraf dist && rimraf dist-test",
+        "clean": "rimraf dist dist-test",
         "test": "nyc --reporter=html mocha -r ts-node/register test/**/test.ts"
     },
     "repository": {
@@ -27,10 +29,11 @@
     },
     "homepage": "https://github.com/DavideCanton/at-json#readme",
     "dependencies": {
-        "core-js": "^3.4.2",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
+        "@rollup/plugin-multi-entry": "^3.0.0",
+        "@rollup/plugin-typescript": "^3.1.0",
         "@types/benchmark": "^1.0.31",
         "@types/chai": "^4.1.4",
         "@types/chai-spies": "^1.0.0",
@@ -42,8 +45,11 @@
         "mocha": "^7.1.0",
         "nyc": "^15.0.0",
         "rimraf": "^3.0.0",
+        "rollup": "^1.32.0",
+        "rollup-plugin-typescript2": "^0.26.0",
         "ts-node": "^7.0.0",
+        "tslib": "^1.11.1",
         "tslint": "^5.17.0",
-        "typescript": "^3.7.2"
+        "typescript": "^3.8.3"
     }
 }

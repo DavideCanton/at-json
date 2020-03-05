@@ -1,8 +1,10 @@
 lib/
 dist-test/
+tmp/
 test/
 .vscode/
 node_modules/
 .travis.yml
+rollup.config.js
 tsconfig.json
 tslint.json
