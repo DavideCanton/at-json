@@ -1,7 +1,8 @@
+import 'mocha';
 import { expect, spy, use } from 'chai';
 import * as spies from 'chai-spies';
 
-import { AfterDeserialize, Constructable, IMappingOptions, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, JsonSerializable, makeCustomDecorator, SerializeFn } from '../lib';
+import { AfterDeserialize, Constructable, IMappingOptions, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, JsonSerializable, makeCustomDecorator, SerializeFn } from '../lib/index';
 
 use(spies);
 
