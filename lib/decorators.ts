@@ -13,8 +13,8 @@ import { JsonMapper } from './mapper';
  *
  * @export
  * @template T
- * @param {T} constructor
  * @returns
+ * @param ignoreMissingFields
  */
 export function JsonClass<T>(ignoreMissingFields = true): <U extends Constructable<T & JsonSerializable>>(constructor: U) => U
 {
@@ -50,6 +50,7 @@ function normalizeParams<T, R>(params: string | MappingFn<T, R> | IMappingOption
  *
  * @export
  * @param {Constructable<any>} constructor the constructor type of the property.
+ * @param name the name of the property
  * @returns the decorator for the property.
  */
 export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string = null)
@@ -66,6 +67,7 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
  *
  * @export
  * @param {Constructable<any>} constructor the constructor type of the array items.
+ * @param name the name of the property
  * @returns the decorator for the property.
  */
 export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null)
