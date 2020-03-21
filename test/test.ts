@@ -42,7 +42,7 @@ class AddressExtended extends Address implements AfterDeserialize
     afterDeserialize() { }
 }
 
-enum Sesso
+enum Gender
 {
     M = 0, F = 1
 }
@@ -66,7 +66,7 @@ class Person
     date2: Date | null;
 
     @JsonProperty()
-    sex: Sesso;
+    gender: Gender;
 
     @JsonArray()
     numbers: number[] = [];
@@ -102,7 +102,7 @@ describe('Mapper tests', () =>
             eta: 16,
             date: '2012',
             date22: '2014',
-            sex: 1,
+            gender: 1,
             numbers: [1, 2, 3],
             aa: {
                 line1: 'a',
@@ -137,7 +137,7 @@ describe('Mapper tests', () =>
         expect(p.firstName).to.equal(obj.firstName);
         expect(p.lastName).to.equal(obj.lastName.toUpperCase());
         expect(p.age).to.equal(obj.eta);
-        expect(p.sex).to.equal(Sesso.F);
+        expect(p.gender).to.equal(Gender.F);
         expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
         expect(dateEquals(p.date2, new Date(+obj.date22, 2, 12))).to.be.true;
 
@@ -199,7 +199,7 @@ describe('Mapper tests', () =>
             eta: 16,
             date: '2012',
             date22: '2014',
-            sex: 1,
+            gender: 1,
             numbers: [1, 2, 3],
             aa: {
                 line1: 'a',
@@ -223,7 +223,7 @@ describe('Mapper tests', () =>
             eta: 21,
             date: '2015',
             date22: '2017',
-            sex: 0,
+            gender: 0,
             numbers: [3, 4, 5],
             aa: {
                 line1: 'g',
@@ -260,7 +260,7 @@ describe('Mapper tests', () =>
             expect(p.firstName).to.equal(obj.firstName);
             expect(p.lastName).to.equal(obj.lastName.toUpperCase());
             expect(p.age).to.equal(obj.eta);
-            expect(p.sex).to.equal(obj.sex);
+            expect(p.gender).to.equal(obj.gender);
             expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).to.be.true;
             expect(dateEquals(p.date2, new Date(+obj.date22, 2, 12))).to.be.true;
 
@@ -292,7 +292,7 @@ describe('Mapper tests', () =>
             firstName: 'Piero',
             lastName: 'Milo',
             eta: 16,
-            sex: 1,
+            gender: 1,
             date: '2012',
             numbers: [1, 2, 3],
             aa: {
@@ -325,7 +325,7 @@ describe('Mapper tests', () =>
         expect(p2.lastName).to.equal(p.lastName);
         expect(p2.age).to.equal(p.age);
         expect(dateEquals(p2.date, p.date)).to.be.true;
-        expect(p2.sex).to.equal(p.sex);
+        expect(p2.gender).to.equal(p.gender);
         expect(p2.numbers.length).to.equal(p.numbers.length);
         expect(p2.numbers[0]).to.equal(p.numbers[0]);
         expect(p2.numbers[1]).to.equal(p.numbers[1]);

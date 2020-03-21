@@ -89,7 +89,7 @@ export class JsonMapper
      * @static
      * @template T the type of output object
      * @param {Constructable<T>} ctor the destination constructor
-     * @param {*} jsonObj the value to be deserialized
+     * @param jsonArray the array to be deserialized
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
