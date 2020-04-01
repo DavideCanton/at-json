@@ -65,3 +65,4 @@ typings/
 dist/
 dist-test/
 tmp/
+.idea/

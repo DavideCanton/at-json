@@ -169,7 +169,7 @@ export class JsonMapper
             });
         }
 
-        const fn = obj[this.nameof<AfterDeserialize>('afterDeserialize')];
+        const fn = obj[nameOf<AfterDeserialize>('afterDeserialize')];
         if(typeof fn === 'function')
             fn.call(obj);
 
@@ -195,9 +195,9 @@ export class JsonMapper
 
         return value;
     }
+}
 
-    private static nameof<T>(k: keyof T): string
-    {
-        return k as string;
-    }
+function nameOf<T>(k: keyof T): string
+{
+    return k as string;
 }

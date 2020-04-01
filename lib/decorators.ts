@@ -1,4 +1,3 @@
-
 import 'reflect-metadata';
 
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
