@@ -5,6 +5,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
+        "downlevelIteration": true,
         "sourceMap": true,
         "outDir": "./dist",
         "lib": [

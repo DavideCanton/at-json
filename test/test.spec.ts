@@ -2,7 +2,7 @@ import 'mocha';
 import { expect, spy, use } from 'chai';
 import * as spies from 'chai-spies';
 
-import { AfterDeserialize, Constructable, IMappingOptions, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, JsonSerializable, makeCustomDecorator, SerializeFn } from '../lib/index';
+import { AfterDeserialize, Constructable, IMappingOptions, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, JsonSerializable, makeCustomDecorator, SerializeFn, JsonMap } from '../lib/index';
 
 use(spies);
 
@@ -13,9 +13,9 @@ const JsonDateProperty = makeCustomDecorator<Date>(
 
 function dateEquals(d: Date | null | undefined, d2: Date | null | undefined): boolean
 {
-    if (d === d2) return true;
+    if(d === d2) return true;
 
-    if (!d || !d2) return false;
+    if(!d || !d2) return false;
 
     return d.getTime() === d2.getTime();
 }
@@ -505,5 +505,110 @@ describe('Mapper tests', () =>
         const des = JsonMapper.deserialize(X, obj);
         expect(des.surname).to.equal('canton');
         expect(des.name).to.equal('davide');
+    });
+
+    it('should deserialize map with primitive values', () =>
+    {
+        @JsonClass()
+        class X
+        {
+            @JsonMap()
+            map: Map<string, string>;
+
+            serialize: SerializeFn;
+        }
+
+        const obj = { map: { n: 'davide', s: 'canton' } };
+
+        const des = JsonMapper.deserialize(X, obj);
+        expect(des.map.get('n')).to.equal('davide');
+        expect(des.map.get('s')).to.equal('canton');
+    });
+
+    it('should serialize map with primitive values', () =>
+    {
+        @JsonClass()
+        class X
+        {
+            @JsonMap()
+            map = new Map<string, string>();
+
+            serialize: SerializeFn;
+        }
+
+        const x = new X();
+        x.map.set('n', 'davide');
+        x.map.set('s', 'canton');
+
+        const s = JSON.parse(x.serialize());
+        expect(s.map.n).to.equal('davide');
+        expect(s.map.s).to.equal('canton');
+    });
+
+    it('should deserialize map with complex values', () =>
+    {
+        @JsonClass()
+        class Y
+        {
+            @JsonProperty('n') name: string;
+            @JsonProperty('s') surname: string;
+            serialize: SerializeFn;
+        }
+
+        @JsonClass()
+        class X
+        {
+            @JsonMap({ complexType: Y })
+            map: Map<string, Y>;
+
+            serialize: SerializeFn;
+        }
+
+        const obj = { map: { p1: { n: 'davide', s: 'canton' }, p2: { n: 'paolo', s: 'rossi' } } };
+
+        const des = JsonMapper.deserialize(X, obj);
+
+        const p1 = des.map.get('p1')!;
+        expect(p1.name).to.equal('davide');
+        expect(p1.surname).to.equal('canton');
+
+        const p2 = des.map.get('p2')!;
+        expect(p2.name).to.equal('paolo');
+        expect(p2.surname).to.equal('rossi');
+    });
+
+    it('should serialize map with complex values', () =>
+    {
+        @JsonClass()
+        class Y
+        {
+            @JsonProperty('n') name: string;
+            @JsonProperty('s') surname: string;
+            serialize: SerializeFn;
+        }
+
+        @JsonClass()
+        class X
+        {
+            @JsonMap({ complexType: Y })
+            map = new Map<string, Y>();
+
+            serialize: SerializeFn;
+        }
+
+        const x = new X();
+        x.map.set('p1', new Y());
+        x.map.get('p1').name = 'davide';
+        x.map.get('p1').surname = 'canton';
+        x.map.set('p2', new Y());
+        x.map.get('p2').name = 'paolo';
+        x.map.get('p2').surname = 'rossi';
+
+        const s = JSON.parse(x.serialize());
+        expect(s.map.p1.n).to.equal('davide');
+        expect(s.map.p1.s).to.equal('canton');
+
+        expect(s.map.p2.n).to.equal('paolo');
+        expect(s.map.p2.s).to.equal('rossi');
     });
 });
