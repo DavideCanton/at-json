@@ -2,10 +2,12 @@ export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
 export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
 
+export type MappingParams<T = any, R = any> = string | MappingFn<T, R> | IMappingOptions<T, R>;
+
 /**
  * Type alias for mapping function.
  */
-export type MappingFn<T, R> = (val: T) => R;
+export type MappingFn<T = any, R = any> = (val: T) => R;
 
 /**
  * Type alias for serialize function member.
@@ -19,7 +21,7 @@ export type SerializeFn = () => string;
  * @interface Constructable
  * @template T the constructed type
  */
-export type Constructable<T> = new(...args: any[]) => T;
+export type Constructable<T> = new (...args: any[]) => T;
 
 /**
  * Interface for serializable object. Auto-implemented by @see JsonClass Decorator.
@@ -27,12 +29,14 @@ export type Constructable<T> = new(...args: any[]) => T;
  * @export
  * @interface JsonSerializable
  */
-export interface JsonSerializable {
+export interface JsonSerializable
+{
     serialize(): string;
 }
 
 
-export interface AfterDeserialize {
+export interface AfterDeserialize
+{
     afterDeserialize(): void;
 }
 
@@ -44,7 +48,8 @@ export interface AfterDeserialize {
  * @template T the source type of mapping
  * @template R the destination type of mapping
  */
-export interface IMappingOptions<T, R> {
+export interface IMappingOptions<T, R>
+{
     /**
      * Property name.
      *
@@ -84,4 +89,12 @@ export interface IMappingOptions<T, R> {
      * @memberof IMappingOptions
      */
     isArray?: boolean;
+
+    /**
+     * If the property is a map.
+     *
+     * @type {boolean}
+     * @memberof IMappingOptions
+     */
+    isMap?: boolean;
 }
