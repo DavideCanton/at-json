@@ -12,7 +12,8 @@
         "build": "rollup -c",
         "build:test": "tsc -b test/tsconfig.json",
         "clean": "rimraf dist dist-test",
-        "test": "nyc --reporter=html mocha -r ts-node/register test/**/test.ts"
+        "test": "nyc --reporter=html mocha -r ts-node/register test/**/*.spec.ts",
+        "show:coverage": "http-server ./coverage -o"
     },
     "repository": {
         "type": "git",
@@ -42,6 +43,7 @@
         "benchmark": "^2.1.4",
         "chai": "^4.1.2",
         "chai-spies": "^1.0.0",
+        "http-server": "^0.12.3",
         "mocha": "^7.1.0",
         "nyc": "^15.0.0",
         "rimraf": "^3.0.0",
