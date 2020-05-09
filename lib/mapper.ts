@@ -61,27 +61,25 @@ export class JsonMapper
             const name = opt.name || propName;
 
             if(opt.isArray)
-                obj[name] = val[propName] ? (val[propName] as Array<any>).map(el => JsonMapper.serializeValue(opt, el)) : null;
+            {
+                if(val[propName])
+                {
+                    if(!Array.isArray(val[propName]))
+                    {
+                        console.warn(`Field ${name} not an array`);
+                        obj[name] = null;
+                    }
+                    else
+                        obj[name] = (val[propName] as Array<any>).map(el => serializeValue(opt, el));
+                }
+                else
+                    obj[name] = null;
+            }
             else
-                obj[name] = JsonMapper.serializeValue(opt, val, propName);
+                obj[name] = serializeValue(opt, val, propName);
         });
 
         return obj;
-    }
-
-    private static serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string): any
-    {
-        const mapValue = propName ? val[propName] : val;
-
-        let value: string;
-        if(opt.serializeFn)
-            value = opt.serializeFn(mapValue);
-        else if(opt.complexType)
-            value = JsonMapper.exportForSerialize(mapValue);
-        else
-            value = mapValue;
-
-        return value;
     }
 
     /**
@@ -150,12 +148,12 @@ export class JsonMapper
             {
                 const prop = jsonObj[name];
                 if(Array.isArray(prop))
-                    obj[propName] = prop.map(e => JsonMapper.deserializeValue(opt, e));
+                    obj[propName] = prop.map(e => deserializeValue(opt, e));
                 else
                     obj[propName] = null;
             }
             else
-                obj[propName] = JsonMapper.deserializeValue(opt, jsonObj, name);
+                obj[propName] = deserializeValue(opt, jsonObj, name);
 
             mapped.add(name);
         });
@@ -175,29 +173,45 @@ export class JsonMapper
 
         return obj;
     }
-
-    private static deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string)
-    {
-        const mapValue = name ? jsonObj[name] : jsonObj;
-
-        let value: any;
-        if(opt.mappingFn)
-            value = opt.mappingFn(mapValue);
-        else if(opt.complexType)
-        {
-            if(mapValue)
-                value = this.deserialize(opt.complexType, mapValue);
-            else
-                value = null;
-        }
-        else
-            value = mapValue;
-
-        return value;
-    }
 }
 
 function nameOf<T>(k: keyof T): string
 {
     return k as string;
+}
+
+export function deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string)
+{
+    const mapValue = name ? jsonObj[name] : jsonObj;
+
+    let value: any;
+    if(opt.mappingFn)
+        value = opt.mappingFn(mapValue);
+    else if(opt.complexType)
+    {
+        if(mapValue)
+            value = JsonMapper.deserialize(opt.complexType, mapValue);
+        else
+            value = null;
+    }
+    else
+        value = mapValue;
+
+    return value;
+}
+
+
+export function serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string): any
+{
+    const mapValue = propName ? val[propName] : val;
+
+    let value: string;
+    if(opt.serializeFn)
+        value = opt.serializeFn(mapValue);
+    else if(opt.complexType)
+        value = JsonMapper.exportForSerialize(mapValue);
+    else
+        value = mapValue;
+
+    return value;
 }

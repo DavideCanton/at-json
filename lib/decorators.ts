@@ -1,8 +1,7 @@
 import 'reflect-metadata';
 
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
-import { JsonMapper } from './mapper';
-import { map } from 'benchmark';
+import { deserializeValue, JsonMapper, serializeValue } from './mapper';
 
 /**
  * Decorator that auto-implements @see JsonSerializable interface.
@@ -148,22 +147,26 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
     };
 }
 
-export const JsonMap = (params?: MappingParams) => makeCustomDecorator(
-    (map: Map<any, any>) =>
-    {
-        const ret = {};
-        for(const [k, v] of map.entries())
-            ret[k] = (JsonMapper as any).serializeValue(v);
-        return ret;
-    },
-    obj =>
-    {
-        const normalized = normalizeParams(params);
-        const map = new Map();
+export const JsonMap = (params?: MappingParams) =>
+{
+    const normalized = normalizeParams(params);
 
-        for(const key in obj)
-            map.set(key, (JsonMapper as any).deserializeValue(normalized, obj[key]));
+    const decoratorFactory = makeCustomDecorator(
+        (map: Map<any, any>) =>
+        {
+            const ret = {};
+            for(const [k, v] of map.entries())
+                ret[k] = serializeValue(normalized, v);
+            return ret;
+        },
+        obj =>
+        {
+            const map = new Map();
+            for(const key in obj)
+                map.set(key, deserializeValue(normalized, obj[key]));
+            return map;
+        }
+    );
 
-        return map;
-    }
-)();
+    return decoratorFactory();
+};
