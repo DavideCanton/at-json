@@ -53,7 +53,7 @@ const payloadObject = {
 
 // you can deserialize objects, or JSON strings too!
 const mapped = JsonMapper.deserialize(Payload, payloadObject);
-const mappedFromString = JsonMapper.deserialize(Payload, JSON.serialize(payloadObject));
+const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
 ```
