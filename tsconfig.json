@@ -6,6 +6,10 @@
         "emitDecoratorMetadata": true,
         "declaration": true,
         "downlevelIteration": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": false,
         "sourceMap": true,
         "outDir": "./dist",
         "lib": [
