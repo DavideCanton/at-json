@@ -1,57 +1,53 @@
 {
-    "name": "at-json",
-    "version": "0.0.30",
-    "description": "A declarative mapper to and from JSON.",
-    "main": "dist/index.js",
-    "module": "dist/index.es.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "prepublishOnly": "npm run build",
-        "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
-        "prebuild": "npm run clean",
-        "build": "rollup -c",
-        "build:test": "tsc -b test/tsconfig.json",
-        "clean": "rimraf dist dist-test",
-        "test": "nyc --reporter=html mocha -r ts-node/register test/**/*.spec.ts",
-        "show:coverage": "http-server ./coverage -o"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/DavideCanton/at-json.git"
-    },
-    "keywords": [
-        "json",
-        "mapper"
-    ],
-    "author": "Davide Canton",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/DavideCanton/at-json/issues"
-    },
-    "homepage": "https://github.com/DavideCanton/at-json#readme",
-    "dependencies": {
-        "reflect-metadata": "^0.1.13"
-    },
-    "devDependencies": {
-        "@rollup/plugin-multi-entry": "^3.0.0",
-        "@rollup/plugin-typescript": "^3.1.0",
-        "@types/benchmark": "^1.0.31",
-        "@types/chai": "^4.1.4",
-        "@types/chai-spies": "^1.0.0",
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^12.12.12",
-        "benchmark": "^2.1.4",
-        "chai": "^4.1.2",
-        "chai-spies": "^1.0.0",
-        "http-server": "^0.12.3",
-        "mocha": "^7.1.0",
-        "nyc": "^15.0.0",
-        "rimraf": "^3.0.0",
-        "rollup": "^1.32.0",
-        "rollup-plugin-typescript2": "^0.26.0",
-        "ts-node": "^7.0.0",
-        "tslib": "^1.11.1",
-        "tslint": "^5.17.0",
-        "typescript": "^3.9.3"
-    }
+  "name": "at-json",
+  "version": "0.0.30",
+  "description": "A declarative mapper to and from JSON.",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "prebuild": "npm run clean",
+    "build": "rollup -c",
+    "clean": "rimraf dist dist-test",
+    "test": "jest",
+    "show:coverage": "http-server ./coverage -o"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavideCanton/at-json.git"
+  },
+  "keywords": [
+    "json",
+    "mapper"
+  ],
+  "author": "Davide Canton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavideCanton/at-json/issues"
+  },
+  "homepage": "https://github.com/DavideCanton/at-json#readme",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@rollup/plugin-multi-entry": "^3.0.0",
+    "@rollup/plugin-typescript": "^3.1.0",
+    "@types/benchmark": "^1.0.31",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^12.12.12",
+    "benchmark": "^2.1.4",
+    "http-server": "^0.12.3",
+    "jest": "^26.0.1",
+    "jest-extended": "^0.11.5",
+    "nyc": "^15.0.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.32.0",
+    "rollup-plugin-typescript2": "^0.26.0",
+    "ts-jest": "^26.0.0",
+    "ts-node": "^7.0.0",
+    "tslib": "^1.11.1",
+    "tslint": "^5.17.0",
+    "typescript": "^3.9.3"
+  }
 }

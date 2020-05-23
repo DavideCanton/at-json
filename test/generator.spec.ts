@@ -1,11 +1,5 @@
-import 'mocha';
-
-import { expect, spy, use } from 'chai';
-import * as spies from 'chai-spies';
-
 import * as atJ from '../lib';
-
-use(spies);
+import 'jest-extended';
 
 const JsonDateProperty = atJ.makeCustomDecorator<Date>(
     d => d ? d.getFullYear().toString() : '',
@@ -45,7 +39,7 @@ enum GenderS
 }
 
 const fns = {
-    generateArray: () =>
+    generateArray()
     {
         return [1, 2, 3];
     }
@@ -80,7 +74,7 @@ class Person
     genders: GenderS;
 
     @atJ.JsonArray()
-    @atJ.Generator(fns.generateArray)
+    @atJ.Generator(() => fns.generateArray())
     numbers: number[] = [];
 
     @atJ.JsonArray()
@@ -112,48 +106,47 @@ describe('Generator tests', () =>
 {
     it('should generate', () =>
     {
-        const s = spy.on(fns, 'generateArray');
+        const spy = jest.spyOn(fns, 'generateArray');
 
         const generated = atJ.MockGenerator.generateMock(Person);
-        expect(generated.firstName).to.be.a('string');
-        expect(generated.lastName).to.be.a('string');
-        expect(generated.address).to.be.an.instanceOf(AddressExtended);
-        expect(generated.address2).to.be.an.instanceOf(AddressExtended);
+        expect(generated.firstName).toBeString();
+        expect(generated.lastName).toBeString();
+        expect(generated.address).toBeInstanceOf(AddressExtended);
+        expect(generated.address2).toBeInstanceOf(AddressExtended);
 
-        expect(generated.prevAddresses).to.be.an.instanceOf(Array);
+        expect(generated.prevAddresses).toBeArray();
+        expect(generated.prevAddresses.length).toBeGreaterThan(0);
         for(const a of generated.prevAddresses)
         {
-            expect(a).to.be.an.instanceOf(Address);
-            expect(a.line1).to.be.a('string');
-            expect(a.line2).to.be.a('string');
-            expect((a as any).line3).to.be.undefined;
+            expect(a).toBeInstanceOf(Address);
+            expect(a.line1).toBeString();
+            expect(a.line2).toBeString();
+            expect((a as any).line3).toBeUndefined();
         }
 
-        expect(generated.nextAddresses).to.be.an.instanceOf(Array);
+        expect(generated.nextAddresses).toBeArray();
+        expect(generated.nextAddresses!.length).toBeGreaterThan(0);
         for(const a of generated.nextAddresses!)
         {
-            expect(a).to.be.an.instanceOf(Address);
-            expect(a.line1).to.be.a('string');
-            expect(a.line2).to.be.a('string');
-            expect((a as any).line3).to.be.undefined;
+            expect(a).toBeInstanceOf(Address);
+            expect(a.line1).toBeString();
+            expect(a.line2).toBeString();
+            expect((a as any).line3).toBeUndefined();
         }
 
-        expect(generated.date).to.be.an.instanceOf(Date);
-        expect(generated.date2).to.be.an.instanceOf(Date);
+        expect(generated.date).toBeValidDate();
+        expect(generated.date2).toBeValidDate();
 
-        expect([Gender.M, Gender.F]).to.include(generated.gender);
-        expect([GenderS.M, GenderS.F]).to.include(generated.genders);
+        expect([Gender.M, Gender.F]).toEqual(expect.arrayContaining([generated.gender]));
+        expect([GenderS.M, GenderS.F]).toEqual(expect.arrayContaining([generated.genders]));
 
-        expect(generated.numbers).to.be.an.instanceOf(Array);
-        for(const a of generated.numbers)
-            expect(a).to.be.a('number');
+        expect(generated.numbers).toEqual([1, 2, 3]);
 
-        expect(generated.numbers2).to.be.an.instanceOf(Array);
+        expect(generated.numbers2).toBeArray();
+        expect(generated.numbers2!.length).toBeGreaterThan(0);
         for(const a of generated.numbers2!)
-            expect(a).to.be.a('number');
+            expect(a).toBeNumber();
 
-        expect(s).to.have.been.called();
+        expect(spy).toHaveBeenCalled();
     });
-
-
 });

@@ -1,3 +1,4 @@
+import expect from 'expect';
 import * as Benchmark from 'benchmark';
 import { map, range } from 'lodash';
 
