@@ -15,7 +15,7 @@
                 "--colors",
                 "-r",
                 "ts-node/register",
-                "${workspaceFolder}/test/**/test.ts"
+                "${workspaceFolder}/test/**/*.spec.ts"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": [
