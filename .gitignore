@@ -61,7 +61,6 @@ typings/
 # next.js build output
 .next
 
-.vscode/
 dist/
 dist-test/
 tmp/
