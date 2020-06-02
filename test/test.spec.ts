@@ -1,8 +1,10 @@
 import 'jest-extended';
 
-import * as atJ from '../lib';
+import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMap, JsonProperty, makeCustomDecorator } from '../lib/decorators';
+import { AfterDeserialize, Constructable, IMappingOptions, JsonSerializable, SerializeFn } from '../lib/interfaces';
+import { JsonMapper } from '../lib/mapper';
 
-const JsonDateProperty = atJ.makeCustomDecorator<Date>(
+const JsonDateProperty = makeCustomDecorator<Date>(
     d => d ? d.getFullYear().toString() : '',
     s => new Date(+s, 2, 12)
 );
@@ -12,22 +14,22 @@ function dateEquals(d: Date | null | undefined, d2: Date | null | undefined): bo
     return d?.getTime() === d2?.getTime();
 }
 
-@atJ.JsonClass(true)
+@JsonClass(true)
 class Address
 {
-    @atJ.JsonProperty() line1: string;
+    @JsonProperty() line1: string;
 
-    @atJ.JsonProperty() line2: string;
+    @JsonProperty() line2: string;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 }
 
-@atJ.JsonClass(false)
-class AddressExtended extends Address implements atJ.AfterDeserialize
+@JsonClass(false)
+class AddressExtended extends Address implements AfterDeserialize
 {
-    @atJ.JsonProperty() line3: string;
+    @JsonProperty() line3: string;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 
     [other: string]: any;
 
@@ -39,16 +41,16 @@ enum Gender
     M = 0, F = 1
 }
 
-@atJ.JsonClass()
+@JsonClass()
 class Person
 {
-    @atJ.JsonProperty()
+    @JsonProperty()
     firstName: string;
 
-    @atJ.JsonProperty(Person.mapLastName)
+    @JsonProperty(Person.mapLastName)
     lastName: string;
 
-    @atJ.JsonProperty('eta')
+    @JsonProperty('eta')
     age: number;
 
     @JsonDateProperty()
@@ -57,29 +59,29 @@ class Person
     @JsonDateProperty('date22')
     date2: Date | null;
 
-    @atJ.JsonProperty()
+    @JsonProperty()
     gender: Gender;
 
-    @atJ.JsonArray()
+    @JsonArray()
     numbers: number[] = [];
 
-    @atJ.JsonArray()
+    @JsonArray()
     numbers2: number[] | null;
 
-    @atJ.JsonComplexProperty(AddressExtended, 'aa')
+    @JsonComplexProperty(AddressExtended, 'aa')
     address: AddressExtended;
 
 
-    @atJ.JsonComplexProperty(AddressExtended)
+    @JsonComplexProperty(AddressExtended)
     address2: AddressExtended;
 
-    @atJ.JsonArrayOfComplexProperty(Address, 'prevs')
+    @JsonArrayOfComplexProperty(Address, 'prevs')
     prevAddresses: Address[] = [];
 
-    @atJ.JsonArrayOfComplexProperty(Address)
+    @JsonArrayOfComplexProperty(Address)
     nextAddresses: Address[] | null;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 
     static mapLastName(s: string): string
     {
@@ -126,7 +128,7 @@ describe('Mapper tests', () =>
             ]
         };
 
-        const p = atJ.JsonMapper.deserialize(Person, obj);
+        const p = JsonMapper.deserialize(Person, obj);
 
         expect(p).not.toBeNull();
         expect(p.address).not.toBeNull();
@@ -161,25 +163,25 @@ describe('Mapper tests', () =>
 
     it('should deserialize as null if array property is not an array', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class Y
         {
-            @atJ.JsonProperty()
+            @JsonProperty()
             s: string;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonArray() x: number[];
-            @atJ.JsonArrayOfComplexProperty(Y) y: Y[];
+            @JsonArray() x: number[];
+            @JsonArrayOfComplexProperty(Y) y: Y[];
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
-        const des = atJ.JsonMapper.deserialize(X, {
+        const des = JsonMapper.deserialize(X, {
             x: 1,
             y: ''
         });
@@ -239,7 +241,7 @@ describe('Mapper tests', () =>
             ]
         }];
 
-        const ps = atJ.JsonMapper.deserializeArray(Person, objs);
+        const ps = JsonMapper.deserializeArray(Person, objs);
 
         expect(ps.length).toEqual(objs.length);
 
@@ -300,12 +302,12 @@ describe('Mapper tests', () =>
             ]
         };
 
-        const p = atJ.JsonMapper.deserialize(Person, obj);
+        const p = JsonMapper.deserialize(Person, obj);
         p.numbers2 = null;
 
         const s = p.serialize();
 
-        const p2 = atJ.JsonMapper.deserialize(Person, s);
+        const p2 = JsonMapper.deserialize(Person, s);
 
         expect(p2.firstName).toEqual(p.firstName);
         expect(p2.lastName).toEqual(p.lastName);
@@ -325,7 +327,7 @@ describe('Mapper tests', () =>
             line1: 'ciao'
         };
 
-        const addr = atJ.JsonMapper.deserialize(AddressExtended, obj);
+        const addr = JsonMapper.deserialize(AddressExtended, obj);
         const addrDefault = new AddressExtended();
 
         expect(addr instanceof AddressExtended).toBeTrue();
@@ -367,7 +369,7 @@ describe('Mapper tests', () =>
                 }
             ]
         };
-        const p = atJ.JsonMapper.deserialize(Person, obj);
+        const p = JsonMapper.deserialize(Person, obj);
 
         expect(p.numbers).toEqual(obj.numbers);
         expect(p.numbers2).toEqual(obj.numbers2);
@@ -378,7 +380,7 @@ describe('Mapper tests', () =>
     it('should deserialize arrays correctly when null', () =>
     {
         const obj = {};
-        const p = atJ.JsonMapper.deserialize(Person, obj);
+        const p = JsonMapper.deserialize(Person, obj);
 
         expect(p.numbers).toBeArrayOfSize(0);
         expect(p.numbers2).toBeUndefined();
@@ -391,7 +393,7 @@ describe('Mapper tests', () =>
     {
         const spyFn = jest.spyOn(AddressExtended.prototype, 'afterDeserialize');
         const obj = { line1: 'ciao' };
-        atJ.JsonMapper.deserialize(AddressExtended, obj);
+        JsonMapper.deserialize(AddressExtended, obj);
         expect(spyFn).toHaveBeenCalled();
     });
 
@@ -412,37 +414,37 @@ describe('Mapper tests', () =>
             serialize: () => ''
         };
 
-        const s = atJ.JsonMapper.serialize(obj);
+        const s = JsonMapper.serialize(obj);
         expect(s).toEqual('{"a":[{"n":1},{"n":2},{"n":3}],"b":1,"c":"ciao","d":{"e":1,"f":null}}');
     });
 
     it('should serialize correctly with custom decorators', () =>
     {
-        const dec = <T extends atJ.JsonSerializable>(ctor: atJ.Constructable<T>, params?: atJ.IMappingOptions<T, any>) => atJ.makeCustomDecorator<T>(
-            x => [atJ.JsonMapper.exportForSerialize(x)],
-            x => atJ.JsonMapper.deserialize(ctor, x[0])
+        const dec = <T extends JsonSerializable>(ctor: Constructable<T>, params?: IMappingOptions<T, any>) => makeCustomDecorator<T>(
+            x => [JsonMapper.exportForSerialize(x)],
+            x => JsonMapper.deserialize(ctor, x[0])
         )({ ...params, complexType: ctor });
 
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonProperty('n') name: string;
-            @atJ.JsonProperty({
+            @JsonProperty('n') name: string;
+            @JsonProperty({
                 name: 's',
                 serializeFn: (x: string) => x.toLowerCase(),
                 mappingFn: (x: string) => x.toUpperCase()
             }) surname: string;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
-        @atJ.JsonClass()
+        @JsonClass()
         class Y
         {
             @dec(X, { name: 'xs' })
             x: X;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const obj = {
@@ -451,7 +453,7 @@ describe('Mapper tests', () =>
             ]
         };
 
-        const des = atJ.JsonMapper.deserialize(Y, obj);
+        const des = JsonMapper.deserialize(Y, obj);
         expect(des.x).not.toBeNull();
         expect(des.x.surname).toEqual('CANTON');
         expect(des.x.name).toEqual('davide');
@@ -463,49 +465,49 @@ describe('Mapper tests', () =>
 
     it('should serialize correctly with not initialized properties', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonProperty('n') name: string;
-            @atJ.JsonProperty('s') surname: string;
+            @JsonProperty('n') name: string;
+            @JsonProperty('s') surname: string;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const obj = { n: 'davide', s: 'canton' };
 
-        const des = atJ.JsonMapper.deserialize(X, obj);
+        const des = JsonMapper.deserialize(X, obj);
         expect(des.surname).toEqual('canton');
         expect(des.name).toEqual('davide');
     });
 
     it('should deserialize map with primitive values', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonMap()
+            @JsonMap()
             map: Map<string, string>;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const obj = { map: { n: 'davide', s: 'canton' } };
 
-        const des = atJ.JsonMapper.deserialize(X, obj);
+        const des = JsonMapper.deserialize(X, obj);
         expect(des.map.get('n')).toEqual('davide');
         expect(des.map.get('s')).toEqual('canton');
     });
 
     it('should serialize map with primitive values', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonMap()
+            @JsonMap()
             map = new Map<string, string>();
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const x = new X();
@@ -519,26 +521,26 @@ describe('Mapper tests', () =>
 
     it('should deserialize map with complex values', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class Y
         {
-            @atJ.JsonProperty('n') name: string;
-            @atJ.JsonProperty('s') surname: string;
-            serialize: atJ.SerializeFn;
+            @JsonProperty('n') name: string;
+            @JsonProperty('s') surname: string;
+            serialize: SerializeFn;
         }
 
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonMap({ complexType: Y })
+            @JsonMap({ complexType: Y })
             map: Map<string, Y>;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const obj = { map: { p1: { n: 'davide', s: 'canton' }, p2: { n: 'paolo', s: 'rossi' } } };
 
-        const des = atJ.JsonMapper.deserialize(X, obj);
+        const des = JsonMapper.deserialize(X, obj);
 
         const p1 = des.map.get('p1')!;
         expect(p1.name).toEqual('davide');
@@ -551,21 +553,21 @@ describe('Mapper tests', () =>
 
     it('should serialize map with complex values', () =>
     {
-        @atJ.JsonClass()
+        @JsonClass()
         class Y
         {
-            @atJ.JsonProperty('n') name: string;
-            @atJ.JsonProperty('s') surname: string;
-            serialize: atJ.SerializeFn;
+            @JsonProperty('n') name: string;
+            @JsonProperty('s') surname: string;
+            serialize: SerializeFn;
         }
 
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonMap({ complexType: Y })
+            @JsonMap({ complexType: Y })
             map = new Map<string, Y>();
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const x = new X();
@@ -588,13 +590,13 @@ describe('Mapper tests', () =>
     {
         const spy = jest.spyOn(console, 'warn').mockImplementation(() => { });
 
-        @atJ.JsonClass()
+        @JsonClass()
         class X
         {
-            @atJ.JsonArray()
+            @JsonArray()
             x: number;
 
-            serialize: atJ.SerializeFn;
+            serialize: SerializeFn;
         }
 
         const x = new X();

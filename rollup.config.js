@@ -7,7 +7,8 @@ export default {
     output: [
         {
             file: pkg.main,
-            format: 'cjs',
+            name: 'atJson',
+            format: 'umd',
             sourcemap: true
         },
         {
@@ -23,7 +24,7 @@ export default {
         typescript({
             tsconfigOverride:  {
                 compilerOptions: {
-                    module: "ES2015"
+                    module: 'ES2015'
                 }
             }
         })

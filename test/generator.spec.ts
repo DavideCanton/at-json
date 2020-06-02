@@ -1,27 +1,30 @@
-import * as atJ from '../lib';
 import 'jest-extended';
+import { makeCustomDecorator, JsonProperty, JsonClass, JsonArray, JsonComplexProperty, JsonArrayOfComplexProperty } from '../lib/decorators';
+import { SerializeFn, AfterDeserialize } from '../lib/interfaces';
+import { TypeHint, EnumHint, Generator, MockGenerator } from '../lib/generator';
 
-const JsonDateProperty = atJ.makeCustomDecorator<Date>(
+
+const JsonDateProperty = makeCustomDecorator<Date>(
     d => d ? d.getFullYear().toString() : '',
     s => new Date(+s, 2, 12)
 );
 
-@atJ.JsonClass()
+@JsonClass()
 class Address
 {
-    @atJ.JsonProperty() line1: string;
+    @JsonProperty() line1: string;
 
-    @atJ.JsonProperty() line2: string;
+    @JsonProperty() line2: string;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 }
 
-@atJ.JsonClass()
-class AddressExtended extends Address implements atJ.AfterDeserialize
+@JsonClass()
+class AddressExtended extends Address implements AfterDeserialize
 {
-    @atJ.JsonProperty() line3: string;
+    @JsonProperty() line3: string;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 
     [other: string]: any;
 
@@ -45,55 +48,55 @@ const fns = {
     }
 };
 
-@atJ.JsonClass()
+@JsonClass()
 class Person
 {
-    @atJ.JsonProperty()
+    @JsonProperty()
     firstName: string;
 
-    @atJ.JsonProperty(Person.mapLastName)
+    @JsonProperty(Person.mapLastName)
     lastName: string;
 
-    @atJ.JsonProperty('eta')
+    @JsonProperty('eta')
     age: number;
 
     @JsonDateProperty()
-    @atJ.TypeHint(Date)
+    @TypeHint(Date)
     date: Date | null;
 
     @JsonDateProperty('date22')
-    @atJ.TypeHint(Date)
+    @TypeHint(Date)
     date2: Date | null;
 
-    @atJ.JsonProperty()
-    @atJ.EnumHint<Gender>(Gender)
+    @JsonProperty()
+    @EnumHint<Gender>(Gender)
     gender: Gender;
 
-    @atJ.JsonProperty()
-    @atJ.EnumHint<GenderS>(GenderS)
+    @JsonProperty()
+    @EnumHint<GenderS>(GenderS)
     genders: GenderS;
 
-    @atJ.JsonArray()
-    @atJ.Generator(() => fns.generateArray())
+    @JsonArray()
+    @Generator(() => fns.generateArray())
     numbers: number[] = [];
 
-    @atJ.JsonArray()
-    @atJ.TypeHint(Number)
+    @JsonArray()
+    @TypeHint(Number)
     numbers2: number[] | null;
 
-    @atJ.JsonComplexProperty(AddressExtended, 'aa')
+    @JsonComplexProperty(AddressExtended, 'aa')
     address: AddressExtended;
 
-    @atJ.JsonComplexProperty(AddressExtended)
+    @JsonComplexProperty(AddressExtended)
     address2: AddressExtended;
 
-    @atJ.JsonArrayOfComplexProperty(Address, 'prevs')
+    @JsonArrayOfComplexProperty(Address, 'prevs')
     prevAddresses: Address[] = [];
 
-    @atJ.JsonArrayOfComplexProperty(Address)
+    @JsonArrayOfComplexProperty(Address)
     nextAddresses: Address[] | null;
 
-    serialize: atJ.SerializeFn;
+    serialize: SerializeFn;
 
     static mapLastName(s: string): string
     {
@@ -108,7 +111,7 @@ describe('Generator tests', () =>
     {
         const spy = jest.spyOn(fns, 'generateArray');
 
-        const generated = atJ.MockGenerator.generateMock(Person);
+        const generated = MockGenerator.generateMock(Person);
         expect(generated.firstName).toBeString();
         expect(generated.lastName).toBeString();
         expect(generated.address).toBeInstanceOf(AddressExtended);
