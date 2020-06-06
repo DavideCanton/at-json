@@ -1,98 +1,90 @@
 import 'reflect-metadata';
 
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingMetadataKey } from './interfaces';
+import { GenFn, genFnMetadataKey, ITypeHint, typeHintMetadataKey, typeMetadataKey } from './internals';
 
-const typeMetadataKey = 'design:type';
-export const typeHintMetadataKey = Symbol('type-hint-metadata-key');
-export const genFnMetadataKey = Symbol('genFn-metadata-key');
-
-
-interface ITypeHint<T>
-{
-    hint: any;
-    isEnum: boolean;
-}
-
-type GenFn<T> = () => T;
 
 export class MockGenerator
 {
+    static ignoreWarnings = false;
+
     static generateMock<T extends JsonSerializable>(ctor: Constructable<T>, ignoreWarnings = false): T
     {
-        return MockGenerator.generateValue(ctor, { complexType: ctor }, null, null, ignoreWarnings);
+        MockGenerator.ignoreWarnings = ignoreWarnings;
+        return MockGenerator.generateValue(ctor, { complexType: ctor }, null, null);
     }
 
-    private static generateComplexObject<T extends JsonSerializable>(ctor: Constructable<T>, ignoreWarnings: boolean)
+    private static generateComplexObject<T extends JsonSerializable>(ctor: Constructable<T>)
     {
         const target = new ctor();
 
         const fields: string[] = Reflect.getMetadata(fieldsMetadataKey, target);
 
-        for(const field of fields)
+        for (const field of fields)
         {
             const propMappingMetadata: IMappingOptions<any, any> | null = Reflect.getMetadata(mappingMetadataKey, target, field);
-            const type: string = Reflect.getMetadata(typeMetadataKey, target, field);
+            const type = Reflect.getMetadata(typeMetadataKey, target, field);
             const hint: ITypeHint<any> | null = Reflect.getMetadata(typeHintMetadataKey, target, field) || null;
             const genFn: GenFn<T> | null = Reflect.getMetadata(genFnMetadataKey, target, field) || null;
 
-            target[field] = MockGenerator.generateValue(type, propMappingMetadata, hint, genFn, ignoreWarnings);
+            target[field] = MockGenerator.generateValue(type, propMappingMetadata, hint, genFn);
         }
 
         return target;
     }
 
-    private static generateValue(type: any, propMappingMetadata: IMappingOptions<any, any> | null, hint: ITypeHint<any> | null, genFn: GenFn<any> | null, ignoreWarnings: boolean): any
+    private static generateValue(type: any, propMappingMetadata: IMappingOptions<any, any> | null, hint: ITypeHint<any> | null, genFn: GenFn<any> | null): any
     {
-        if(genFn)
+        if (genFn)
             return genFn();
 
-        if(type === Object && hint?.hint)
+        if (type === Object && hint?.hint)
             type = hint.hint;
-      
-        if(type === Array || propMappingMetadata?.isArray)
-            return MockGenerator.generateRandomArray(propMappingMetadata, ignoreWarnings, hint);
-        else if(type === Object)
+
+        if (type === Array || propMappingMetadata?.isArray)
+            return MockGenerator.generateRandomArray(propMappingMetadata, hint);
+        else if (type === Object)
         {
-            if(!ignoreWarnings)
+            if (!MockGenerator.ignoreWarnings)
                 console.warn('Object type without hint, it will be generated as {}');
             return {};
         }
-        else if(type === String)
+        else if (type === String)
         {
-            if(hint?.isEnum)
+            if (hint?.isEnum)
                 return MockGenerator.randomEnum(hint);
             else
                 return Math.random().toString();
         }
-        else if(type === Number)
+        else if (type === Number)
         {
-            if(hint?.isEnum)
+            if (hint?.isEnum)
                 return MockGenerator.randomEnum(hint);
             else
                 return Math.random();
         }
-        else if(type === Date)
+        else if (type === Date)
             return new Date();
-        else if(propMappingMetadata?.complexType)
-            return MockGenerator.generateComplexObject(propMappingMetadata.complexType, ignoreWarnings);
+        else if (propMappingMetadata?.complexType)
+            return MockGenerator.generateComplexObject(propMappingMetadata.complexType);
     }
 
-    private static generateRandomArray(propMappingMetadata: IMappingOptions<any, any> | null, ignoreWarnings: boolean, hint: ITypeHint<any> | null)
+    private static generateRandomArray(propMappingMetadata: IMappingOptions<any, any> | null, hint: ITypeHint<any> | null)
     {
         const array: Array<any> = [];
         const length = Math.floor(Math.random() * 9 + 1);
-        const arrayGenItemFn = (function()
+        const arrayGenItemFn = (function ()
         {
-            if(propMappingMetadata?.complexType)
-                return () => MockGenerator.generateComplexObject(propMappingMetadata.complexType!, ignoreWarnings);
-            else if(hint?.hint)
-                return () => MockGenerator.generateMock(hint.hint, ignoreWarnings);
-            else if(!ignoreWarnings)
+            if (propMappingMetadata?.complexType)
+                return () => MockGenerator.generateComplexObject(propMappingMetadata.complexType!);
+            else if (hint?.hint)
+                return () => MockGenerator.generateMock(hint.hint);
+            else if (!MockGenerator.ignoreWarnings)
                 console.warn('Array type without hint, it will be generated empty');
         })();
 
-        if(arrayGenItemFn)
-            for(let i = 0; i < length; ++i)
+        if (arrayGenItemFn)
+            for (let i = 0; i < length; ++i)
                 array.push(arrayGenItemFn());
 
         return array;
@@ -106,7 +98,7 @@ export class MockGenerator
     }
 }
 
-export function TypeHint<T>(hint: Constructable<T>): (target: Object, propertyKey: string | symbol) => void
+export function TypeHint<T>(hint: T): (target: Object, propertyKey: string | symbol) => void
 {
     const settings: ITypeHint<T> = { hint, isEnum: false };
 
@@ -116,7 +108,7 @@ export function TypeHint<T>(hint: Constructable<T>): (target: Object, propertyKe
     );
 }
 
-export function EnumHint<T>(hint: any): (target: Object, propertyKey: string | symbol) => void
+export function EnumHint<T>(hint: T): (target: Object, propertyKey: string | symbol) => void
 {
     const settings: ITypeHint<T> = { hint, isEnum: true };
 

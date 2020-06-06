@@ -49,12 +49,12 @@ const fns = {
 };
 
 @JsonClass()
-class Person
+class Container
 {
     @JsonProperty()
     firstName: string;
 
-    @JsonProperty(Person.mapLastName)
+    @JsonProperty(Container.mapLastName)
     lastName: string;
 
     @JsonProperty('eta')
@@ -69,11 +69,11 @@ class Person
     date2: Date | null;
 
     @JsonProperty()
-    @EnumHint<Gender>(Gender)
+    @EnumHint(Gender)
     gender: Gender;
 
     @JsonProperty()
-    @EnumHint<GenderS>(GenderS)
+    @EnumHint(GenderS)
     genders: GenderS;
 
     @JsonArray()
@@ -111,7 +111,7 @@ describe('Generator tests', () =>
     {
         const spy = jest.spyOn(fns, 'generateArray');
 
-        const generated = MockGenerator.generateMock(Person);
+        const generated = MockGenerator.generateMock(Container);
         expect(generated.firstName).toBeString();
         expect(generated.lastName).toBeString();
         expect(generated.address).toBeInstanceOf(AddressExtended);
@@ -119,22 +119,22 @@ describe('Generator tests', () =>
 
         expect(generated.prevAddresses).toBeArray();
         expect(generated.prevAddresses.length).toBeGreaterThan(0);
-        for(const a of generated.prevAddresses)
+        for(const address of generated.prevAddresses)
         {
-            expect(a).toBeInstanceOf(Address);
-            expect(a.line1).toBeString();
-            expect(a.line2).toBeString();
-            expect((a as any).line3).toBeUndefined();
+            expect(address).toBeInstanceOf(Address);
+            expect(address.line1).toBeString();
+            expect(address.line2).toBeString();
+            expect((address as any).line3).toBeUndefined();
         }
 
         expect(generated.nextAddresses).toBeArray();
         expect(generated.nextAddresses!.length).toBeGreaterThan(0);
-        for(const a of generated.nextAddresses!)
+        for(const address of generated.nextAddresses!)
         {
-            expect(a).toBeInstanceOf(Address);
-            expect(a.line1).toBeString();
-            expect(a.line2).toBeString();
-            expect((a as any).line3).toBeUndefined();
+            expect(address).toBeInstanceOf(Address);
+            expect(address.line1).toBeString();
+            expect(address.line2).toBeString();
+            expect((address as any).line3).toBeUndefined();
         }
 
         expect(generated.date).toBeValidDate();
@@ -147,8 +147,8 @@ describe('Generator tests', () =>
 
         expect(generated.numbers2).toBeArray();
         expect(generated.numbers2!.length).toBeGreaterThan(0);
-        for(const a of generated.numbers2!)
-            expect(a).toBeNumber();
+        for(const num of generated.numbers2!)
+            expect(num).toBeNumber();
 
         expect(spy).toHaveBeenCalled();
     });
