@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMap, JsonProperty, makeCustomDecorator } from '../lib/decorators';
-import { AfterDeserialize, Constructable, IMappingOptions, JsonSerializable, SerializeFn } from '../lib/interfaces';
+import { AfterDeserialize, Constructable, IMappingOptions, JsonSerializable, SerializeFn, CustomSerialize } from '../lib/interfaces';
 import { JsonMapper } from '../lib/mapper';
 
 const JsonDateProperty = makeCustomDecorator<Date>(
@@ -159,6 +159,38 @@ describe('Mapper tests', () =>
             obj.prevs[1],
             null
         ]);
+    });
+
+    it('should deserialize with custom', () =>
+    {
+        @JsonClass()
+        class C implements CustomSerialize
+        {
+            @JsonProperty() n: number;
+            @JsonProperty() ns: string;
+            @JsonComplexProperty(Address) na: Address;
+
+            serialize: SerializeFn;
+
+            exportForSerialize()
+            {
+                return 'ciao';
+            }
+        }
+
+        @JsonClass()
+        class D
+        {
+            @JsonComplexProperty(C) c: C;
+
+            serialize: SerializeFn
+        }
+
+        const d = new D();
+        d.c = new C();
+        expect(JSON.parse(d.serialize())).toEqual({ c: 'ciao' });
+
+        expect(d.c.serialize()).toBe('ciao');
     });
 
     it('should deserialize as null if array property is not an array', () =>

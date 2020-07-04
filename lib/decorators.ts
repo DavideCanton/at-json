@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
 import { deserializeValue, JsonMapper, serializeValue } from './mapper';
+import { isFunction } from 'util';
 
 /**
  * Decorator that auto-implements @see JsonSerializable interface.

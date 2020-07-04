@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
-import { AfterDeserialize, Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
+import { AfterDeserialize, Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, CustomSerialize } from './interfaces';
+import { isString } from 'util';
 
 /**
  * Static class for JSON Mapping.
@@ -35,7 +36,12 @@ export class JsonMapper
      */
     static serialize<T extends JsonSerializable>(val: T): string
     {
-        return JSON.stringify(JsonMapper.exportForSerialize(val));
+        const exported = JsonMapper.exportForSerialize(val);
+
+        if(isString(exported))
+            return exported;
+        else
+            return JSON.stringify(exported);
     }
 
     static exportForSerialize<T extends JsonSerializable>(val: T): any
@@ -45,6 +51,10 @@ export class JsonMapper
 
         const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, Object.getPrototypeOf(val));
         const obj = {};
+
+        const { serialized, value } = exportCustom(val);
+        if(serialized)
+            return value;
 
         Object.keys(val).forEach(propName =>
         {
@@ -215,3 +225,13 @@ export function serializeValue(opt: IMappingOptions<any, any>, val: any, propNam
 
     return value;
 }
+
+function exportCustom(mapValue: any): { serialized: boolean, value: any }
+{
+    const fn = mapValue[nameOf<CustomSerialize>('exportForSerialize')];
+    if(typeof fn === 'function')
+        return { serialized: true, value: fn.call(mapValue) }
+    else
+        return { serialized: false, value: '' };
+}
+
