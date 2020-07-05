@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import { AfterDeserialize, Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, CustomSerialize } from './interfaces';
-import { isString } from 'util';
 
 /**
  * Static class for JSON Mapping.
@@ -38,7 +37,7 @@ export class JsonMapper
     {
         const exported = JsonMapper.exportForSerialize(val);
 
-        if(isString(exported))
+        if(typeof exported === 'string')
             return exported;
         else
             return JSON.stringify(exported);

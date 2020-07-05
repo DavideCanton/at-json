@@ -1,7 +1,8 @@
 import 'jest-extended';
-import { makeCustomDecorator, JsonProperty, JsonClass, JsonArray, JsonComplexProperty, JsonArrayOfComplexProperty } from '../lib/decorators';
-import { SerializeFn, AfterDeserialize } from '../lib/interfaces';
-import { TypeHint, EnumHint, Generator, MockGenerator } from '../lib/generator';
+
+import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty, makeCustomDecorator } from '../lib/decorators';
+import { ArrayHint, EnumHint, Generator, MockGenerator, TypeHint } from '../lib/generator';
+import { AfterDeserialize, SerializeFn } from '../lib/interfaces';
 
 
 const JsonDateProperty = makeCustomDecorator<Date>(
@@ -152,4 +153,36 @@ describe('Generator tests', () =>
 
         expect(spy).toHaveBeenCalled();
     });
+
+    it('should generate array of correct length', () =>
+    {
+        @JsonClass()
+        class C
+        {
+            @JsonArray()
+            @TypeHint(Number)
+            @ArrayHint(3)
+            n: number[];
+
+            @JsonArray()
+            @TypeHint(Number)
+            @ArrayHint(4, 10)
+            n2: number[];
+
+            @JsonArray()
+            @TypeHint(Number)
+            n3: number[];
+
+            serialize: SerializeFn;
+        }
+
+        for(let index = 0; index < 1000; index++)
+        {
+            const c = MockGenerator.generateMock(C);
+            expect(c.n.length).toBeWithinInclusive(1, 3);
+            expect(c.n2.length).toBeWithinInclusive(4, 10);
+            expect(c.n3.length).toBeWithinInclusive(1, 10);
+        }
+    });
+
 });

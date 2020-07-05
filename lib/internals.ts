@@ -1,5 +1,3 @@
-import { Constructable } from './interfaces';
-
 export const typeMetadataKey = 'design:type';
 export const typeHintMetadataKey = Symbol('type-hint-metadata-key');
 export const genFnMetadataKey = Symbol('genFn-metadata-key');
@@ -7,8 +5,10 @@ export const genFnMetadataKey = Symbol('genFn-metadata-key');
 export interface ITypeHint<T>
 {
     hint: T;
-    isEnum: boolean;
+    isEnum?: boolean;
+    minArrayLength?: number;
+    maxArrayLength?: number;
 }
 
-export type GenFn<T> = () => T;
+export type Supplier<T> = () => T;
 

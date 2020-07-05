@@ -1,8 +1,15 @@
 import 'reflect-metadata';
 
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingMetadataKey } from './interfaces';
-import { GenFn, genFnMetadataKey, ITypeHint, typeHintMetadataKey, typeMetadataKey } from './internals';
+import { Supplier, genFnMetadataKey, ITypeHint, typeHintMetadataKey, typeMetadataKey } from './internals';
 
+
+type GenerateValueParams = {
+    type: any;
+    propMappingMetadata: IMappingOptions<any, any> | null;
+    hint: ITypeHint<any> | null;
+    genFn: Supplier<any> | null;
+};
 
 export class MockGenerator
 {
@@ -11,7 +18,7 @@ export class MockGenerator
     static generateMock<T extends JsonSerializable>(ctor: Constructable<T>, ignoreWarnings = false): T
     {
         MockGenerator.ignoreWarnings = ignoreWarnings;
-        return MockGenerator.generateValue(ctor, { complexType: ctor }, null, null);
+        return MockGenerator.generateValue({ type: ctor, propMappingMetadata: { complexType: ctor }, hint: null, genFn: null });
     }
 
     private static generateComplexObject<T extends JsonSerializable>(ctor: Constructable<T>)
@@ -20,71 +27,75 @@ export class MockGenerator
 
         const fields: string[] = Reflect.getMetadata(fieldsMetadataKey, target);
 
-        for (const field of fields)
+        for(const field of fields)
         {
             const propMappingMetadata: IMappingOptions<any, any> | null = Reflect.getMetadata(mappingMetadataKey, target, field);
             const type = Reflect.getMetadata(typeMetadataKey, target, field);
             const hint: ITypeHint<any> | null = Reflect.getMetadata(typeHintMetadataKey, target, field) || null;
-            const genFn: GenFn<T> | null = Reflect.getMetadata(genFnMetadataKey, target, field) || null;
+            const genFn: Supplier<T> | null = Reflect.getMetadata(genFnMetadataKey, target, field) || null;
 
-            target[field] = MockGenerator.generateValue(type, propMappingMetadata, hint, genFn);
+            target[field] = MockGenerator.generateValue({ type, propMappingMetadata, hint, genFn });
         }
 
         return target;
     }
 
-    private static generateValue(type: any, propMappingMetadata: IMappingOptions<any, any> | null, hint: ITypeHint<any> | null, genFn: GenFn<any> | null): any
+    private static generateValue({ type, propMappingMetadata, hint, genFn }: GenerateValueParams): any
     {
-        if (genFn)
+        if(genFn)
             return genFn();
 
-        if (type === Object && hint?.hint)
+        if(type === Object && hint?.hint)
             type = hint.hint;
 
-        if (type === Array || propMappingMetadata?.isArray)
-            return MockGenerator.generateRandomArray(propMappingMetadata, hint);
-        else if (type === Object)
+        if(type === Array || propMappingMetadata?.isArray)
         {
-            if (!MockGenerator.ignoreWarnings)
+            return MockGenerator.generateRandomArray(propMappingMetadata, hint);
+        }
+        else if(type === Object)
+        {
+            if(!MockGenerator.ignoreWarnings)
                 console.warn('Object type without hint, it will be generated as {}');
             return {};
         }
-        else if (type === String)
+        else if(type === String)
         {
-            if (hint?.isEnum)
+            if(hint?.isEnum)
                 return MockGenerator.randomEnum(hint);
             else
                 return Math.random().toString();
         }
-        else if (type === Number)
+        else if(type === Number)
         {
-            if (hint?.isEnum)
+            if(hint?.isEnum)
                 return MockGenerator.randomEnum(hint);
             else
                 return Math.random();
         }
-        else if (type === Date)
+        else if(type === Date)
             return new Date();
-        else if (propMappingMetadata?.complexType)
+        else if(propMappingMetadata?.complexType)
             return MockGenerator.generateComplexObject(propMappingMetadata.complexType);
     }
 
     private static generateRandomArray(propMappingMetadata: IMappingOptions<any, any> | null, hint: ITypeHint<any> | null)
     {
         const array: Array<any> = [];
-        const length = Math.floor(Math.random() * 9 + 1);
-        const arrayGenItemFn = (function ()
+        const min = hint?.minArrayLength ?? 1;
+        const max = hint?.maxArrayLength ?? 10;
+        const length = Math.floor(Math.random() * (max - min + 1) + min);
+        const arrayGenItemFn = (function()
         {
-            if (propMappingMetadata?.complexType)
+            if(propMappingMetadata?.complexType)
                 return () => MockGenerator.generateComplexObject(propMappingMetadata.complexType!);
-            else if (hint?.hint)
+            else if(hint?.hint)
                 return () => MockGenerator.generateMock(hint.hint);
-            else if (!MockGenerator.ignoreWarnings)
+            else if(!MockGenerator.ignoreWarnings)
                 console.warn('Array type without hint, it will be generated empty');
         })();
 
-        if (arrayGenItemFn)
-            for (let i = 0; i < length; ++i)
+        if(arrayGenItemFn)
+            for(let i = 0; i < length; ++i)
                 array.push(arrayGenItemFn());
 
         return array;
@@ -98,27 +109,52 @@ export class MockGenerator
     }
 }
 
-export function TypeHint<T>(hint: T): (target: Object, propertyKey: string | symbol) => void
-{
-    const settings: ITypeHint<T> = { hint, isEnum: false };
+type Decorator = (target: Object, propertyKey: string | symbol) => void;
 
-    return Reflect.metadata(
-        typeHintMetadataKey,
-        settings
-    );
+export function TypeHint<T>(hint: T): Decorator
+{
+    const settings: ITypeHint<T> = { hint };
+    return overrideHint(settings);
 }
 
-export function EnumHint<T>(hint: T): (target: Object, propertyKey: string | symbol) => void
+export function EnumHint<T>(hint: T): Decorator
 {
     const settings: ITypeHint<T> = { hint, isEnum: true };
-
-    return Reflect.metadata(
-        typeHintMetadataKey,
-        settings
-    );
+    return overrideHint(settings);
 }
 
-export function Generator<T>(genFn: GenFn<T>)
+export function ArrayHint<T>(max: number): Decorator;
+export function ArrayHint<T>(min: number, max: number): Decorator;
+export function ArrayHint<T>(min: number, max: number = -1): Decorator
+{
+    let minArrayLength: number | undefined = min;
+    let maxArrayLength: number | undefined = max;
+
+    if(maxArrayLength < 0)
+    {
+        maxArrayLength = minArrayLength;
+        minArrayLength = undefined;
+    }
+
+    return overrideHint<T>({
+        maxArrayLength: maxArrayLength,
+        minArrayLength: minArrayLength
+    });
+}
+
+function overrideHint<T>(newSettings: Partial<ITypeHint<T>>): Decorator
+{
+    return function(target: Object, propertyKey: string | symbol)
+    {
+        const settings: ITypeHint<T> = Reflect.getMetadata(typeHintMetadataKey, target, propertyKey) || {};
+        Reflect.defineMetadata(typeHintMetadataKey, {
+            ...newSettings,
+            ...settings
+        }, target, propertyKey);
+    };
+}
+
+export function Generator<T>(genFn: Supplier<T>)
 {
     return Reflect.metadata(
         genFnMetadataKey,
