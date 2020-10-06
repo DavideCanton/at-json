@@ -9,7 +9,7 @@
     "prepublishOnly": "npm run build",
     "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
     "prebuild": "npm run clean",
-    "build": "rollup -c",
+    "build": "webpack",
     "clean": "rimraf dist dist-test",
     "test": "jest",
     "show:coverage": "http-server ./coverage -o"
@@ -32,24 +32,23 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@rollup/plugin-multi-entry": "^3.0.0",
-    "@rollup/plugin-typescript": "^3.1.0",
     "@types/benchmark": "^1.0.31",
     "@types/jest": "^25.2.3",
     "@types/node": "^12.12.12",
     "benchmark": "^2.1.4",
     "http-server": "^0.12.3",
-    "lodash": "^4.17.19",
     "jest": "^26.0.1",
     "jest-extended": "^0.11.5",
+    "lodash": "^4.17.19",
     "nyc": "^15.0.0",
     "rimraf": "^3.0.0",
-    "rollup": "^1.32.0",
-    "rollup-plugin-typescript2": "^0.26.0",
     "ts-jest": "^26.0.0",
+    "ts-loader": "^8.0.4",
     "ts-node": "^7.0.0",
     "tslib": "^1.11.1",
     "tslint": "^5.17.0",
-    "typescript": "^3.9.3"
+    "typescript": "^4.0.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   }
 }

@@ -5,7 +5,7 @@ test/
 .vscode/
 node_modules/
 .travis.yml
-rollup.config.js
+webpack.config.js
 tsconfig.json
 tslint.json
 .idea/
