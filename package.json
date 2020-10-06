@@ -1,12 +1,13 @@
 {
   "name": "at-json",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "A declarative mapper to and from JSON.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run build",
+    "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
     "prebuild": "npm run clean",
     "build": "rollup -c",
     "clean": "rimraf dist dist-test",

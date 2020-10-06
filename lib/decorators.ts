@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
 import { deserializeValue, JsonMapper, serializeValue } from './mapper';
 
+type JsonConstructor<T> = Constructable<T & JsonSerializable>;
 /**
  * Decorator that auto-implements @see JsonSerializable interface.
  *
@@ -15,17 +16,17 @@ import { deserializeValue, JsonMapper, serializeValue } from './mapper';
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T>(ignoreMissingFields = true): <U extends Constructable<T & JsonSerializable>>(constructor: U) => U
+export function JsonClass<T, C extends JsonConstructor<T> = JsonConstructor<T>>(ignoreMissingFields = true): (ctor: C) => C
 {
-    return <U extends Constructable<T & JsonSerializable>>(constructor: U) =>
+    return (ctor: C) =>
     {
-        constructor.prototype.serialize = function(this: JsonSerializable)
+        ctor.prototype.serialize = function(this: T & JsonSerializable)
         {
             return JsonMapper.serialize(this);
         };
-        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, constructor.prototype);
+        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, ctor.prototype);
 
-        return constructor;
+        return ctor;
     };
 }
 
@@ -33,9 +34,9 @@ function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): 
 {
     let resolvedParams: IMappingOptions<T, R>;
 
-    if(typeof params === 'string')
+    if (typeof params === 'string')
         resolvedParams = { name: params };
-    else if(typeof params === 'function')
+    else if (typeof params === 'function')
         resolvedParams = { mappingFn: params };
     else
         resolvedParams = params || {};
@@ -55,7 +56,7 @@ function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): 
 export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
-    if(name)
+    if (name)
         opts.name = name;
     return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
@@ -72,7 +73,7 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
 export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
-    if(name)
+    if (name)
         opts.name = name;
     return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
@@ -132,7 +133,7 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
     return (params?: string | IMappingOptions<any, T>) =>
     {
         let normalizedParams: IMappingOptions<any, T>;
-        if(params)
+        if (params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};
@@ -159,14 +160,14 @@ export const JsonMap = (params?: MappingParams) =>
         (map: Map<any, any>) =>
         {
             const ret = {};
-            for(const [k, v] of map.entries())
+            for (const [k, v] of map.entries())
                 ret[k] = serializeValue(normalized, v);
             return ret;
         },
         obj =>
         {
             const map = new Map();
-            for(const key in obj)
+            for (const key in obj)
                 map.set(key, deserializeValue(normalized, obj[key]));
             return map;
         }
