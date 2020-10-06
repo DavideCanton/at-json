@@ -3,7 +3,7 @@
 const config = {
     testEnvironment: 'node',
     preset: 'ts-jest',
-    setupFilesAfterEnv: ["jest-extended", "./setupJest.ts"],
+    setupFilesAfterEnv: ["jest-extended"],
     restoreMocks: true,
     globals: {
         'ts-jest': {

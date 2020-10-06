@@ -120,7 +120,7 @@ describe('Generator tests', () =>
 
         expect(generated.prevAddresses).toBeArray();
         expect(generated.prevAddresses.length).toBeGreaterThan(0);
-        for(const address of generated.prevAddresses)
+        for (const address of generated.prevAddresses)
         {
             expect(address).toBeInstanceOf(Address);
             expect(address.line1).toBeString();
@@ -130,7 +130,7 @@ describe('Generator tests', () =>
 
         expect(generated.nextAddresses).toBeArray();
         expect(generated.nextAddresses!.length).toBeGreaterThan(0);
-        for(const address of generated.nextAddresses!)
+        for (const address of generated.nextAddresses!)
         {
             expect(address).toBeInstanceOf(Address);
             expect(address.line1).toBeString();
@@ -148,7 +148,7 @@ describe('Generator tests', () =>
 
         expect(generated.numbers2).toBeArray();
         expect(generated.numbers2!.length).toBeGreaterThan(0);
-        for(const num of generated.numbers2!)
+        for (const num of generated.numbers2!)
             expect(num).toBeNumber();
 
         expect(spy).toHaveBeenCalled();
@@ -176,13 +176,19 @@ describe('Generator tests', () =>
             serialize: SerializeFn;
         }
 
-        for(let index = 0; index < 1000; index++)
+        for (let index = 0; index < 1000; index++)
         {
             const c = MockGenerator.generateMock(C);
-            expect(c.n.length).toBeWithinInclusive(1, 3);
-            expect(c.n2.length).toBeWithinInclusive(4, 10);
-            expect(c.n3.length).toBeWithinInclusive(1, 10);
+            checkInclusive(c.n.length, 1, 3);
+            checkInclusive(c.n2.length, 4, 10);
+            checkInclusive(c.n3.length, 1, 10);
         }
     });
 
 });
+
+function checkInclusive(n, start, end)
+{
+    expect(n).toBeLessThanOrEqual(end);
+    expect(n).toBeGreaterThanOrEqual(start);
+}

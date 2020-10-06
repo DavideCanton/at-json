@@ -3,13 +3,12 @@ import 'reflect-metadata';
 import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingMetadataKey } from './interfaces';
 import { Supplier, genFnMetadataKey, ITypeHint, typeHintMetadataKey, typeMetadataKey } from './internals';
 
-
-type GenerateValueParams = {
+interface GenerateValueParams {
     type: any;
     propMappingMetadata: IMappingOptions<any, any> | null;
     hint: ITypeHint<any> | null;
     genFn: Supplier<any> | null;
-};
+}
 
 export class MockGenerator
 {
@@ -124,6 +123,7 @@ export function EnumHint<T>(hint: T): Decorator
 }
 
 export function ArrayHint<T>(max: number): Decorator;
+// tslint:disable-next-line: unified-signatures
 export function ArrayHint<T>(min: number, max: number): Decorator;
 export function ArrayHint<T>(min: number, max: number = -1): Decorator
 {

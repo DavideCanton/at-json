@@ -16,11 +16,11 @@ type JsonConstructor<T> = Constructable<T & JsonSerializable>;
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T, C extends JsonConstructor<T> = JsonConstructor<T>>(ignoreMissingFields = true): (ctor: C) => C
+export function JsonClass<T>(ignoreMissingFields = true): <C extends JsonConstructor<T>>(ctor: C) => C
 {
-    return (ctor: C) =>
+    const func = <C extends JsonConstructor<T>>(ctor: C) =>
     {
-        ctor.prototype.serialize = function(this: T & JsonSerializable)
+        ctor.prototype.serialize = function(this: JsonSerializable)
         {
             return JsonMapper.serialize(this);
         };
@@ -28,6 +28,8 @@ export function JsonClass<T, C extends JsonConstructor<T> = JsonConstructor<T>>(
 
         return ctor;
     };
+
+    return func;
 }
 
 function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): IMappingOptions<T, R>
