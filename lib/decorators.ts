@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, MappingFn, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
+import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
 import { deserializeValue, JsonMapper, serializeValue } from './mapper';
 
 type JsonConstructor<T> = Constructable<T & JsonSerializable>;
@@ -16,11 +16,11 @@ type JsonConstructor<T> = Constructable<T & JsonSerializable>;
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T, C extends JsonConstructor<T> = JsonConstructor<T>>(ignoreMissingFields = true): (ctor: C) => C
+export function JsonClass<T>(ignoreMissingFields = true): <C extends JsonConstructor<T>>(ctor: C) => C
 {
-    return (ctor: C) =>
+    const func = <C extends JsonConstructor<T>>(ctor: C) =>
     {
-        ctor.prototype.serialize = function(this: T & JsonSerializable)
+        ctor.prototype.serialize = function(this: JsonSerializable)
         {
             return JsonMapper.serialize(this);
         };
@@ -28,9 +28,11 @@ export function JsonClass<T, C extends JsonConstructor<T> = JsonConstructor<T>>(
 
         return ctor;
     };
+
+    return func;
 }
 
-function normalizeParams<T, R>(params: MappingParams<T, R>): IMappingOptions<T, R>
+function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): IMappingOptions<T, R>
 {
     let resolvedParams: IMappingOptions<T, R>;
 
@@ -53,7 +55,7 @@ function normalizeParams<T, R>(params: MappingParams<T, R>): IMappingOptions<T, 
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string = null)
+export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
     if (name)
@@ -70,7 +72,7 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string = null)
+export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
     if (name)
@@ -116,8 +118,7 @@ function wrapDecorator(fn: (target: Object, propertyKey: string | symbol) => voi
     return function(target: Object, propertyKey: string | symbol)
     {
         const objMetadata = Reflect.getMetadata(fieldsMetadataKey, target) || [];
-        objMetadata.push(propertyKey);
-        Reflect.defineMetadata(fieldsMetadataKey, objMetadata, target);
+        Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], target);
         return fn.call(null, target, propertyKey);
     };
 }

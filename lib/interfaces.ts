@@ -34,6 +34,10 @@ export interface JsonSerializable
     serialize(): string;
 }
 
+export interface CustomSerialize
+{
+    exportForSerialize(): any;
+}
 
 export interface AfterDeserialize
 {
