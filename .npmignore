@@ -6,6 +6,7 @@ test/
 node_modules/
 .travis.yml
 webpack.config.js
+jest.config.js
 tsconfig.json
 tslint.json
 .idea/
