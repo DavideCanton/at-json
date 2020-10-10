@@ -9,7 +9,10 @@ const config = {
         'ts-jest': {
 
         }
-    }
+    },
+    collectCoverageFrom: [
+        "lib/**/*.ts"
+    ]
 };
 
 module.exports = config;
