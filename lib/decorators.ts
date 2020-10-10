@@ -24,7 +24,7 @@ export function JsonClass<T>(ignoreMissingFields = true): <C extends JsonConstru
         {
             return JsonMapper.serialize(this);
         };
-        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, ctor.prototype);
+        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, ctor);
 
         return ctor;
     };
@@ -36,9 +36,9 @@ function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): 
 {
     let resolvedParams: IMappingOptions<T, R>;
 
-    if (typeof params === 'string')
+    if(typeof params === 'string')
         resolvedParams = { name: params };
-    else if (typeof params === 'function')
+    else if(typeof params === 'function')
         resolvedParams = { mappingFn: params };
     else
         resolvedParams = params || {};
@@ -58,7 +58,7 @@ function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): 
 export function JsonComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { complexType: constructor };
-    if (name)
+    if(name)
         opts.name = name;
     return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
@@ -75,7 +75,7 @@ export function JsonComplexProperty<T>(constructor: Constructable<T>, name: stri
 export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
 {
     const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
-    if (name)
+    if(name)
         opts.name = name;
     return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
 }
@@ -117,9 +117,10 @@ function wrapDecorator(fn: (target: Object, propertyKey: string | symbol) => voi
 {
     return function(target: Object, propertyKey: string | symbol)
     {
-        const objMetadata = Reflect.getMetadata(fieldsMetadataKey, target) || [];
-        Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], target);
-        return fn.call(null, target, propertyKey);
+        const { constructor: ctor } = target;
+        const objMetadata = Reflect.getMetadata(fieldsMetadataKey, ctor) || [];
+        Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], ctor);
+        return fn.call(null, ctor, propertyKey);
     };
 }
 
@@ -135,7 +136,7 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
     return (params?: string | IMappingOptions<any, T>) =>
     {
         let normalizedParams: IMappingOptions<any, T>;
-        if (params)
+        if(params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};
@@ -162,14 +163,14 @@ export const JsonMap = (params?: MappingParams) =>
         (map: Map<any, any>) =>
         {
             const ret = {};
-            for (const [k, v] of map.entries())
+            for(const [k, v] of map.entries())
                 ret[k] = serializeValue(normalized, v);
             return ret;
         },
         obj =>
         {
             const map = new Map();
-            for (const key in obj)
+            for(const key in obj)
                 map.set(key, deserializeValue(normalized, obj[key]));
             return map;
         }
