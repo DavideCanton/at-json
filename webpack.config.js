@@ -13,6 +13,7 @@ module.exports = (env) => {
     output: {
       path: path.resolve(__dirname, pathParsed.dir),
       filename: pathParsed.base,
+      libraryTarget: 'umd'
     },
     plugins: [...(env.analyze ? [new BundleAnalyzerPlugin()] : [])],
     devtool: "source-map",
