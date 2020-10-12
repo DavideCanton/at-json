@@ -1,94 +1,10 @@
 import 'jest-extended';
 
 import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMap, JsonProperty, makeCustomDecorator } from '../lib/decorators';
-import { AfterDeserialize, Constructable, IMappingOptions, JsonSerializable, SerializeFn, CustomSerialize } from '../lib/interfaces';
+import { Constructable, CustomSerialize, IMappingOptions, JsonSerializable, SerializeFn, fieldsMetadataKey } from '../lib/interfaces';
 import { JsonMapper } from '../lib/mapper';
-
-const JsonDateProperty = makeCustomDecorator<Date>(
-    d => d ? d.getFullYear().toString() : '',
-    s => new Date(+s, 2, 12)
-);
-
-function dateEquals(d: Date | null | undefined, d2: Date | null | undefined): boolean
-{
-    return d?.getTime() === d2?.getTime();
-}
-
-@JsonClass(true)
-class Address
-{
-    @JsonProperty() line1: string;
-
-    @JsonProperty() line2: string;
-
-    serialize: SerializeFn;
-}
-
-@JsonClass(false)
-class AddressExtended extends Address implements AfterDeserialize
-{
-    @JsonProperty() line3: string;
-
-    serialize: SerializeFn;
-
-    [other: string]: any;
-
-    afterDeserialize() { }
-}
-
-enum Gender
-{
-    M = 0, F = 1
-}
-
-@JsonClass()
-class Person
-{
-    @JsonProperty()
-    firstName: string;
-
-    @JsonProperty(Person.mapLastName)
-    lastName: string;
-
-    @JsonProperty('eta')
-    age: number;
-
-    @JsonDateProperty()
-    date: Date | null;
-
-    @JsonDateProperty('date22')
-    date2: Date | null;
-
-    @JsonProperty()
-    gender: Gender;
-
-    @JsonArray()
-    numbers: number[] = [];
-
-    @JsonArray()
-    numbers2: number[] | null;
-
-    @JsonComplexProperty(AddressExtended, 'aa')
-    address: AddressExtended;
-
-
-    @JsonComplexProperty(AddressExtended)
-    address2: AddressExtended;
-
-    @JsonArrayOfComplexProperty(Address, 'prevs')
-    prevAddresses: Address[] = [];
-
-    @JsonArrayOfComplexProperty(Address)
-    nextAddresses: Address[] | null;
-
-    serialize: SerializeFn;
-
-    static mapLastName(s: string): string
-    {
-        return s.toUpperCase();
-    }
-}
-
+import { dateEquals } from './test-utils';
+import { Address, AddressExtended, Person, Gender } from './test.models';
 
 describe('Mapper tests', () =>
 {
@@ -636,5 +552,26 @@ describe('Mapper tests', () =>
         const s = JSON.parse(x.serialize());
         expect(s.x).toBeNull();
         expect(spy).toHaveBeenCalled();
+    });
+
+    it('should not map fields with no metadata associated', () =>
+    {
+        @JsonClass()
+        class X
+        {
+            @JsonProperty() x: number;
+            y: number;
+
+            serialize: SerializeFn;
+        }
+
+        const x = { x: 10, y: 20 };
+        const xd = JsonMapper.deserialize(X, x);
+        expect(xd.x).toBe(10);
+        expect(xd.y).toBeUndefined();
+        xd.y = 20;
+        const xs = JSON.parse(xd.serialize());
+        expect(xs.x).toBe(10);
+        expect(xs.y).toBeUndefined();
     });
 });

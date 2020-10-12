@@ -1,18 +1,19 @@
 {
   "name": "at-json",
-  "version": "0.0.31",
+  "version": "0.0.32-rc.1",
   "description": "A declarative mapper to and from JSON.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "bench": "npm run build:test && node dist-test/test/benchmarks/benchmarks.js",
-    "prebuild": "npm run clean",
-    "build": "rollup -c",
-    "clean": "rimraf dist dist-test",
+    "prepublishOnly": "yarn build",
+    "bench": "yarn build:test && node dist-test/test/benchmarks/benchmarks.js",
+    "prebuild": "yarn clean",
+    "build": "webpack",
+    "clean": "rimraf dist coverage",
     "test": "jest",
-    "show:coverage": "http-server ./coverage -o"
+    "test:coverage": "yarn test --collect-coverage",
+    "show:coverage": "http-server ./coverage/lcov-report -o"
   },
   "repository": {
     "type": "git",
@@ -32,24 +33,23 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@rollup/plugin-multi-entry": "^3.0.0",
-    "@rollup/plugin-typescript": "^3.1.0",
     "@types/benchmark": "^1.0.31",
     "@types/jest": "^25.2.3",
     "@types/node": "^12.12.12",
     "benchmark": "^2.1.4",
     "http-server": "^0.12.3",
-    "lodash": "^4.17.19",
     "jest": "^26.0.1",
     "jest-extended": "^0.11.5",
-    "nyc": "^15.0.0",
+    "lodash": "^4.17.19",
     "rimraf": "^3.0.0",
-    "rollup": "^1.32.0",
-    "rollup-plugin-typescript2": "^0.26.0",
     "ts-jest": "^26.0.0",
+    "ts-loader": "^8.0.4",
     "ts-node": "^7.0.0",
     "tslib": "^1.11.1",
     "tslint": "^5.17.0",
-    "typescript": "^3.9.3"
+    "typescript": "^4.0.0",
+    "webpack": "^4.44.2",
+    "webpack-bundle-analyzer": "^3.9.0",
+    "webpack-cli": "^3.3.12"
   }
 }

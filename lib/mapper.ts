@@ -48,7 +48,8 @@ export class JsonMapper
         if(val === null || val === undefined)
             return val;
 
-        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, Object.getPrototypeOf(val));
+        const ctor: Constructable<T> = Object.getPrototypeOf(val).constructor;
+        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
         const obj = {};
 
         const { serialized, value } = exportCustom(val);
@@ -57,7 +58,7 @@ export class JsonMapper
 
         Object.keys(val).forEach(propName =>
         {
-            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, val, propName);
+            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
             if(opt === undefined)
             {
@@ -136,14 +137,14 @@ export class JsonMapper
 
         const obj = new ctor();
         const has = Object.prototype.hasOwnProperty;
-        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor.prototype);
+        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
         const mapped = new Set<string>();
 
-        const propNames = Reflect.getMetadata(fieldsMetadataKey, obj) as string[];
+        const propNames = Reflect.getMetadata(fieldsMetadataKey, ctor) as string[];
 
         propNames.forEach(propName =>
         {
-            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, obj, propName);
+            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
             if(opt === undefined)
                 return;
