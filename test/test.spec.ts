@@ -99,7 +99,7 @@ describe('Mapper tests', () =>
         {
             @JsonComplexProperty(C) c: C;
 
-            serialize: SerializeFn
+            serialize: SerializeFn;
         }
 
         const d = new D();

@@ -1,6 +1,11 @@
 import { AfterDeserialize, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty, SerializeFn } from '../lib';
 import { JsonDateProperty } from './test-utils';
 
+export enum Gender
+{
+    M = 0, F = 1
+}
+
 @JsonClass(true)
 export class Address
 {
@@ -14,18 +19,10 @@ export class Address
 @JsonClass(false)
 export class AddressExtended extends Address implements AfterDeserialize
 {
-    @JsonProperty() line3: string;
-
-    serialize: SerializeFn;
-
     [other: string]: any;
-
+    @JsonProperty() line3: string;
+    serialize: SerializeFn;
     afterDeserialize() { }
-}
-
-export enum Gender
-{
-    M = 0, F = 1
 }
 
 @JsonClass()
