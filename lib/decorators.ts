@@ -152,7 +152,7 @@ export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn
 
 /**
  * A custom decorator for handling objects as maps.
- * 
+ *
  * @param params the mapping options to apply to the values of the map.
  */
 export const JsonMap = (params?: MappingParams) =>

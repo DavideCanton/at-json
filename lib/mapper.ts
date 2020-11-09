@@ -226,12 +226,11 @@ export function serializeValue(opt: IMappingOptions<any, any>, val: any, propNam
     return value;
 }
 
-function exportCustom(mapValue: any): { serialized: boolean, value: any }
+function exportCustom(mapValue: any): { serialized: boolean; value: any }
 {
     const fn = mapValue[nameOf<CustomSerialize>('exportForSerialize')];
     if(typeof fn === 'function')
-        return { serialized: true, value: fn.call(mapValue) }
+        return { serialized: true, value: fn.call(mapValue) };
     else
         return { serialized: false, value: '' };
 }
-
