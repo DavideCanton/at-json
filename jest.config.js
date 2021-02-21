@@ -6,9 +6,7 @@ const config = {
     setupFilesAfterEnv: ["jest-extended"],
     restoreMocks: true,
     globals: {
-        'ts-jest': {
-
-        }
+        'ts-jest': {}
     },
     collectCoverageFrom: [
         "lib/**/*.ts"

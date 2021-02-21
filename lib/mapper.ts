@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { AfterDeserialize, Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, CustomSerialize } from './interfaces';
+import { AfterDeserialize, Constructable, CustomSerialize, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
 
 /**
  * Static class for JSON Mapping.
@@ -37,7 +37,7 @@ export class JsonMapper
     {
         const exported = JsonMapper.exportForSerialize(val);
 
-        if(typeof exported === 'string')
+        if (typeof exported === 'string')
             return exported;
         else
             return JSON.stringify(exported);
@@ -45,7 +45,7 @@ export class JsonMapper
 
     static exportForSerialize<T extends JsonSerializable>(val: T): any
     {
-        if(val === null || val === undefined)
+        if (val === null || val === undefined)
             return val;
 
         const ctor: Constructable<T> = Object.getPrototypeOf(val).constructor;
@@ -53,16 +53,16 @@ export class JsonMapper
         const obj = {};
 
         const { serialized, value } = exportCustom(val);
-        if(serialized)
+        if (serialized)
             return value;
 
         Object.keys(val).forEach(propName =>
         {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
-            if(opt === undefined)
+            if (opt === undefined)
             {
-                if(!ignoreMissingProperties)
+                if (!ignoreMissingProperties)
                     obj[propName] = val[propName];
 
                 return;
@@ -70,22 +70,19 @@ export class JsonMapper
 
             const name = opt.name || propName;
 
-            if(opt.isArray)
+            if (opt.isArray)
             {
-                if(val[propName])
+                if (val[propName])
                 {
-                    if(!Array.isArray(val[propName]))
+                    if (!Array.isArray(val[propName]))
                     {
                         console.warn(`Field ${name} not an array`);
                         obj[name] = null;
-                    }
-                    else
+                    } else
                         obj[name] = (val[propName] as Array<any>).map(el => serializeValue(opt, el));
-                }
-                else
+                } else
                     obj[name] = null;
-            }
-            else
+            } else
                 obj[name] = serializeValue(opt, val, propName);
         });
 
@@ -132,7 +129,7 @@ export class JsonMapper
      */
     static deserialize<T>(ctor: Constructable<T>, jsonObj: any): T
     {
-        if(typeof jsonObj === 'string')
+        if (typeof jsonObj === 'string')
             jsonObj = JSON.parse(jsonObj);
 
         const obj = new ctor();
@@ -146,39 +143,38 @@ export class JsonMapper
         {
             const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
-            if(opt === undefined)
+            if (opt === undefined)
                 return;
 
             const name = opt.name || propName;
 
-            if(!has.call(jsonObj, name))
+            if (!has.call(jsonObj, name))
                 return;
 
-            if(opt.isArray)
+            if (opt.isArray)
             {
                 const prop = jsonObj[name];
-                if(Array.isArray(prop))
+                if (Array.isArray(prop))
                     obj[propName] = prop.map(e => deserializeValue(opt, e));
                 else
                     obj[propName] = null;
-            }
-            else
+            } else
                 obj[propName] = deserializeValue(opt, jsonObj, name);
 
             mapped.add(name);
         });
 
-        if(!ignoreMissingProperties)
+        if (!ignoreMissingProperties)
         {
             Object.keys(jsonObj).forEach(propName =>
             {
-                if(!mapped.has(propName))
+                if (!mapped.has(propName))
                     obj[propName] = jsonObj[propName];
             });
         }
 
         const fn = obj[nameOf<AfterDeserialize>('afterDeserialize')];
-        if(typeof fn === 'function')
+        if (typeof fn === 'function')
             fn.call(obj);
 
         return obj;
@@ -195,16 +191,15 @@ export function deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, n
     const mapValue = name ? jsonObj[name] : jsonObj;
 
     let value: any;
-    if(opt.mappingFn)
+    if (opt.mappingFn)
         value = opt.mappingFn(mapValue);
-    else if(opt.complexType)
+    else if (opt.complexType)
     {
-        if(mapValue)
+        if (mapValue)
             value = JsonMapper.deserialize(opt.complexType, mapValue);
         else
             value = null;
-    }
-    else
+    } else
         value = mapValue;
 
     return value;
@@ -216,9 +211,9 @@ export function serializeValue(opt: IMappingOptions<any, any>, val: any, propNam
     const mapValue = propName ? val[propName] : val;
 
     let value: string;
-    if(opt.serializeFn)
+    if (opt.serializeFn)
         value = opt.serializeFn(mapValue);
-    else if(opt.complexType)
+    else if (opt.complexType)
         value = JsonMapper.exportForSerialize(mapValue);
     else
         value = mapValue;
@@ -229,8 +224,8 @@ export function serializeValue(opt: IMappingOptions<any, any>, val: any, propNam
 function exportCustom(mapValue: any): { serialized: boolean, value: any }
 {
     const fn = mapValue[nameOf<CustomSerialize>('exportForSerialize')];
-    if(typeof fn === 'function')
-        return { serialized: true, value: fn.call(mapValue) }
+    if (typeof fn === 'function')
+        return { serialized: true, value: fn.call(mapValue) };
     else
         return { serialized: false, value: '' };
 }

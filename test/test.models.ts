@@ -20,7 +20,9 @@ export class AddressExtended extends Address implements AfterDeserialize
 
     [other: string]: any;
 
-    afterDeserialize() { }
+    afterDeserialize()
+    {
+    }
 }
 
 export enum Gender

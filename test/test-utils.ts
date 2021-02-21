@@ -1,7 +1,7 @@
 import { makeCustomDecorator } from '../lib';
 
 export const JsonDateProperty = makeCustomDecorator<Date>(
-    d => d ? d.getFullYear().toString() : '',
+    d => d?.getFullYear()?.toString() ?? '',
     s => new Date(+s, 2, 12)
 );
 

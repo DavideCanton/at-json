@@ -1,10 +1,8 @@
 import 'jest-extended';
 
-import { JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMap, JsonProperty, makeCustomDecorator } from '../lib/decorators';
-import { Constructable, CustomSerialize, IMappingOptions, JsonSerializable, SerializeFn, fieldsMetadataKey } from '../lib/interfaces';
-import { JsonMapper } from '../lib/mapper';
+import { Constructable, CustomSerialize, IMappingOptions, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonMap, JsonMapper, JsonProperty, JsonSerializable, makeCustomDecorator, SerializeFn } from '../lib';
 import { dateEquals } from './test-utils';
-import { Address, AddressExtended, Person, Gender } from './test.models';
+import { Address, AddressExtended, Gender, Person } from './test.models';
 
 describe('Mapper tests', () =>
 {
@@ -99,7 +97,7 @@ describe('Mapper tests', () =>
         {
             @JsonComplexProperty(C) c: C;
 
-            serialize: SerializeFn
+            serialize: SerializeFn;
         }
 
         const d = new D();
@@ -536,7 +534,9 @@ describe('Mapper tests', () =>
 
     it('should not map fields not of array type but decorated with array', () =>
     {
-        const spy = jest.spyOn(console, 'warn').mockImplementation(() => { });
+        const spy = jest.spyOn(console, 'warn').mockImplementation(() =>
+        {
+        });
 
         @JsonClass()
         class X
