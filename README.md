@@ -56,6 +56,11 @@ const mapped = JsonMapper.deserialize(Payload, payloadObject);
 const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
+expect(mapped.name).toBe('name');
+expect(mapped.surname).toBe('surname');
+expect(mapped.numbers).toEqual([1, 2, 3]);
+expect(mapped.c1.x).toBe(10);
+expect(mapped.c1.y).toBe(20);
 ```
 
 ## Contributing
