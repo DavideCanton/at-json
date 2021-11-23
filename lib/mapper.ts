@@ -16,7 +16,7 @@ export class JsonMapper
      * Serializes `val` into a JSON string.
      *
      * It needs @see JsonSerializable implementation, and serializes only properties
-     * decorated with @see JsonProperty , @see JsonArray , @see JsonComplexProperty , @see JsonArrayOfComplexProperty .
+     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator.
      *
      * Annotated properties are serialized into a property using the `name` value as the destination name (defaults to the property name),
      * if the `serializeFn` is present, it is invoked to allow serialization customization.
@@ -111,7 +111,7 @@ export class JsonMapper
      * Deserialize `jsonObj` into an object built using `ctor`.
      *
      * It deserializes only properties
-     * decorated with @see JsonProperty , @see JsonArray , @see JsonComplexProperty , @see JsonArrayOfComplexProperty .
+     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator .
      *
      * Annotated properties are deserialized into a property using the `name` value as the source name (defaults to the property name),
      * if the `mappingFn` is present, it is invoked to allow deserialization customization.

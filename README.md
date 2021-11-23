@@ -24,20 +24,24 @@ class Payload {
     // maps an array of numbers named "numbers" to the field
     @JsonArray() numbers: number[];
     // maps a complex type recursively
-    @JsonComplexProperty(C1) c1: C1;
+    @JsonComplexProperty(SubClass) sub: SubClass;
 
     // needed to typecheck
     serialize: SerializeFn;
 }
 
 @JsonClass()
-class C1 {
+class SubClass {
     // other mappings
     @JsonProperty() x: number;
     @JsonProperty() y: number;
 
     // needed to typecheck
     serialize: SerializeFn;
+
+    get norm(): double {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
 }
 
 // ...
@@ -45,9 +49,9 @@ const payloadObject = {
     name: 'name',
     SN: 'surname',
     numbers: [1,2,3],
-    c1: {
-        x: 10,
-        y: 20
+    sub: {
+        x: 1,
+        y: 2
     }
 };
 
@@ -56,6 +60,15 @@ const mapped = JsonMapper.deserialize(Payload, payloadObject);
 const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
+expect(mapped instanceof Payload).toBe(true);
+
+// fields are deserialized accordingly to the names specified in decorators
+expect(mapped.name).toBe('name');
+expect(mapped.surname).toBe('surname');
+
+// mapped.sub is a SubClass instance
+expect(mapped.sub instanceof SubClass).toBe(true);
+expect(mapped.sub.norm).toBe(Math.sqrt(5));
 ```
 
 ## Contributing
