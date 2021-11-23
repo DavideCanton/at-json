@@ -52,7 +52,7 @@ export interface AfterDeserialize
  * @template T the source type of mapping
  * @template R the destination type of mapping
  */
-export interface IMappingOptions<T, R>
+export interface IMappingOptions<T = any, R = any>
 {
     /**
      * Property name.
