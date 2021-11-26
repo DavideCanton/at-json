@@ -106,7 +106,7 @@ describe('Mapper tests', () =>
         d.c = new C();
         expect(JSON.parse(d.serialize())).toEqual({ c: 'ciao' });
 
-        expect(d.c.serialize()).toBe('ciaoo');
+        expect(d.c.serialize()).toBe('ciao');
     });
 
     it('should deserialize as null if array property is not an array', () =>
