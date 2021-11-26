@@ -10,11 +10,6 @@ export type MappingParams<T = any, R = any> = string | MappingFn<T, R> | IMappin
 export type MappingFn<T = any, R = any> = (val: T) => R;
 
 /**
- * Type alias for serialize function member.
- */
-export type SerializeFn = () => string;
-
-/**
  * Interface for constructor class.
  *
  * @export
@@ -31,12 +26,11 @@ export type Constructable<T> = new (...args: any[]) => T;
  */
 export interface JsonSerializable
 {
-    serialize(): string;
 }
 
 export interface CustomSerialize
 {
-    exportForSerialize(): any;
+    customSerialize(): any;
 }
 
 export interface AfterDeserialize
@@ -101,4 +95,8 @@ export interface IMappingOptions<T = any, R = any>
      * @memberof IMappingOptions
      */
     isMap?: boolean;
+}
+
+export interface IJsonClassOptions {
+    ignoreMissingProperties?: boolean;
 }
