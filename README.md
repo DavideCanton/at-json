@@ -13,7 +13,7 @@ npm install at-json
 ## Usage
 
 ```typescript
-import { JsonClass, JsonProperty, JsonArray, JsonComplexProperty, SerializeFn, JsonMapper } from 'at-json';
+import { JsonClass, JsonProperty, JsonArray, JsonComplexProperty, JsonMapper } from 'at-json';
 
 @JsonClass()
 class Payload {
@@ -25,9 +25,6 @@ class Payload {
     @JsonArray() numbers: number[];
     // maps a complex type recursively
     @JsonComplexProperty(SubClass) sub: SubClass;
-
-    // needed to typecheck
-    serialize: SerializeFn;
 }
 
 @JsonClass()
@@ -35,9 +32,6 @@ class SubClass {
     // other mappings
     @JsonProperty() x: number;
     @JsonProperty() y: number;
-
-    // needed to typecheck
-    serialize: SerializeFn;
 
     get norm(): double {
         return Math.sqrt(this.x * this.x + this.y * this.y);
