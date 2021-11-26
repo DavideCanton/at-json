@@ -6,7 +6,7 @@ export enum Gender
     M = 0, F = 1
 }
 
-@JsonClass({ ignoreMissingProperties: true })
+@JsonClass({ ignoreUndecoratedProperties: true })
 export class Address
 {
     @JsonProperty() line1: string;
@@ -14,7 +14,7 @@ export class Address
     @JsonProperty() line2: string;
 }
 
-@JsonClass({ ignoreMissingProperties: false })
+@JsonClass({ ignoreUndecoratedProperties: false })
 export class AddressExtended extends Address implements AfterDeserialize
 {
     [other: string]: any;
@@ -52,7 +52,6 @@ export class Person
 
     @JsonComplexProperty(AddressExtended, 'aa')
     address: AddressExtended;
-
 
     @JsonComplexProperty(AddressExtended)
     address2: AddressExtended;

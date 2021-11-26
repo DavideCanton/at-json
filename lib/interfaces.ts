@@ -98,5 +98,6 @@ export interface IMappingOptions<T = any, R = any>
 }
 
 export interface IJsonClassOptions {
-    ignoreMissingProperties?: boolean;
+    /** should undecorated properties be mapped? */
+    ignoreUndecoratedProperties?: boolean;
 }

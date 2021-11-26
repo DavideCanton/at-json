@@ -2,15 +2,15 @@ import 'reflect-metadata';
 
 import { IJsonClassOptions } from '.';
 import
-    {
-        Constructable,
-        fieldsMetadataKey,
-        IMappingOptions,
-        JsonSerializable,
-        mappingIgnoreKey,
-        mappingMetadataKey,
-        MappingParams,
-    } from './interfaces';
+{
+    Constructable,
+    fieldsMetadataKey,
+    IMappingOptions,
+    JsonSerializable,
+    mappingIgnoreKey,
+    mappingMetadataKey,
+    MappingParams,
+} from './interfaces';
 import { deserializeValue, serializeValue } from './mapper';
 
 type JsonConstructor<T> = Constructable<T & JsonSerializable>;
@@ -24,11 +24,14 @@ type JsonConstructor<T> = Constructable<T & JsonSerializable>;
  */
 export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstructor<T>>(ctor: C) => C
 {
-    const actualOptions = Object.assign({ ignoreMissingFields: true }, options);
+    const actualOptions: Required<IJsonClassOptions> = Object.assign(
+        { ignoreUndecoratedProperties: true } as Required<IJsonClassOptions>,
+        options
+    );
 
     return ctor =>
     {
-        Reflect.defineMetadata(mappingIgnoreKey, actualOptions.ignoreMissingFields, ctor);
+        Reflect.defineMetadata(mappingIgnoreKey, actualOptions.ignoreUndecoratedProperties, ctor);
         return ctor;
     };
 }
