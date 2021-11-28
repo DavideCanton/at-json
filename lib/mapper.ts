@@ -10,13 +10,12 @@ import { AfterDeserialize, Constructable, CustomSerialize, fieldsMetadataKey, IM
  */
 export class JsonMapper
 {
-
     /**
      * Serialization method.
-     * Serializes `val` into a JSON string.
+     * Transform `val` into a new JSON value by applying the "serialization" step for each property decorator.
      *
      * It needs @see JsonSerializable implementation, and serializes only properties
-     * decorated with @see JsonProperty , @see JsonArray , @see JsonComplexProperty , @see JsonArrayOfComplexProperty .
+     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator.
      *
      * Annotated properties are serialized into a property using the `name` value as the destination name (defaults to the property name),
      * if the `serializeFn` is present, it is invoked to allow serialization customization.
@@ -29,64 +28,71 @@ export class JsonMapper
      * according to other parameters.
      *
      * @static
-     * @param {*} val the value to be serialized.
-     * @returns {string} the serialized JSON string.
+     * @param {*} source the value to be serialized.
+     * @returns {string} the transformed JSON value.
      * @memberof JsonMapper
      */
-    static serialize<T extends JsonSerializable>(val: T): string
+    static serialize(source: JsonSerializable): any
     {
-        const exported = JsonMapper.exportForSerialize(val);
+        // if val is nil no need to export it
+        if (source === null || source === undefined)
+            return source;
 
-        if (typeof exported === 'string')
-            return exported;
-        else
-            return JSON.stringify(exported);
-    }
+        // let's try to call an eventual custom export before the standard one
+        const customExport = exportCustom(source);
+        if (customExport.serialized)
+            return customExport.value;
 
-    static exportForSerialize<T extends JsonSerializable>(val: T): any
-    {
-        if (val === null || val === undefined)
-            return val;
-
-        const ctor: Constructable<T> = Object.getPrototypeOf(val).constructor;
+        // retrieve the object constructor in order to load the class decorator metadata
+        const ctor: Constructable<JsonSerializable> = Object.getPrototypeOf(source).constructor;
+        // should missing properties be ignored
         const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
-        const obj = {};
+        // destination object for the mapping
+        const target = {};
 
-        const { serialized, value } = exportCustom(val);
-        if (serialized)
-            return value;
-
-        Object.keys(val).forEach(propName =>
+        Object.keys(source).forEach(propName =>
         {
-            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
+            // retrieve the serialization options in the decorator of the property
+            const options: IMappingOptions = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
+            const propValue = source[propName];
 
-            if (opt === undefined)
+            // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
+            // maybe here a clone should be used instead of a shallow copy
+            if (options === undefined)
             {
                 if (!ignoreMissingProperties)
-                    obj[propName] = val[propName];
+                    target[propName] = propValue;
 
                 return;
             }
 
-            const name = opt.name || propName;
+            // destination property name, by default the property name in the source object, but it can be
+            // overridden in the decorator
+            const name = options.name || propName;
 
-            if (opt.isArray)
+            if (options.isArray)
             {
-                if (val[propName])
+                // isArray handling, if not valued it is set to null by default
+                if (propValue)
                 {
-                    if (!Array.isArray(val[propName]))
+                    // if value is an array, map each item recursively, else warn the user and set it to null
+                    if (Array.isArray(propValue))
+                        target[name] = propValue.map(el => serializeValue(options, el));
+                    else
                     {
                         console.warn(`Field ${name} not an array`);
-                        obj[name] = null;
-                    } else
-                        obj[name] = (val[propName] as Array<any>).map(el => serializeValue(opt, el));
-                } else
-                    obj[name] = null;
-            } else
-                obj[name] = serializeValue(opt, val, propName);
+                        target[name] = null;
+                    }
+                }
+                else
+                    target[name] = null;
+            }
+            else
+                // default handling, by calling serialize
+                target[name] = serializeValue(options, propValue);
         });
 
-        return obj;
+        return target;
     }
 
     /**
@@ -108,7 +114,7 @@ export class JsonMapper
      * Deserialize `jsonObj` into an object built using `ctor`.
      *
      * It deserializes only properties
-     * decorated with @see JsonProperty , @see JsonArray , @see JsonComplexProperty , @see JsonArrayOfComplexProperty .
+     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator .
      *
      * Annotated properties are deserialized into a property using the `name` value as the source name (defaults to the property name),
      * if the `mappingFn` is present, it is invoked to allow deserialization customization.
@@ -123,110 +129,158 @@ export class JsonMapper
      * @static
      * @template T the type of output object
      * @param {Constructable<T>} ctor the destination constructor
-     * @param {*} jsonObj the value to be deserialized
+     * @param {*} source the value to be deserialized
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
-    static deserialize<T>(ctor: Constructable<T>, jsonObj: any): T
+    static deserialize<T>(ctor: Constructable<T>, source: any): T
     {
-        if (typeof jsonObj === 'string')
-            jsonObj = JSON.parse(jsonObj);
+        // automatic parse of strings
+        if (typeof source === 'string')
+            source = JSON.parse(source);
 
-        const obj = new ctor();
+        const target = new ctor();
         const has = Object.prototype.hasOwnProperty;
         const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
+        // keep track of mapped properties, so we can copy not mapped ones if "ignoreMissingFields" is false
         const mapped = new Set<string>();
-
+        // extract the property names array from the metadata stored in the constructor
+        // be careful: undecorated properties are NOT stored in this array
         const propNames = Reflect.getMetadata(fieldsMetadataKey, ctor) as string[];
 
         propNames.forEach(propName =>
         {
-            const opt: IMappingOptions<any, any> = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
+            const options: IMappingOptions = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
-            if (opt === undefined)
+            if (options === undefined)
                 return;
 
-            const name = opt.name || propName;
+            const name = options.name || propName;
 
-            if (!has.call(jsonObj, name))
+            if (!has.call(source, name))
                 return;
 
-            if (opt.isArray)
+            if (options.isArray)
             {
-                const prop = jsonObj[name];
-                if (Array.isArray(prop))
-                    obj[propName] = prop.map(e => deserializeValue(opt, e));
+                const propertyValue = source[name];
+                if (Array.isArray(propertyValue))
+                    // map deserialize on the array
+                    target[propName] = propertyValue.map(item => deserializeValue(options, item));
                 else
-                    obj[propName] = null;
-            } else
-                obj[propName] = deserializeValue(opt, jsonObj, name);
+                    // if marked as array, but not an array, set the value to null
+                    target[propName] = null;
+            }
+            else
+                target[propName] = deserializeValue(options, source[name]);
 
             mapped.add(name);
         });
 
         if (!ignoreMissingProperties)
         {
-            Object.keys(jsonObj).forEach(propName =>
+            // iterate ALL object keys (even undecorated ones, since we are using Object.keys)
+            Object.keys(source).forEach(propName =>
             {
+                // copy over not mapped properties
+                // maybe here a clone should be performed?
                 if (!mapped.has(propName))
-                    obj[propName] = jsonObj[propName];
+                    target[propName] = source[propName];
             });
         }
 
-        const fn = obj[nameOf<AfterDeserialize>('afterDeserialize')];
-        if (typeof fn === 'function')
-            fn.call(obj);
+        // call eventual after deserialize callback to postprocess values
+        if (hasAfterDeserialize(target))
+            target.afterDeserialize();
 
-        return obj;
+        return target;
     }
 }
 
+/**
+ * Deserializes the input `val` property according to is decorator options.
+ *
+ * @param options the decorator options
+ * @param valueToDeserialize the value to deserialize
+ * @returns the deserialized value
+ */
+export function deserializeValue(options: IMappingOptions, valueToDeserialize: any)
+{
+    if (options.mappingFn)
+        return options.mappingFn(valueToDeserialize);
+    else if (options.complexType)
+    {
+        return valueToDeserialize ?
+            JsonMapper.deserialize(options.complexType, valueToDeserialize) :
+            null;
+    }
+    else
+        return valueToDeserialize;
+}
+
+/**
+ * Serializes the input `val` property according to is decorator options.
+ *
+ * @param options the decorator options
+ * @param valueToSerialize the value to serialize
+ * @returns the serialized value
+ */
+export function serializeValue(options: IMappingOptions, valueToSerialize: any): any
+{
+    if (options.serializeFn)
+        return options.serializeFn(valueToSerialize);
+    else if (options.complexType)
+        return JsonMapper.serialize(valueToSerialize);
+    else
+        return valueToSerialize;
+}
+
+/**
+ * This method checks if the input value is a @see CustomSerialize implementation.
+ * If it is so, it calls the custom export function and returns its output in the `value` field
+ * of the response.
+ *
+ * @param mapValue the value to export
+ * @returns the exported value decorated with a boolean
+ */
+function exportCustom(mapValue: any): { serialized: true; value: any } | { serialized: false }
+{
+    if (hasCustomSerializeExport(mapValue))
+        return {
+            serialized: true,
+            value: mapValue.customSerialize()
+        };
+    else
+        return {
+            serialized: false,
+        };
+}
+
+/**
+ * Type guard for @see CustomSerialize interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a CustomSerialize interface
+ */
+function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize
+{
+    const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
+    return typeof fn === 'function';
+}
+
+/**
+ * Type guard for @see AfterDeserialize interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a AfterDeserialize interface
+ */
+function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
+{
+    const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
+    return typeof fn === 'function';
+}
+
+/** helper */
 function nameOf<T>(k: keyof T): string
 {
     return k as string;
 }
-
-export function deserializeValue(opt: IMappingOptions<any, any>, jsonObj: any, name?: string)
-{
-    const mapValue = name ? jsonObj[name] : jsonObj;
-
-    let value: any;
-    if (opt.mappingFn)
-        value = opt.mappingFn(mapValue);
-    else if (opt.complexType)
-    {
-        if (mapValue)
-            value = JsonMapper.deserialize(opt.complexType, mapValue);
-        else
-            value = null;
-    } else
-        value = mapValue;
-
-    return value;
-}
-
-
-export function serializeValue(opt: IMappingOptions<any, any>, val: any, propName?: string): any
-{
-    const mapValue = propName ? val[propName] : val;
-
-    let value: string;
-    if (opt.serializeFn)
-        value = opt.serializeFn(mapValue);
-    else if (opt.complexType)
-        value = JsonMapper.exportForSerialize(mapValue);
-    else
-        value = mapValue;
-
-    return value;
-}
-
-function exportCustom(mapValue: any): { serialized: boolean, value: any }
-{
-    const fn = mapValue[nameOf<CustomSerialize>('exportForSerialize')];
-    if (typeof fn === 'function')
-        return { serialized: true, value: fn.call(mapValue) };
-    else
-        return { serialized: false, value: '' };
-}
-

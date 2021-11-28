@@ -1,33 +1,38 @@
 import 'reflect-metadata';
 
-import { Constructable, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey, MappingParams } from './interfaces';
-import { deserializeValue, JsonMapper, serializeValue } from './mapper';
+import { IJsonClassOptions } from '.';
+import
+{
+    Constructable,
+    fieldsMetadataKey,
+    IMappingOptions,
+    JsonSerializable,
+    mappingIgnoreKey,
+    mappingMetadataKey,
+    MappingParams,
+} from './interfaces';
+import { deserializeValue, serializeValue } from './mapper';
 
 type JsonConstructor<T> = Constructable<T & JsonSerializable>;
 
 /**
  * Decorator that auto-implements @see JsonSerializable interface.
  *
- * Classes must only provide a declaration for the unique interface method:
- *
- * `serialize: SerializeFn;`
- *
  * @export
  * @template T
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T>(ignoreMissingFields = true): <C extends JsonConstructor<T>>(ctor: C) => C
+export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstructor<T>>(ctor: C) => C
 {
-    return <C extends JsonConstructor<T>>(ctor: C) =>
-    {
-        // noinspection JSUnusedGlobalSymbols
-        ctor.prototype.serialize = function (this: JsonSerializable)
-        {
-            return JsonMapper.serialize(this);
-        };
-        Reflect.defineMetadata(mappingIgnoreKey, ignoreMissingFields, ctor);
+    const actualOptions: Required<IJsonClassOptions> = Object.assign(
+        { ignoreUndecoratedProperties: true } as Required<IJsonClassOptions>,
+        options
+    );
 
+    return ctor =>
+    {
+        Reflect.defineMetadata(mappingIgnoreKey, actualOptions.ignoreUndecoratedProperties, ctor);
         return ctor;
     };
 }

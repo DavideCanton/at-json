@@ -1,0 +1,32 @@
+name: Build and run tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        id: checkout-repo
+        name: Checkout Repository
+        
+      - uses: actions/setup-node@v2
+        name: Setup node
+        with:
+          node-version: '14.x'
+
+      - run: yarn install
+        name: Install dependencies
+
+      - run: yarn build
+        name: Build code
+
+      - run: yarn test
+        name: Run tests
