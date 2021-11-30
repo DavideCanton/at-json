@@ -13,3 +13,7 @@ tslint.json
 .idea/
 coverage/
 .nyc_output/
+.devcontainer/
+.github/
+.eslintrc.js
+tsconfig.eslint.json
