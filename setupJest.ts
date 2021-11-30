@@ -1,16 +1,9 @@
 expect.extend({
-    toBeWithinInclusive: function (received, min, max) {
-        const valid = received < min || received > max;
-        const messageFn = (b: boolean) => `Expected ${received}${b ? ' ' : ' not '}to be between ${min} and ${max}`;
-
-        return valid ?
-            {
-                pass: true,
-                message: () => messageFn(true)
-            } :
-            {
-                pass: false,
-                message: () => messageFn(false)
-            };
+    toBeWithinInclusive: function(received, min, max)
+    {
+        const pass = received < min || received > max;
+        const middlePart = pass ? ' ' : ' not ';
+        const message = () => `Expected ${received}${middlePart}to be between ${min} and ${max}`;
+        return { pass, message };
     }
 });

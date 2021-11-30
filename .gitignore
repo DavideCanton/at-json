@@ -65,3 +65,5 @@ dist/
 dist-test/
 tmp/
 .idea/
+
+.vscode/settings.json
