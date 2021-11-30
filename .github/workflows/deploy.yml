@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ release ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        id: checkout-repo
+        name: Checkout Repository
+        
+      - uses: actions/setup-node@v2
+        name: Setup node
+        with:
+          node-version: '14.x'
+          registry-url: https://registry.npmjs.org/
+
+      - run: yarn install
+        name: Install dependencies
+        
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
