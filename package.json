@@ -6,7 +6,6 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "prepublishOnly": "yarn build",
-        "bench": "yarn build:test && node dist-test/test/benchmarks/benchmarks.js",
         "prebuild": "yarn clean",
         "build": "webpack",
         "clean": "rimraf dist coverage",
@@ -37,7 +36,6 @@
         "@types/node": "^12.12.12",
         "@typescript-eslint/eslint-plugin": "^4.6.1",
         "@typescript-eslint/parser": "^4.6.1",
-        "benchmark": "^2.1.4",
         "eslint": "^7.13.0",
         "eslint-plugin-import": "^2.22.1",
         "http-server": "^0.12.3",
