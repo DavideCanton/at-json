@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: '14.x'
 
-      - run: yarn install
+      - run: npm install
         name: Install dependencies
 
-      - run: yarn build
+      - run: npm run build
         name: Build code
 
-      - run: yarn test
+      - run: npm run test
         name: Run tests
