@@ -19,7 +19,7 @@ jobs:
         name: Setup node
         with:
           node-version: '16.x'
-          registry-url: https://registry.npmjs.org/
+          registry-url: 'https://registry.npmjs.org'
 
       - run: npm install
         name: Install dependencies
