@@ -1,19 +1,19 @@
 # at-json
 
-[![Build Status](https://travis-ci.org/DavideCanton/at-json.svg?branch=master)](https://travis-ci.org/DavideCanton/at-json)
+[![Build Status](https://github.com/DavideCanton/at-json/actions/workflows/main.yml/badge.svg)](https://github.com/DavideCanton/at-json/actions/workflows/main.yml)
 
 A declarative mapper to and from JSON.
 
 ## Installation
 
 ```bash
-npm install at-json
+npm install @mdcc/at-json
 ```
 
 ## Usage
 
 ```typescript
-import { JsonClass, JsonProperty, JsonArray, JsonComplexProperty, JsonMapper } from 'at-json';
+import { JsonClass, JsonProperty, JsonArray, JsonComplexProperty, JsonMapper } from '@mdcc/at-json';
 
 @JsonClass()
 class Payload {

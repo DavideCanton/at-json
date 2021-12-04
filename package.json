@@ -1,6 +1,6 @@
 {
-    "name": "at-json",
-    "version": "1.0.0-3",
+    "name": "@mdcc/at-json",
+    "version": "1.0.0",
     "description": "A declarative mapper to and from JSON.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
