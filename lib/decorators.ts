@@ -13,10 +13,13 @@ import
 } from './interfaces';
 import { deserializeValue, serializeValue } from './mapper';
 
-type JsonConstructor<T> = Constructable<T & JsonSerializable>;
+/**
+ * Constructor of a class decorated with {@link JsonClass}.
+ */
+export type JsonConstructor<T> = Constructable<T & JsonSerializable>;
 
 /**
- * Decorator that auto-implements @see JsonSerializable interface.
+ * Decorator that auto-implements {@link JsonSerializable} interface.
  *
  * @export
  * @template T
@@ -88,7 +91,7 @@ export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, nam
 /**
  * The basic decorator for array of simple properties. Required to enable (de)serialization of property.
  *
- * `params` has the same meaning that the one in @see JsonProperty .
+ * `params` has the same meaning that the one in {@link JsonProperty}.
  *
  * @export
  * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params
@@ -104,9 +107,9 @@ export function JsonArray<T, R>(params?: MappingParams<T, R>)
  * The basic decorator for simple properties. Required to enable (de)serialization of property.
  *
  * `params` can be:
- * - a string, if only the name of source property is provided (`name` property of @see IMappingOptions ).
- * - a function, if only the mapping function of property is provided (`mappingFn` property of @see IMappingOptions ).
- * - an object compliant to @see IMappingOptions interface.
+ * - a string, if only the name of source property is provided (`name` property of {@link IMappingOptions}).
+ * - a function, if only the mapping function of property is provided (`mappingFn` property of {@link IMappingOptions}).
+ * - an object compliant to {@link IMappingOptions} interface.
  *
  * @export
  * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params

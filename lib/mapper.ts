@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-
 import { AfterDeserialize, Constructable, CustomSerialize, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
+
 
 /**
  * Static class for JSON Mapping.
@@ -14,17 +14,17 @@ export class JsonMapper
      * Serialization method.
      * Transform `val` into a new JSON value by applying the "serialization" step for each property decorator.
      *
-     * It needs @see JsonSerializable implementation, and serializes only properties
-     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator.
+     * It needs {@link JsonSerializable} implementation, and serializes only properties
+     * decorated with some decorator from this library, or a custom one implemented using {@link makeCustomDecorator}.
      *
      * Annotated properties are serialized into a property using the `name` value as the destination name (defaults to the property name),
      * if the `serializeFn` is present, it is invoked to allow serialization customization.
      *
-     * If `complexType` is specified, the property is treated as it had @see JsonComplexProperty decorator,
-     * recursively calling @see JsonMapper.serialize .
+     * If `complexType` is specified, the property is treated as it had {@link JsonComplexProperty} decorator,
+     * recursively calling {@link JsonMapper}.serialize .
      *
      * If `isArray` is specified, the property is treated as it is an array,
-     * using respectively @see JsonArray or @see JsonArrayOfComplexProperty ,
+     * using respectively {@link JsonArray} or {@link JsonArrayOfComplexProperty},
      * according to other parameters.
      *
      * @static
@@ -96,7 +96,7 @@ export class JsonMapper
     }
 
     /**
-     * Deserializes an array. @see deserialize
+     * Deserializes an array. {@link deserialize}
      * @static
      * @template T the type of output object
      * @param {Constructable<T>} ctor the destination constructor
@@ -114,16 +114,16 @@ export class JsonMapper
      * Deserialize `jsonObj` into an object built using `ctor`.
      *
      * It deserializes only properties
-     * decorated with some decorator from this library, or a custom one implemented using @see makeCustomDecorator .
+     * decorated with some decorator from this library, or a custom one implemented using {@link makeCustomDecorator} .
      *
      * Annotated properties are deserialized into a property using the `name` value as the source name (defaults to the property name),
      * if the `mappingFn` is present, it is invoked to allow deserialization customization.
      *
-     * If `complexType` is specified, the property is treated as it had @see JsonComplexProperty decorator,
-     * recursively calling @see JsonMapper.serialize .
+     * If `complexType` is specified, the property is treated as it had {@link JsonComplexProperty} decorator,
+     * recursively calling {@link JsonMapper}.serialize .
      *
      * If `isArray` is specified, the property is treated as it is an array,
-     * using respectively @see JsonArray or @see JsonArrayOfComplexProperty ,
+     * using respectively {@link JsonArray} or {@link JsonArrayOfComplexProperty} ,
      * according to other parameters.
      *
      * @static
@@ -235,7 +235,7 @@ export function serializeValue(options: IMappingOptions, valueToSerialize: any):
 }
 
 /**
- * This method checks if the input value is a @see CustomSerialize implementation.
+ * This method checks if the input value is a {@link CustomSerialize} implementation.
  * If it is so, it calls the custom export function and returns its output in the `value` field
  * of the response.
  *
@@ -256,7 +256,7 @@ function exportCustom(mapValue: any): { serialized: true; value: any } | { seria
 }
 
 /**
- * Type guard for @see CustomSerialize interface.
+ * Type guard for {@link CustomSerialize} interface.
  *
  * @param mapValue value to check
  * @returns if the parameter is a CustomSerialize interface
@@ -268,7 +268,7 @@ function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize
 }
 
 /**
- * Type guard for @see AfterDeserialize interface.
+ * Type guard for {@link AfterDeserialize} interface.
  *
  * @param mapValue value to check
  * @returns if the parameter is a AfterDeserialize interface
