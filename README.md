@@ -65,6 +65,10 @@ expect(mapped.sub instanceof SubClass).toBe(true);
 expect(mapped.sub.norm).toBe(Math.sqrt(5));
 ```
 
+## Documentation
+
+Documentation can be found [here](https://davidecanton.github.io/at-json/).
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
