@@ -120,6 +120,9 @@ export interface IMappingOptions<T = any, R = any>
 
 export interface IJsonClassOptions
 {
-    /** should undecorated properties be mapped? */
+    /**
+     * If `true` (the default), undecorated properties are ignored by the serialization/deserialization process.
+     * If `false`, they are treated as if they were decorated with the {@link JsonProperty} decorator.
+     */
     ignoreUndecoratedProperties?: boolean;
 }

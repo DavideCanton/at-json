@@ -31,6 +31,7 @@ export class JsonMapper
      * @static
      * @param {*} source the value to be serialized.
      * @returns {string} the transformed JSON value.
+     * @throws An error if a class encountered while serializing has no {@link JsonClass} decorator.
      * @memberof JsonMapper
      */
     static serialize(source: JsonSerializable): any
@@ -136,6 +137,7 @@ export class JsonMapper
      * @param {Constructable<T>} ctor the destination constructor
      * @param {*} source the value to be deserialized
      * @returns {T} the deserialized object
+     * @throws An error if a class encountered while deserializing has no {@link JsonClass} decorator.
      * @memberof JsonMapper
      */
     static deserialize<T>(ctor: Constructable<T>, source: any): T
