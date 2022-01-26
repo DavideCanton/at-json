@@ -2,6 +2,7 @@ lib/
 dist-test/
 tmp/
 test/
+docs/
 .vscode/
 node_modules/
 .travis.yml
