@@ -1,4 +1,5 @@
 import 'jest-extended';
+import each from 'jest-each';
 
 import * as D from '../lib/decorators';
 import * as IF from '../lib/interfaces';
@@ -8,7 +9,9 @@ import { Person, AddressExtended, Gender, Address } from './test.models';
 
 describe('Mapper tests', () =>
 {
-    it('should deserialize', () =>
+    each([
+        'string', 'object'
+    ]).it('should deserialize when type is %s', type =>
     {
         const obj = {
             firstName: 'Piero',
@@ -44,7 +47,9 @@ describe('Mapper tests', () =>
             ]
         };
 
-        const p = M.JsonMapper.deserialize(Person, obj);
+        const input = type === 'string' ? JSON.stringify(obj) : obj;
+
+        const p = M.JsonMapper.deserialize(Person, input);
 
         expect(p).not.toBeNull();
         expect(p.address).not.toBeNull();
@@ -339,38 +344,6 @@ describe('Mapper tests', () =>
         expect(spyFn).toHaveBeenCalled();
     });
 
-    it('should serialize correctly fields', () =>
-    {
-        const obj = {
-            a: [
-                { n: 1 },
-                { n: 2 },
-                { n: 3 }
-            ],
-            b: 1,
-            c: 'ciao',
-            d: {
-                e: 1,
-                f: null
-            }
-        };
-
-        const s = M.JsonMapper.serialize(obj);
-        expect(s).toEqual({
-            "a": [
-                { "n": 1 },
-                { "n": 2 },
-                { "n": 3 }
-            ],
-            "b": 1,
-            "c": "ciao",
-            "d": {
-                "e": 1,
-                "f": null
-            }
-        });
-    });
-
     it('should serialize correctly with custom decorators', () =>
     {
         const dec = <T extends IF.JsonSerializable>(ctor: IF.Constructable<T>, params?: IF.IMappingOptions<T, any>) => D.makeCustomDecorator<T>(
@@ -468,7 +441,7 @@ describe('Mapper tests', () =>
         class Y
         {
             @D.JsonProperty('n') name: string;
-            @D.JsonProperty('s') surname: string
+            @D.JsonProperty('s') surname: string;
         }
 
         @D.JsonClass()
@@ -497,7 +470,7 @@ describe('Mapper tests', () =>
         class Y
         {
             @D.JsonProperty('n') name: string;
-            @D.JsonProperty('s') surname: string
+            @D.JsonProperty('s') surname: string;
         }
 
         @D.JsonClass()
@@ -615,7 +588,7 @@ describe('Mapper tests', () =>
         expect(ys.x).toBe(10);
         expect(ys.otherY).toBe(20);
         expect(ys.y).toBeUndefined();
-        
+
         const yy = M.JsonMapper.deserialize(Y, ys);
         expect(spyY).toHaveBeenCalled();
         expect(yy.x).toBe(11);
@@ -631,12 +604,58 @@ describe('Mapper tests', () =>
         const zs = M.JsonMapper.serialize(z);
         expect(zs.x).toBe(10);
         expect(zs.z).toBe(20);
-        
+
         const zz = M.JsonMapper.deserialize(Z, zs);
         expect(spyZ).toHaveBeenCalled();
         expect(zz.x).toBe(11);
         expect(zz.z).toBe(40);
         expect(zz).toBeInstanceOf(X);
         expect(zz).toBeInstanceOf(Z);
+    });
+
+    it('should deserialize when there are no decorators', () =>
+    {
+        @D.JsonClass({ ignoreUndecoratedProperties: false })
+        class X
+        {
+            x: number;
+        }
+
+        const x = { x: 10 };
+        const xd = M.JsonMapper.deserialize(X, x);
+        expect(xd.x).toBe(10);
+    });
+
+    it('should error if class is undecorated', () =>
+    {
+        class X
+        {
+            x: number;
+        }
+
+        const x = { x: 10 };
+        expect(() => M.JsonMapper.deserialize(X, x)).toThrow('Class X is not decorated with @JsonClass');
+
+        const xc = new X();
+        xc.x = 10;
+        expect(() => M.JsonMapper.serialize(xc)).toThrow('Class X is not decorated with @JsonClass');
+    });
+
+    it('should error if class of field is undecorated', () =>
+    {
+        class Y { }
+
+        @D.JsonClass()
+        class X
+        {
+            @D.JsonComplexProperty(Y) y: Y;
+        }
+
+        const x = { x: 10, y: {} };
+        expect(() => M.JsonMapper.deserialize(X, x)).toThrow('Class Y is not decorated with @JsonClass');
+
+        const xc = new X();
+        xc.y = new Y();
+        expect(() => M.JsonMapper.serialize(xc)).toThrow('Class Y is not decorated with @JsonClass');
     });
 });

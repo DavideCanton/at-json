@@ -18,7 +18,8 @@ export class Address
 export class AddressExtended extends Address implements AfterDeserialize
 {
     [other: string]: any;
-    @JsonProperty() line3: string;
+    
+    line3: string;
 
     afterDeserialize() { }
 }

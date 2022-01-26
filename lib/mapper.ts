@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import { AfterDeserialize, Constructable, CustomSerialize, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingIgnoreKey, mappingMetadataKey } from './interfaces';
+import { IJsonClassOptions, mappingOptionsKey } from '.';
+import { AfterDeserialize, Constructable, CustomSerialize, fieldsMetadataKey, IMappingOptions, JsonSerializable, mappingMetadataKey } from './interfaces';
 
 
 /**
@@ -38,15 +39,19 @@ export class JsonMapper
         if (source === null || source === undefined)
             return source;
 
+        // retrieve the object constructor in order to load the class decorator metadata
+        const ctor: Constructable<JsonSerializable> = Object.getPrototypeOf(source).constructor;
+        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(mappingOptionsKey, ctor);
+        if (!ctorOptions)
+            throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
+
         // let's try to call an eventual custom export before the standard one
         const customExport = exportCustom(source);
         if (customExport.serialized)
             return customExport.value;
 
-        // retrieve the object constructor in order to load the class decorator metadata
-        const ctor: Constructable<JsonSerializable> = Object.getPrototypeOf(source).constructor;
         // should missing properties be ignored
-        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
+        const { ignoreUndecoratedProperties } = ctorOptions;
         // destination object for the mapping
         const target = {};
 
@@ -60,7 +65,7 @@ export class JsonMapper
             // maybe here a clone should be used instead of a shallow copy
             if (options === undefined)
             {
-                if (!ignoreMissingProperties)
+                if (!ignoreUndecoratedProperties)
                     target[propName] = propValue;
 
                 return;
@@ -135,23 +140,28 @@ export class JsonMapper
      */
     static deserialize<T>(ctor: Constructable<T>, source: any): T
     {
+        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(mappingOptionsKey, ctor);
+        if (!ctorOptions)
+            throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
+
         // automatic parse of strings
         if (typeof source === 'string')
             source = JSON.parse(source);
 
         const target = new ctor();
         const has = Object.prototype.hasOwnProperty;
-        const ignoreMissingProperties = Reflect.getMetadata(mappingIgnoreKey, ctor);
+        const { ignoreUndecoratedProperties } = ctorOptions;
         // keep track of mapped properties, so we can copy not mapped ones if "ignoreMissingFields" is false
         const mapped = new Set<string>();
         // extract the property names array from the metadata stored in the constructor
         // be careful: undecorated properties are NOT stored in this array
-        const propNames = Reflect.getMetadata(fieldsMetadataKey, ctor) as string[];
+        const propNames = Reflect.getMetadata(fieldsMetadataKey, ctor) as string[] ?? [];
 
         propNames.forEach(propName =>
         {
             const options: IMappingOptions = Reflect.getMetadata(mappingMetadataKey, ctor, propName);
 
+            /* istanbul ignore next */
             if (options === undefined)
                 return;
 
@@ -176,7 +186,7 @@ export class JsonMapper
             mapped.add(name);
         });
 
-        if (!ignoreMissingProperties)
+        if (!ignoreUndecoratedProperties)
         {
             // iterate ALL object keys (even undecorated ones, since we are using Object.keys)
             Object.keys(source).forEach(propName =>

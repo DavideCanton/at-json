@@ -7,7 +7,7 @@ import
     fieldsMetadataKey,
     IMappingOptions,
     JsonSerializable,
-    mappingIgnoreKey,
+    mappingOptionsKey,
     mappingMetadataKey,
     MappingParams,
 } from './interfaces';
@@ -35,7 +35,7 @@ export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstr
 
     return ctor =>
     {
-        Reflect.defineMetadata(mappingIgnoreKey, actualOptions.ignoreUndecoratedProperties, ctor);
+        Reflect.defineMetadata(mappingOptionsKey, actualOptions, ctor);
         return ctor;
     };
 }

@@ -1,6 +1,6 @@
 import { JsonClass } from './decorators';
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
-export const mappingIgnoreKey = Symbol('mappingIgnoreKey');
+export const mappingOptionsKey = Symbol('mappingOptionsKey');
 export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
 
 export type MappingParams<T = any, R = any> = string | MappingFn<T, R> | IMappingOptions<T, R>;

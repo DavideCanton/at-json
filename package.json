@@ -12,7 +12,7 @@
         "clean": "rimraf dist coverage docs",
         "test": "jest",
         "docs": "typedoc lib/index.ts",
-        "test:coverage": "npm run test --collect-coverage",
+        "test:coverage": "npm run test -- --collect-coverage",
         "show:coverage": "http-server ./coverage/lcov-report -o"
     },
     "repository": {
@@ -42,6 +42,7 @@
         "eslint-plugin-import": "^2.22.1",
         "http-server": "^0.12.3",
         "jest": "^26.0.1",
+        "jest-each": "^27.4.6",
         "jest-extended": "^0.11.5",
         "lodash": "^4.17.19",
         "rimraf": "^3.0.0",
