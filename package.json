@@ -8,7 +8,6 @@
         "prepublishOnly": "npm run build",
         "prebuild": "npm run clean",
         "build": "webpack",
-        "postbuild": "npm run docs",
         "clean": "rimraf dist coverage docs",
         "test": "jest",
         "docs": "typedoc lib/index.ts",
