@@ -31,5 +31,5 @@ jobs:
       - run: npm run test
         name: Run tests
         
-      - run: num run docs
+      - run: npm run docs
         name: Build docs
