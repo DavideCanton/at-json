@@ -3,7 +3,8 @@ import { JsonDateProperty } from './test-utils';
 
 export enum Gender
 {
-    M = 0, F = 1
+    M = 0,
+    F = 1
 }
 
 @JsonClass({ ignoreUndecoratedProperties: true })
@@ -18,7 +19,7 @@ export class Address
 export class AddressExtended extends Address implements AfterDeserialize
 {
     [other: string]: any;
-    
+
     line3: string;
 
     afterDeserialize() { }
@@ -30,7 +31,7 @@ export class Person
     @JsonProperty()
     firstName: string;
 
-    @JsonProperty(Person.mapLastName)
+    @JsonProperty({ mappingFn: Person.mapLastName })
     lastName: string;
 
     @JsonProperty('eta')

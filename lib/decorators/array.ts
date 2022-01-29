@@ -1,6 +1,5 @@
-import { MappingParams } from '../interfaces';
-import { normalizeParams } from './common';
-import { JsonProperty } from './property';
+import { DecoratorInput } from '../interfaces';
+import { makeCustomDecorator, mapArray } from './common';
 
 
 /**
@@ -12,8 +11,12 @@ import { JsonProperty } from './property';
  * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params
  * @returns the decorator for the property.
  */
-export function JsonArray<T, R>(params?: MappingParams<T, R>)
+export function JsonArray<T>(params?: DecoratorInput<T>, throwIfNotArray?: boolean): PropertyDecorator
 {
-    params = normalizeParams(params);
-    return JsonProperty({ isArray: true, ...params });
+    return makeCustomDecorator<T>(
+        opt => ({
+            serializeFn: array => mapArray(array, opt?.serializeFn, throwIfNotArray),
+            deserializeFn: array => mapArray(array, opt?.mappingFn, throwIfNotArray)
+        })
+    )(params);
 }

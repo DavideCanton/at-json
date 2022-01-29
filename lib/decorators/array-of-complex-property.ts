@@ -1,5 +1,6 @@
-import { Constructable, IMappingOptions, mappingMetadataKey } from '../interfaces';
-import { wrapDecorator } from './common';
+import { Constructable, DecoratorInput, JsonSerializable } from '../interfaces';
+import { JsonMapper } from '../mapper';
+import { makeCustomDecorator, mapArray } from './common';
 
 
 /**
@@ -11,10 +12,25 @@ import { wrapDecorator } from './common';
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonArrayOfComplexProperty<T>(constructor: Constructable<T>, name: string | null = null)
+export function JsonArrayOfComplexProperty<T extends JsonSerializable>(
+    constructor: Constructable<T>,
+    params?: DecoratorInput<T[] | null>,
+    throwIfNotArray?: boolean
+)
 {
-    const opts: IMappingOptions<any, T> = { isArray: true, complexType: constructor };
-    if (name)
-        opts.name = name;
-    return wrapDecorator(Reflect.metadata(mappingMetadataKey, opts));
+    return makeCustomDecorator<T[] | null>(
+        () => ({
+            serializeFn: array => mapArray<T>(
+                array,
+                item => JsonMapper.serialize(item),
+                throwIfNotArray
+            ),
+            deserializeFn: array => mapArray<T>(array,
+                item => item === null || item === undefined ?
+                    item :
+                    JsonMapper.deserialize(constructor, item),
+                throwIfNotArray
+            )
+        })
+    )(params);
 }

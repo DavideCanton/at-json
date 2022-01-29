@@ -1,5 +1,5 @@
-import { mappingMetadataKey, MappingParams } from '../interfaces';
-import { normalizeParams, wrapDecorator } from './common';
+import { DecoratorInput } from '../interfaces';
+import { makeCustomDecorator } from './common';
 
 /**
  * The basic decorator for simple properties. Required to enable (de)serialization of property.
@@ -13,8 +13,13 @@ import { normalizeParams, wrapDecorator } from './common';
  * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params
  * @returns the decorator for the property.
  */
-export function JsonProperty<T, R>(params?: MappingParams<T, R>)
+export function JsonProperty<T>(params?: DecoratorInput<T>): PropertyDecorator
 {
-    params = normalizeParams(params);
-    return wrapDecorator(Reflect.metadata(mappingMetadataKey, params));
+    const identity = (v: any) => v;
+    return makeCustomDecorator<T>(
+        opt => ({
+            serializeFn: opt?.serializeFn ?? identity,
+            deserializeFn: opt?.mappingFn ?? identity,
+        })
+    )(params);
 }

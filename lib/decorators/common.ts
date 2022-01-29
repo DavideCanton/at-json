@@ -1,31 +1,17 @@
-import { fieldsMetadataKey, IMappingOptions, mappingMetadataKey, MappingParams } from '../interfaces';
+import { DecoratorInput, fieldsMetadataKey, IMappingOptions, mappingMetadataKey } from '../interfaces';
 
-export function wrapDecorator(fn: (target: Object, propertyKey: string | symbol) => void)
+
+export function normalizeParams<T>(params: DecoratorInput<T>): IMappingOptions<T>
 {
-    return function (target: Object, propertyKey: string | symbol)
-    {
-        const { constructor: ctor } = target;
-        const objMetadata = Reflect.getMetadata(fieldsMetadataKey, ctor) || [];
-        Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], ctor);
-        return fn.call(null, ctor, propertyKey);
-    };
-}
-
-
-export function normalizeParams<T, R>(params: MappingParams<T, R> | null | undefined): IMappingOptions<T, R>
-{
-    let resolvedParams: IMappingOptions<T, R>;
+    let resolvedParams: IMappingOptions<T>;
 
     if (typeof params === 'string')
         resolvedParams = { name: params };
-    else if (typeof params === 'function')
-        resolvedParams = { mappingFn: params };
     else
         resolvedParams = params || {};
 
     return resolvedParams;
 }
-
 
 
 /**
@@ -34,23 +20,52 @@ export function normalizeParams<T, R>(params: MappingParams<T, R> | null | undef
  * @param serializeFn the function used for serializing the value.
  * @param deserializeFn the function used for deserializing the value.
  */
-export function makeCustomDecorator<T>(serializeFn: (t: T) => any, deserializeFn: (arg: any) => T)
+export function makeCustomDecorator<T>(
+    fn: (opt: IMappingOptions<T>) => {
+        serializeFn: NonNullable<IMappingOptions<T>['serializeFn']>;
+        deserializeFn: NonNullable<IMappingOptions['mappingFn']>;
+    }
+): (params?: DecoratorInput<T>) => PropertyDecorator
 {
-
-    return (params?: string | IMappingOptions<any, T>) =>
+    return params =>
     {
-        let normalizedParams: IMappingOptions<any, T>;
+        let normalizedParams: IMappingOptions<T>;
         if (params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};
+
+        const { serializeFn, deserializeFn } = fn(normalizedParams);
 
         const actualParams: IMappingOptions<any, T> = {
             ...normalizedParams,
             serializeFn,
             mappingFn: deserializeFn
         };
-        return wrapDecorator(Reflect.metadata(mappingMetadataKey, actualParams));
+
+        return function (target: Object, propertyKey: string | symbol)
+        {
+            const { constructor: ctor } = target;
+            const objMetadata = Reflect.getMetadata(fieldsMetadataKey, ctor) || [];
+            Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], ctor);
+            return Reflect.metadata(mappingMetadataKey, actualParams)(ctor, propertyKey);
+        };
     };
 }
 
+export function mapArray<T>(propertyValue: any, deserializeItem?: (t: T) => any, throwIfNotArray?: boolean): T[] | null
+{
+    if (Array.isArray(propertyValue))
+    {
+        // map deserialize on the array
+        return propertyValue.map(item => deserializeItem ? deserializeItem(item) : item);
+    }
+    else
+    {
+        if (throwIfNotArray)
+            throw new Error(`Expected array, got ${typeof propertyValue}`);
+
+        // if marked as array, but not an array, set the value to null
+        return null;
+    }
+}

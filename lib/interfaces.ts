@@ -1,9 +1,6 @@
-import { JsonClass } from './decorators';
 export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingOptionsKey = Symbol('mappingOptionsKey');
 export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
-
-export type MappingParams<T = any, R = any> = string | MappingFn<T, R> | IMappingOptions<T, R>;
 
 /**
  * Type alias for mapping function.
@@ -92,28 +89,9 @@ export interface IMappingOptions<T = any, R = any>
      * @memberof IMappingOptions
      */
     serializeFn?: MappingFn<T, any>;
-
-    /**
-     * Complex type constructor for complex properties.
-     *
-     * @type {Constructable<R>}
-     * @memberof IMappingOptions
-     */
-    complexType?: Constructable<R>;
-
-    /**
-     * If the property is an array.
-     *
-     * @type {boolean}
-     * @memberof IMappingOptions
-     */
-    isArray?: boolean;
-
-    /**
-     * If the property is a map.
-     *
-     * @type {boolean}
-     * @memberof IMappingOptions
-     */
-    isMap?: boolean;
 }
+
+/**
+ * Decorator input
+ */
+export type DecoratorInput<T> = string | IMappingOptions<T, any> | undefined;

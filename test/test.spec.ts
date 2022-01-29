@@ -346,10 +346,12 @@ describe('Mapper tests', () =>
 
     it('should serialize correctly with custom decorators', () =>
     {
-        const dec = <T extends IF.JsonSerializable>(ctor: IF.Constructable<T>, params?: IF.IMappingOptions<T, any>) => D.makeCustomDecorator<T>(
-            x => [M.JsonMapper.serialize(x)],
-            x => M.JsonMapper.deserialize(ctor, x[0])
-        )({ ...params, complexType: ctor });
+        const dec = (ctor, params) => D.makeCustomDecorator<any>(() => (
+            {
+                serializeFn: x => [M.JsonMapper.serialize(x)],
+                deserializeFn: x => M.JsonMapper.deserialize(ctor, x[0])
+            })
+        )(params);
 
         @D.JsonClass()
         class X
@@ -496,24 +498,48 @@ describe('Mapper tests', () =>
         expect(s.map.p2.s).toEqual('rossi');
     });
 
-    it('should not map fields not of array type but decorated with array', () =>
+    it('should not throw and not map fields not of array type but decorated with array', () =>
     {
-        const spy = jest.spyOn(console, 'warn').mockImplementation(() =>
-        {
-        });
-
         @D.JsonClass()
         class X
         {
             @D.JsonArray()
             x: number;
+            @D.JsonArrayOfComplexProperty(X)
+            xs: X;
         }
 
         const x = new X();
         x.x = 10;
+        x.xs = new X();
         const s = M.JsonMapper.serialize(x);
         expect(s.x).toBeNull();
-        expect(spy).toHaveBeenCalled();
+        expect(s.xs).toBeNull();
+    });
+
+    it('should throw if enabled throwing for map fields not of array type but decorated with array', () =>
+    {
+        @D.JsonClass()
+        class X
+        {
+            @D.JsonArray(undefined, true)
+            x: number;
+        }
+
+        const x = new X();
+        x.x = 10;
+        expect(() => M.JsonMapper.serialize(x)).toThrow('Expected array, got number');
+
+        @D.JsonClass()
+        class Y
+        {
+            @D.JsonArrayOfComplexProperty(X, undefined, true)
+            Y: X;
+        }
+
+        const y = new Y();
+        y.Y = new X();
+        expect(() => M.JsonMapper.serialize(y)).toThrow('Expected array, got object');
     });
 
     it('should not map fields with no metadata associated', () =>

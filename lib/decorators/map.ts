@@ -1,32 +1,44 @@
-import { MappingParams } from '../interfaces';
-import { deserializeValue, serializeValue } from '../mapper';
-import { makeCustomDecorator, normalizeParams } from './common';
+import { Constructable, DecoratorInput } from '../interfaces';
+import { JsonMapper } from '../mapper';
+import { makeCustomDecorator } from './common';
+
+export type MapDecoratorInput<T> = DecoratorInput<T> & { complexType?: Constructable<any> };
 
 /**
  * A custom decorator for handling objects as maps.
  *
  * @param params the mapping options to apply to the values of the map.
  */
-export const JsonMap = (params?: MappingParams) =>
+export function JsonMap<T extends Map<any, any>>(params?: MapDecoratorInput<T>): PropertyDecorator
 {
-    const normalized = normalizeParams(params);
+    return makeCustomDecorator<T>(
+        () => ({
+            serializeFn: (map: Map<any, any>) =>
+            {
+                const ret = {};
 
-    const decoratorFactory = makeCustomDecorator(
-        (map: Map<any, any>) =>
-        {
-            const ret = {};
-            for (const [k, v] of map.entries())
-                ret[k] = serializeValue(normalized, v);
-            return ret;
-        },
-        obj =>
-        {
-            const map = new Map();
-            for (const key in obj)
-                map.set(key, deserializeValue(normalized, obj[key]));
-            return map;
-        }
-    );
+                const serializeFn = params?.complexType ?
+                    (v: any) => JsonMapper.serialize(v) :
+                    (v: any) => v;
 
-    return decoratorFactory();
+                for (const [k, v] of map.entries())
+                    ret[k] = serializeFn(v);
+
+                return ret;
+            },
+            deserializeFn: obj =>
+            {
+                const map = new Map();
+
+                const deserializeFn = params?.complexType ?
+                    (v: any) => JsonMapper.deserialize(params.complexType!, v) :
+                    (v: any) => v;
+
+                for (const key in obj)
+                    map.set(key, deserializeFn(obj[key]));
+
+                return map;
+            }
+        })
+    )(params);
 };
