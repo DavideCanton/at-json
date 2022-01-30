@@ -49,7 +49,11 @@ export class Person
     @JsonArray()
     numbers: number[] = [];
 
-    @JsonArray()
+    @JsonArray({
+        name: 'nums2',
+        serialize: n => n.toString(),
+        deserialize: n => parseInt(n, 10)
+    })
     numbers2: number[] | null;
 
     @JsonComplexProperty(AddressExtended, 'aa')

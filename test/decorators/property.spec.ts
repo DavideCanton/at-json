@@ -1,0 +1,48 @@
+import each from 'jest-each';
+import { JsonClass, JsonProperty, mappingMetadataKey } from '../../lib';
+import { _IDENTITY_FUNCTION } from '../../lib/decorators/property';
+
+const f1 = (v: number) => v.toString();
+const f2 = (v: string) => parseInt(v, 10);
+
+describe('JsonProperty', () =>
+{
+    each([
+        [
+            'basic params',
+            undefined,
+            { serialize: _IDENTITY_FUNCTION, deserialize: _IDENTITY_FUNCTION }
+        ],
+        [
+            'custom name',
+            { name: 'bar' },
+            { name: 'bar', serialize: _IDENTITY_FUNCTION, deserialize: _IDENTITY_FUNCTION }
+        ],
+        [
+            'custom serialize',
+            { serialize: f1 },
+            { serialize: f1, deserialize: _IDENTITY_FUNCTION }
+        ],
+        [
+            'custom deserialize',
+            { deserialize: f2 },
+            { deserialize: f2, serialize: _IDENTITY_FUNCTION }
+        ],
+        [
+            'custom all',
+            { name: 'bar', serialize: f1, deserialize: f2 },
+            { name: 'bar', serialize: f1, deserialize: f2 }
+        ]
+    ]).it('should work [%s]', (_name, args, expected) =>
+    {
+        @JsonClass()
+        class C
+        {
+            @JsonProperty(args)
+            foo: string;
+        }
+
+        const metadata = Reflect.getMetadata(mappingMetadataKey, C, 'foo');
+        expect(metadata).toEqual(expected);
+    });
+});

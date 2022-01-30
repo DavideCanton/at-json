@@ -1,9 +1,9 @@
 import { DecoratorInput, fieldsMetadataKey, IMappingOptions, mappingMetadataKey } from '../interfaces';
 
 
-export function normalizeParams<T>(params: DecoratorInput<T>): IMappingOptions<T>
+export function normalizeParams(params: DecoratorInput): IMappingOptions
 {
-    let resolvedParams: IMappingOptions<T>;
+    let resolvedParams: IMappingOptions;
 
     if (typeof params === 'string')
         resolvedParams = { name: params };
@@ -14,7 +14,7 @@ export function normalizeParams<T>(params: DecoratorInput<T>): IMappingOptions<T
 }
 
 
-export type CustomDecoratorFunctions<T> = NonNullable<Pick<IMappingOptions<T>, 'serialize' | 'deserialize'>>;
+export type CustomDecoratorFunctions = NonNullable<Pick<IMappingOptions, 'serialize' | 'deserialize'>>;
 
 /**
  * A custom decorator factory function, in order to allow defining custom reusable decorators.
@@ -22,24 +22,24 @@ export type CustomDecoratorFunctions<T> = NonNullable<Pick<IMappingOptions<T>, '
  * @param serializeFn the function used for serializing the value.
  * @param deserializeFn the function used for deserializing the value.
  */
-export function makeCustomDecorator<T>(
-    fn: (opt: IMappingOptions<T>) => CustomDecoratorFunctions<T>
-): (params?: DecoratorInput<T>) => PropertyDecorator
+export function makeCustomDecorator(
+    fn: (opt: IMappingOptions) => CustomDecoratorFunctions
+): (params?: DecoratorInput) => PropertyDecorator
 {
     return params =>
     {
-        let normalizedParams: IMappingOptions<T>;
+        let normalizedParams: IMappingOptions;
         if (params)
             normalizedParams = normalizeParams(params);
         else
             normalizedParams = {};
 
-        const { serialize: serializeFn, deserialize: deserializeFn } = fn(normalizedParams);
+        const { serialize, deserialize } = fn(normalizedParams);
 
-        const actualParams: IMappingOptions<T> = {
+        const actualParams: IMappingOptions = {
             ...normalizedParams,
-            serialize: serializeFn,
-            deserialize: deserializeFn
+            serialize,
+            deserialize
         };
 
         return function (target: Object, propertyKey: string | symbol)

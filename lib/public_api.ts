@@ -8,6 +8,7 @@ export
     IMappingOptions,
     JsonSerializable,
     Mapping,
+    NoCustomFunctionsDecoratorInput,
     fieldsMetadataKey,
     mappingMetadataKey,
     mappingOptionsKey

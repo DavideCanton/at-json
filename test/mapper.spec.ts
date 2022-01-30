@@ -7,11 +7,11 @@ import * as M from '../lib/mapper';
 import { dateEquals } from './test-utils';
 import { Person, AddressExtended, Gender, Address } from './test.models';
 
-describe('Mapper tests', () =>
+describe('JsonMapper', () =>
 {
     each([
         'string', 'object'
-    ]).it('should deserialize when type is %s', type =>
+    ]).it('should deserialize [%s]', type =>
     {
         const obj = {
             firstName: 'Piero',
@@ -302,7 +302,7 @@ describe('Mapper tests', () =>
     {
         const obj = {
             numbers: [1, 2, 3],
-            numbers2: [1, 2, 3],
+            nums2: [1, 2, 3],
             prevs: [
                 {
                     line1: 'c',
@@ -319,7 +319,7 @@ describe('Mapper tests', () =>
         const p = M.JsonMapper.deserialize(Person, obj);
 
         expect(p.numbers).toEqual(obj.numbers);
-        expect(p.numbers2).toEqual(obj.numbers2);
+        expect(p.numbers2).toEqual(obj.nums2);
 
         expect(p.prevAddresses).toEqual(obj.prevs);
     });
@@ -346,7 +346,7 @@ describe('Mapper tests', () =>
 
     it('should serialize correctly with custom decorators', () =>
     {
-        const dec = (ctor, params) => D.makeCustomDecorator<any>(() => (
+        const dec = (ctor, params) => D.makeCustomDecorator(() => (
             {
                 serialize: x => [M.JsonMapper.serialize(x)],
                 deserialize: x => M.JsonMapper.deserialize(ctor, x[0])

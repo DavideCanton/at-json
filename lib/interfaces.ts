@@ -121,6 +121,7 @@ export interface IMappingOptions
  * Decorator input
  */
 export type DecoratorInput = string | IMappingOptions | undefined;
+export type NoCustomFunctionsDecoratorInput = string | Omit<IMappingOptions, 'serialize' | 'deserialize'> | undefined;
 
 
 /** helper */

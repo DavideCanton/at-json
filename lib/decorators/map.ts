@@ -1,17 +1,17 @@
-import { Constructable, DecoratorInput } from '../interfaces';
+import { Constructable, DecoratorInput, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
-export type MapDecoratorInput = DecoratorInput & { complexType?: Constructable<any> };
+export type MapDecoratorInput = NoCustomFunctionsDecoratorInput & { complexType?: Constructable<any> };
 
 /**
  * A custom decorator for handling objects as maps.
  *
  * @param params the mapping options to apply to the values of the map.
  */
-export function JsonMap<T extends Map<any, any>>(params?: MapDecoratorInput): PropertyDecorator
+export function JsonMap(params?: MapDecoratorInput): PropertyDecorator
 {
-    return makeCustomDecorator<T>(
+    return makeCustomDecorator(
         () => ({
             serialize: (map: Map<any, any>) =>
             {

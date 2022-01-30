@@ -164,7 +164,7 @@ export class JsonMapper
             });
         }
 
-        // call eventual after deserialize callback to postprocess values
+        // call eventual after deserialize callback to post-process values
         if (I.hasAfterDeserialize(target))
             target.afterDeserialize();
 
