@@ -10,13 +10,13 @@ import { makeCustomDecorator } from './common';
  * - an object compliant to {@link IMappingOptions} interface.
  *
  * @export
- * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params
+ * @param {DecoratorInput} [params] the params
  * @returns the decorator for the property.
  */
-export function JsonProperty<T>(params?: DecoratorInput<T>): PropertyDecorator
+export function JsonProperty(params?: DecoratorInput): PropertyDecorator
 {
     const identity = (v: any) => v;
-    return makeCustomDecorator<T>(
+    return makeCustomDecorator(
         opt => ({
             serialize: opt?.serialize ?? identity,
             deserialize: opt?.deserialize ?? identity,

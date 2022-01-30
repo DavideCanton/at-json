@@ -14,18 +14,18 @@ import { makeCustomDecorator, mapArray } from './common';
  */
 export function JsonArrayOfComplexProperty<T extends JsonSerializable>(
     constructor: Constructable<T>,
-    params?: DecoratorInput<T[] | null>,
+    params?: DecoratorInput,
     throwIfNotArray?: boolean
 ): PropertyDecorator
 {
     return makeCustomDecorator<T[] | null>(
         () => ({
-            serialize: array => mapArray<T>(
+            serialize: (array: any) => mapArray<T>(
                 array,
                 item => JsonMapper.serialize(item),
                 throwIfNotArray
             ),
-            deserialize: array => mapArray<T>(array,
+            deserialize: (array: any) => mapArray<T>(array,
                 item => item === null || item === undefined ?
                     item :
                     JsonMapper.deserialize(constructor, item),

@@ -88,10 +88,12 @@ export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
  * @template T the source type of mapping
  * @template R the destination type of mapping
  */
-export interface IMappingOptions<T = any, R = any>
+export interface IMappingOptions
 {
     /**
      * Property name.
+     * If specified, the serialize process will convert the class property name to this value, and
+     * the deserialize process will convert the other way.
      *
      * @type {string}
      * @memberof IMappingOptions
@@ -99,26 +101,26 @@ export interface IMappingOptions<T = any, R = any>
     name?: string;
 
     /**
-     * Deserialization function.
+     * Custom deserialization function.
      *
-     * @type {Mapping<T, R>}
+     * @type {Mapping}
      * @memberof IMappingOptions
      */
-    deserialize?: Mapping<T, R>;
+    deserialize?: Mapping;
 
     /**
-     * Serialization function.
+     * Custom serialization function.
      *
-     * @type {Mapping<T, any>}
+     * @type {Mapping}
      * @memberof IMappingOptions
      */
-    serialize?: Mapping<T, any>;
+    serialize?: Mapping;
 }
 
 /**
  * Decorator input
  */
-export type DecoratorInput<T> = string | IMappingOptions<T, any> | undefined;
+export type DecoratorInput = string | IMappingOptions | undefined;
 
 
 /** helper */

@@ -1,4 +1,4 @@
-import { Constructable, DecoratorInput } from '../interfaces';
+import { Constructable, DecoratorInput, JsonSerializable } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
@@ -11,12 +11,12 @@ import { makeCustomDecorator } from './common';
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonComplexProperty<T extends object>(constructor: Constructable<T>, params?: DecoratorInput<T>)
+export function JsonComplexProperty<T extends JsonSerializable>(constructor: Constructable<T>, params?: DecoratorInput)
 {
     return makeCustomDecorator<T>(
         () => ({
-            serialize: value => JsonMapper.serialize(value),
-            deserialize: value => JsonMapper.deserialize<T>(constructor, value)
+            serialize: (value: T) => JsonMapper.serialize(value),
+            deserialize: (value: string | object) => JsonMapper.deserialize<T>(constructor, value)
         })
     )(params);
 }

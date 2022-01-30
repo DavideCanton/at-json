@@ -36,7 +36,7 @@ export function makeCustomDecorator<T>(
 
         const { serialize: serializeFn, deserialize: deserializeFn } = fn(normalizedParams);
 
-        const actualParams: IMappingOptions<any, T> = {
+        const actualParams: IMappingOptions<T> = {
             ...normalizedParams,
             serialize: serializeFn,
             deserialize: deserializeFn

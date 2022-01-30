@@ -8,12 +8,13 @@ import { makeCustomDecorator, mapArray } from './common';
  * `params` has the same meaning that the one in {@link JsonProperty}.
  *
  * @export
- * @param {(string | MappingFn<any, any> | IMappingOptions<any, any>)} [params] the params
+ * @param {DecoratorInput<T>} [params] the params
+ * @param {boolean} [throwIfNotArray] if the process should throw an error if the property value is not an array
  * @returns the decorator for the property.
  */
-export function JsonArray<T>(params?: DecoratorInput<T>, throwIfNotArray?: boolean): PropertyDecorator
+export function JsonArray(params?: DecoratorInput, throwIfNotArray?: boolean): PropertyDecorator
 {
-    return makeCustomDecorator<T>(
+    return makeCustomDecorator(
         opt => ({
             serialize: array => mapArray(array, opt?.serialize, throwIfNotArray),
             deserialize: array => mapArray(array, opt?.deserialize, throwIfNotArray)
