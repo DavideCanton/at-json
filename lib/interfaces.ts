@@ -5,7 +5,7 @@ export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
 /**
  * Type alias for mapping function.
  */
-export type MappingFn<T = any, R = any> = (val: T) => R;
+export type Mapping<T = any, R = any> = (val: T) => R;
 
 /**
  * Interface for constructor class.
@@ -57,6 +57,30 @@ export interface AfterDeserialize
 }
 
 /**
+ * Type guard for {@link CustomSerialize} interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a CustomSerialize interface
+ */
+export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize
+{
+    const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
+    return typeof fn === 'function';
+}
+
+/**
+ * Type guard for {@link AfterDeserialize} interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a AfterDeserialize interface
+ */
+export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
+{
+    const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
+    return typeof fn === 'function';
+}
+
+/**
  * Mapping options.
  *
  * @export
@@ -77,21 +101,28 @@ export interface IMappingOptions<T = any, R = any>
     /**
      * Deserialization function.
      *
-     * @type {MappingFn<T, R>}
+     * @type {Mapping<T, R>}
      * @memberof IMappingOptions
      */
-    mappingFn?: MappingFn<T, R>;
+    deserialize?: Mapping<T, R>;
 
     /**
      * Serialization function.
      *
-     * @type {MappingFn<T, any>}
+     * @type {Mapping<T, any>}
      * @memberof IMappingOptions
      */
-    serializeFn?: MappingFn<T, any>;
+    serialize?: Mapping<T, any>;
 }
 
 /**
  * Decorator input
  */
 export type DecoratorInput<T> = string | IMappingOptions<T, any> | undefined;
+
+
+/** helper */
+function nameOf<T>(k: keyof T): string
+{
+    return k as string;
+}

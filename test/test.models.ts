@@ -31,7 +31,7 @@ export class Person
     @JsonProperty()
     firstName: string;
 
-    @JsonProperty({ mappingFn: Person.mapLastName })
+    @JsonProperty({ deserialize: Person.mapLastName })
     lastName: string;
 
     @JsonProperty('eta')

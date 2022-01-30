@@ -8,7 +8,7 @@
         "prepublishOnly": "npm run build",
         "prebuild": "npm run clean",
         "build": "webpack",
-        "clean": "rimraf dist coverage docs",
+        "clean": "rimraf dist coverage",
         "test": "jest",
         "docs": "typedoc lib/index.ts",
         "test:coverage": "npm run test -- --collect-coverage",

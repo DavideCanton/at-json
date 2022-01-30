@@ -18,8 +18,8 @@ export function JsonProperty<T>(params?: DecoratorInput<T>): PropertyDecorator
     const identity = (v: any) => v;
     return makeCustomDecorator<T>(
         opt => ({
-            serializeFn: opt?.serializeFn ?? identity,
-            deserializeFn: opt?.mappingFn ?? identity,
+            serialize: opt?.serialize ?? identity,
+            deserialize: opt?.deserialize ?? identity,
         })
     )(params);
 }

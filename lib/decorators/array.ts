@@ -15,8 +15,8 @@ export function JsonArray<T>(params?: DecoratorInput<T>, throwIfNotArray?: boole
 {
     return makeCustomDecorator<T>(
         opt => ({
-            serializeFn: array => mapArray(array, opt?.serializeFn, throwIfNotArray),
-            deserializeFn: array => mapArray(array, opt?.mappingFn, throwIfNotArray)
+            serialize: array => mapArray(array, opt?.serialize, throwIfNotArray),
+            deserialize: array => mapArray(array, opt?.deserialize, throwIfNotArray)
         })
     )(params);
 }

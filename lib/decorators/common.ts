@@ -14,6 +14,8 @@ export function normalizeParams<T>(params: DecoratorInput<T>): IMappingOptions<T
 }
 
 
+export type CustomDecoratorFunctions<T> = NonNullable<Pick<IMappingOptions<T>, 'serialize' | 'deserialize'>>;
+
 /**
  * A custom decorator factory function, in order to allow defining custom reusable decorators.
  *
@@ -21,10 +23,7 @@ export function normalizeParams<T>(params: DecoratorInput<T>): IMappingOptions<T
  * @param deserializeFn the function used for deserializing the value.
  */
 export function makeCustomDecorator<T>(
-    fn: (opt: IMappingOptions<T>) => {
-        serializeFn: NonNullable<IMappingOptions<T>['serializeFn']>;
-        deserializeFn: NonNullable<IMappingOptions['mappingFn']>;
-    }
+    fn: (opt: IMappingOptions<T>) => CustomDecoratorFunctions<T>
 ): (params?: DecoratorInput<T>) => PropertyDecorator
 {
     return params =>
@@ -35,12 +34,12 @@ export function makeCustomDecorator<T>(
         else
             normalizedParams = {};
 
-        const { serializeFn, deserializeFn } = fn(normalizedParams);
+        const { serialize: serializeFn, deserialize: deserializeFn } = fn(normalizedParams);
 
         const actualParams: IMappingOptions<any, T> = {
             ...normalizedParams,
-            serializeFn,
-            mappingFn: deserializeFn
+            serialize: serializeFn,
+            deserialize: deserializeFn
         };
 
         return function (target: Object, propertyKey: string | symbol)

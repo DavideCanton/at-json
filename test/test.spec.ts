@@ -348,8 +348,8 @@ describe('Mapper tests', () =>
     {
         const dec = (ctor, params) => D.makeCustomDecorator<any>(() => (
             {
-                serializeFn: x => [M.JsonMapper.serialize(x)],
-                deserializeFn: x => M.JsonMapper.deserialize(ctor, x[0])
+                serialize: x => [M.JsonMapper.serialize(x)],
+                deserialize: x => M.JsonMapper.deserialize(ctor, x[0])
             })
         )(params);
 
@@ -359,8 +359,8 @@ describe('Mapper tests', () =>
             @D.JsonProperty('n') name: string;
             @D.JsonProperty({
                 name: 's',
-                serializeFn: (x: string) => x.toLowerCase(),
-                mappingFn: (x: string) => x.toUpperCase()
+                serialize: (x: string) => x.toLowerCase(),
+                deserialize: (x: string) => x.toUpperCase()
             }) surname: string;
         }
 

@@ -2,8 +2,8 @@ import { makeCustomDecorator } from '../lib';
 
 export const JsonDateProperty = makeCustomDecorator<Date>(
     () => ({
-        serializeFn: d => d?.getFullYear()?.toString() ?? '',
-        deserializeFn: s => new Date(+s, 2, 12)
+        serialize: d => d?.getFullYear()?.toString() ?? '',
+        deserialize: s => new Date(+s, 2, 12)
     })
 );
 

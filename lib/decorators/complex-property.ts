@@ -11,12 +11,12 @@ import { makeCustomDecorator } from './common';
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonComplexProperty<T>(constructor: Constructable<T>, params?: DecoratorInput<T>)
+export function JsonComplexProperty<T extends object>(constructor: Constructable<T>, params?: DecoratorInput<T>)
 {
     return makeCustomDecorator<T>(
         () => ({
-            serializeFn: value => JsonMapper.serialize(value),
-            deserializeFn: value => JsonMapper.deserialize<T>(constructor, value)
+            serialize: value => JsonMapper.serialize(value),
+            deserialize: value => JsonMapper.deserialize<T>(constructor, value)
         })
     )(params);
 }

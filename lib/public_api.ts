@@ -1,3 +1,15 @@
 export { JsonMapper } from './mapper';
-export * from './interfaces';
+export
+{
+    AfterDeserialize,
+    Constructable,
+    CustomSerialize,
+    DecoratorInput,
+    IMappingOptions,
+    JsonSerializable,
+    Mapping,
+    fieldsMetadataKey,
+    mappingMetadataKey,
+    mappingOptionsKey
+} from './interfaces';
 export * from './decorators';

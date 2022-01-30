@@ -16,16 +16,16 @@ export function JsonArrayOfComplexProperty<T extends JsonSerializable>(
     constructor: Constructable<T>,
     params?: DecoratorInput<T[] | null>,
     throwIfNotArray?: boolean
-)
+): PropertyDecorator
 {
     return makeCustomDecorator<T[] | null>(
         () => ({
-            serializeFn: array => mapArray<T>(
+            serialize: array => mapArray<T>(
                 array,
                 item => JsonMapper.serialize(item),
                 throwIfNotArray
             ),
-            deserializeFn: array => mapArray<T>(array,
+            deserialize: array => mapArray<T>(array,
                 item => item === null || item === undefined ?
                     item :
                     JsonMapper.deserialize(constructor, item),

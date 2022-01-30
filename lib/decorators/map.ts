@@ -13,7 +13,7 @@ export function JsonMap<T extends Map<any, any>>(params?: MapDecoratorInput<T>):
 {
     return makeCustomDecorator<T>(
         () => ({
-            serializeFn: (map: Map<any, any>) =>
+            serialize: (map: Map<any, any>) =>
             {
                 const ret = {};
 
@@ -26,7 +26,7 @@ export function JsonMap<T extends Map<any, any>>(params?: MapDecoratorInput<T>):
 
                 return ret;
             },
-            deserializeFn: obj =>
+            deserialize: obj =>
             {
                 const map = new Map();
 
