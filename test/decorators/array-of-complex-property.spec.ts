@@ -40,7 +40,7 @@ describe('JsonArrayOfComplexProperty', () =>
             foo: X[];
         }
 
-        if (throwIfNotArray)
+        if(throwIfNotArray)
             expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
         else
         {

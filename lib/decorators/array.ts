@@ -1,4 +1,3 @@
-import { options } from 'benchmark';
 import { DecoratorInput } from '../interfaces';
 import { makeCustomDecorator, mapArray } from './common';
 
@@ -66,9 +65,8 @@ import { makeCustomDecorator, mapArray } from './common';
  */
 export function JsonArray(params?: DecoratorInput, throwIfNotArray?: boolean): PropertyDecorator
 {
-    if (typeof params === 'object')
-        if (!!params.serialize !== !!params.deserialize)
-            throw new Error('serialize and deserialize must be defined together');
+    if(typeof params === 'object' && !!params.serialize !== !!params.deserialize)
+        throw new Error('serialize and deserialize must be defined together');
 
     return makeCustomDecorator(
         opt => ({

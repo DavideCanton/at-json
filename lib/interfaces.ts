@@ -62,6 +62,7 @@ export interface AfterDeserialize
  * @param mapValue value to check
  * @returns if the parameter is a CustomSerialize interface
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize
 {
     const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
@@ -74,6 +75,7 @@ export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSeria
  * @param mapValue value to check
  * @returns if the parameter is a AfterDeserialize interface
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
 {
     const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];

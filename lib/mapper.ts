@@ -28,18 +28,18 @@ export class JsonMapper
     static serialize(source: I.JsonSerializable): any
     {
         // if val is nil no need to do anything
-        if (source === null || source === undefined)
+        if(source === null || source === undefined)
             return source;
 
         // retrieve the object constructor in order to load the class decorator metadata
         const ctor: I.Constructable<I.JsonSerializable> = Object.getPrototypeOf(source).constructor;
         const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
-        if (!ctorOptions)
+        if(!ctorOptions)
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
 
         // let's try to call an eventual custom export before the standard one
         const customExport = exportCustom(source);
-        if (customExport.serialized)
+        if(customExport.serialized)
             return customExport.value;
 
         // should missing properties be ignored
@@ -55,9 +55,9 @@ export class JsonMapper
 
             // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
             // maybe here a clone should be used instead of a shallow copy
-            if (options === undefined)
+            if(options === undefined)
             {
-                if (!ignoreUndecoratedProperties)
+                if(!ignoreUndecoratedProperties)
                     target[propName] = propValue;
 
                 return;
@@ -67,7 +67,7 @@ export class JsonMapper
             // overridden in the decorator
             const name = options.name || propName;
 
-            if (options.serialize)
+            if(options.serialize)
                 target[name] = options.serialize(propValue);
             else
                 target[name] = propValue;
@@ -107,16 +107,17 @@ export class JsonMapper
      */
     static deserialize<T>(
         ctor: I.Constructable<T>,
+        // eslint-disable-next-line @typescript-eslint/ban-types
         source: string | object,
         stringParser: (s: string) => any = JSON.parse
     ): T
     {
         const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
-        if (!ctorOptions)
+        if(!ctorOptions)
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
 
         // automatic parse of strings
-        if (typeof source === 'string')
+        if(typeof source === 'string')
             source = stringParser(source);
 
         const target = new ctor();
@@ -136,15 +137,15 @@ export class JsonMapper
             const options: I.IMappingOptions = Reflect.getMetadata(I.mappingMetadataKey, ctor, propName);
 
             /* istanbul ignore next */
-            if (options === undefined)
+            if(options === undefined)
                 return;
 
             const name = options.name || propName;
 
-            if (!has.call(source, name))
+            if(!has.call(source, name))
                 return;
 
-            if (options.deserialize)
+            if(options.deserialize)
                 target[propName] = options.deserialize(source[name]);
             else
                 target[propName] = source[name];
@@ -152,20 +153,20 @@ export class JsonMapper
             mapped.add(name);
         });
 
-        if (!ignoreUndecoratedProperties)
+        if(!ignoreUndecoratedProperties)
         {
             // iterate ALL object keys (even undecorated ones, since we are using Object.keys)
             Object.keys(source).forEach(propName =>
             {
                 // copy over not mapped properties
                 // maybe here a clone should be performed?
-                if (!mapped.has(propName))
+                if(!mapped.has(propName))
                     target[propName] = source[propName];
             });
         }
 
         // call eventual after deserialize callback to post-process values
-        if (I.hasAfterDeserialize(target))
+        if(I.hasAfterDeserialize(target))
             target.afterDeserialize();
 
         return target;
@@ -182,7 +183,7 @@ export class JsonMapper
  */
 function exportCustom(mapValue: any): { serialized: true; value: any } | { serialized: false }
 {
-    if (I.hasCustomSerializeExport(mapValue))
+    if(I.hasCustomSerializeExport(mapValue))
         return {
             serialized: true,
             value: mapValue.customSerialize()

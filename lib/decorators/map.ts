@@ -1,4 +1,4 @@
-import { Constructable, DecoratorInput, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
@@ -41,4 +41,4 @@ export function JsonMap(params?: MapDecoratorInput): PropertyDecorator
             }
         })
     )(params);
-};
+}

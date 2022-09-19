@@ -42,6 +42,7 @@ export function makeCustomDecorator(
             deserialize
         };
 
+        // eslint-disable-next-line @typescript-eslint/ban-types
         return function (target: Object, propertyKey: string | symbol)
         {
             const { constructor: ctor } = target;
@@ -52,6 +53,7 @@ export function makeCustomDecorator(
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function mapArray<T>(propertyValue: any, deserializeItem?: (t: T) => any, throwIfNotArray?: boolean): T[] | null
 {
     if (Array.isArray(propertyValue))

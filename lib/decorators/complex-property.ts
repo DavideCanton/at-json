@@ -1,4 +1,4 @@
-import { Constructable, DecoratorInput, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
@@ -53,11 +53,12 @@ import { makeCustomDecorator } from './common';
  * @param name the name of the property
  * @returns the decorator for the property.
  */
-export function JsonComplexProperty<T extends JsonSerializable>(constructor: Constructable<T>, params?: NoCustomFunctionsDecoratorInput)
+export function JsonComplexProperty<T extends JsonSerializable>(constructor: Constructable<T>, params?: NoCustomFunctionsDecoratorInput): PropertyDecorator
 {
     return makeCustomDecorator(
         () => ({
             serialize: (value: T) => JsonMapper.serialize(value),
+            // eslint-disable-next-line @typescript-eslint/ban-types
             deserialize: (value: string | object) => JsonMapper.deserialize<T>(constructor, value)
         })
     )(params);

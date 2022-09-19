@@ -1,4 +1,6 @@
 {
     "extends": "./tsconfig.json",
-    "exclude": []
+    "exclude": [
+        "dist", "docs", "setupJest.ts"
+    ]
 }

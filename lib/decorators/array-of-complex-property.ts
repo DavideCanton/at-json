@@ -1,4 +1,4 @@
-import { Constructable, DecoratorInput, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator, mapArray } from './common';
 

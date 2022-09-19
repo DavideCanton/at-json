@@ -22,7 +22,7 @@ export class AddressExtended extends Address implements AfterDeserialize
 
     line3: string;
 
-    afterDeserialize() { }
+    afterDeserialize(): void { }
 }
 
 @JsonClass()

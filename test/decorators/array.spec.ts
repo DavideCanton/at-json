@@ -1,7 +1,7 @@
 
 import * as common from '../../lib/decorators/common';
 import each from 'jest-each';
-import { JsonArray, JsonClass, JsonMap, JsonMapper, mappingMetadataKey } from '../../lib';
+import { JsonArray, JsonClass, JsonMapper, mappingMetadataKey } from '../../lib';
 
 
 const f1 = (v: number) => v.toString();
@@ -59,6 +59,7 @@ describe('JsonArray', () =>
         expect(() =>
         {
             @JsonClass()
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class C
             {
                 @JsonArray(args)
@@ -78,7 +79,7 @@ describe('JsonArray', () =>
             foo: number[];
         }
 
-        if (throwIfNotArray)
+        if(throwIfNotArray)
             expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
         else
         {
