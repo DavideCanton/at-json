@@ -1,7 +1,10 @@
 import { DecoratorInput } from '../interfaces';
 import { makeCustomDecorator } from './common';
 
-export const _IDENTITY_FUNCTION: <T>(v: T) => T = v => v;
+export function _IDENTITY_FUNCTION<T>(v: T)
+{
+    return v;
+}
 
 /**
  * The basic decorator for simple properties.
