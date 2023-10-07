@@ -1,6 +1,17 @@
-export { JsonMapper } from './mapper';
-export
-{
+export {
+    CustomDecoratorFunctions,
+    IJsonClassOptions,
+    JsonArray,
+    JsonArrayOfComplexProperty,
+    JsonClass,
+    JsonComplexProperty,
+    JsonConstructor,
+    JsonMap,
+    JsonProperty,
+    MapDecoratorInput,
+    makeCustomDecorator,
+} from './decorators';
+export {
     AfterDeserialize,
     Constructable,
     CustomSerialize,
@@ -11,6 +22,6 @@ export
     NoCustomFunctionsDecoratorInput,
     fieldsMetadataKey,
     mappingMetadataKey,
-    mappingOptionsKey
+    mappingOptionsKey,
 } from './interfaces';
-export * from './decorators';
+export { JsonMapper } from './mapper';

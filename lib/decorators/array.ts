@@ -1,7 +1,6 @@
 import { DecoratorInput } from '../interfaces';
 import { makeCustomDecorator, mapArray } from './common';
 
-
 /**
  * The basic decorator for array of simple properties.
  *
@@ -63,15 +62,19 @@ import { makeCustomDecorator, mapArray } from './common';
  * @param {boolean} throwIfNotArray if true, throws an error if the property is not an array.
  * @returns the decorator for the property.
  */
-export function JsonArray(params?: DecoratorInput, throwIfNotArray?: boolean): PropertyDecorator
-{
-    if(typeof params === 'object' && !!params.serialize !== !!params.deserialize)
+export function JsonArray(
+    params?: DecoratorInput,
+    throwIfNotArray?: boolean
+): PropertyDecorator {
+    if (
+        typeof params === 'object' &&
+        !!params.serialize !== !!params.deserialize
+    )
         throw new Error('serialize and deserialize must be defined together');
 
-    return makeCustomDecorator(
-        opt => ({
-            serialize: array => mapArray(array, opt?.serialize, throwIfNotArray),
-            deserialize: array => mapArray(array, opt?.deserialize, throwIfNotArray)
-        })
-    )(params);
+    return makeCustomDecorator(opt => ({
+        serialize: array => mapArray(array, opt?.serialize, throwIfNotArray),
+        deserialize: array =>
+            mapArray(array, opt?.deserialize, throwIfNotArray),
+    }))(params);
 }

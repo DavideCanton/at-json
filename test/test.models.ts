@@ -1,33 +1,36 @@
-import { AfterDeserialize, JsonArray, JsonArrayOfComplexProperty, JsonClass, JsonComplexProperty, JsonProperty } from '../lib';
+import {
+    AfterDeserialize,
+    JsonArray,
+    JsonArrayOfComplexProperty,
+    JsonClass,
+    JsonComplexProperty,
+    JsonProperty,
+} from '../lib';
 import { JsonDateProperty } from './test-utils';
 
-export enum Gender
-{
+export enum Gender {
     M = 0,
-    F = 1
+    F = 1,
 }
 
 @JsonClass({ ignoreUndecoratedProperties: true })
-export class Address
-{
+export class Address {
     @JsonProperty() line1: string;
 
     @JsonProperty() line2: string;
 }
 
 @JsonClass({ ignoreUndecoratedProperties: false })
-export class AddressExtended extends Address implements AfterDeserialize
-{
+export class AddressExtended extends Address implements AfterDeserialize {
     [other: string]: any;
 
     line3: string;
 
-    afterDeserialize(): void { }
+    afterDeserialize(): void {}
 }
 
 @JsonClass()
-export class Person
-{
+export class Person {
     @JsonProperty()
     firstName: string;
 
@@ -52,7 +55,7 @@ export class Person
     @JsonArray({
         name: 'nums2',
         serialize: n => n.toString(),
-        deserialize: n => parseInt(n, 10)
+        deserialize: n => parseInt(n, 10),
     })
     numbers2: number[] | null;
 
@@ -68,10 +71,7 @@ export class Person
     @JsonArrayOfComplexProperty(Address)
     nextAddresses: Address[] | null;
 
-    static mapLastName(s: string): string
-    {
+    static mapLastName(s: string): string {
         return s.toUpperCase();
     }
 }
-
-

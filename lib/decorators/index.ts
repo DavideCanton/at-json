@@ -7,4 +7,3 @@ export { CustomDecoratorFunctions, makeCustomDecorator } from './common';
 export { JsonComplexProperty } from './complex-property';
 export { JsonMap, MapDecoratorInput } from './map';
 export { JsonProperty } from './property';
-

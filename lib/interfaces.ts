@@ -23,9 +23,7 @@ export type Constructable<T> = new (...args: any[]) => T;
  * @interface JsonSerializable
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface JsonSerializable
-{
-}
+export interface JsonSerializable {}
 
 /**
  * Interface for classes that want to apply a custom serialization logic.
@@ -34,8 +32,7 @@ export interface JsonSerializable
  * It is the responsibility of the implementation to recursively serialize
  * nested objects.
  */
-export interface CustomSerialize
-{
+export interface CustomSerialize {
     /**
      * Custom serialization logic.
      */
@@ -48,8 +45,7 @@ export interface CustomSerialize
  * If a class implements this interface, its {@link afterDeserialize}
  * method will be called after the deserialization.
  */
-export interface AfterDeserialize
-{
+export interface AfterDeserialize {
     /**
      * Additional deserialization logic.
      */
@@ -63,8 +59,9 @@ export interface AfterDeserialize
  * @returns if the parameter is a CustomSerialize interface
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize
-{
+export function hasCustomSerializeExport(
+    mapValue: any
+): mapValue is CustomSerialize {
     const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
     return typeof fn === 'function';
 }
@@ -76,8 +73,9 @@ export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSeria
  * @returns if the parameter is a AfterDeserialize interface
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
-{
+export function hasAfterDeserialize(
+    mapValue: any
+): mapValue is AfterDeserialize {
     const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
     return typeof fn === 'function';
 }
@@ -90,8 +88,7 @@ export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
  * @template T the source type of mapping
  * @template R the destination type of mapping
  */
-export interface IMappingOptions
-{
+export interface IMappingOptions {
     /**
      * Property name.
      * If specified, the serialize process will convert the class property name to this value, and
@@ -123,11 +120,12 @@ export interface IMappingOptions
  * Decorator input
  */
 export type DecoratorInput = string | IMappingOptions | undefined;
-export type NoCustomFunctionsDecoratorInput = string | Omit<IMappingOptions, 'serialize' | 'deserialize'> | undefined;
-
+export type NoCustomFunctionsDecoratorInput =
+    | string
+    | Omit<IMappingOptions, 'serialize' | 'deserialize'>
+    | undefined;
 
 /** helper */
-function nameOf<T>(k: keyof T): string
-{
+function nameOf<T>(k: keyof T): string {
     return k as string;
 }

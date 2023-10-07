@@ -1,7 +1,10 @@
-import { Constructable, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import {
+    Constructable,
+    JsonSerializable,
+    NoCustomFunctionsDecoratorInput,
+} from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator, mapArray } from './common';
-
 
 /**
  * Decorator for complex-type array properties to be (de)serialized correctly.
@@ -9,7 +12,12 @@ import { makeCustomDecorator, mapArray } from './common';
  *
  * Usage examples:
  * ```typescript
- * import { JsonClass, JsonMapper, JsonProperty, JsonArrayOfComplexProperty } from '@mdcc/at-json';
+ * import {
+ *  JsonClass,
+ *  JsonMapper,
+ *  JsonProperty,
+ *  JsonArrayOfComplexProperty
+ * } from '@mdcc/at-json';
  *
  * @JsonClass()
  * class SubClass
@@ -68,21 +76,22 @@ export function JsonArrayOfComplexProperty<T extends JsonSerializable>(
     constructor: Constructable<T>,
     params?: NoCustomFunctionsDecoratorInput,
     throwIfNotArray?: boolean
-): PropertyDecorator
-{
-    return makeCustomDecorator(
-        () => ({
-            serialize: (array: any) => mapArray<T>(
+): PropertyDecorator {
+    return makeCustomDecorator(() => ({
+        serialize: (array: any) =>
+            mapArray<T>(
                 array,
                 item => JsonMapper.serialize(item),
                 throwIfNotArray
             ),
-            deserialize: (array: any) => mapArray<T>(array,
-                item => item === null || item === undefined ?
-                    item :
-                    JsonMapper.deserialize(constructor, item),
+        deserialize: (array: any) =>
+            mapArray<T>(
+                array,
+                item =>
+                    item === null || item === undefined
+                        ? item
+                        : JsonMapper.deserialize(constructor, item),
                 throwIfNotArray
-            )
-        })
-    )(params);
+            ),
+    }))(params);
 }

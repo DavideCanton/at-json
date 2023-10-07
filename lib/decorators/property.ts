@@ -1,8 +1,7 @@
 import { DecoratorInput } from '../interfaces';
 import { makeCustomDecorator } from './common';
 
-export function _IDENTITY_FUNCTION<T>(v: T)
-{
+export function _IDENTITY_FUNCTION<T>(v: T) {
     return v;
 }
 
@@ -56,12 +55,9 @@ export function _IDENTITY_FUNCTION<T>(v: T)
  * @param {DecoratorInput} [params] the params
  * @returns the decorator for the property.
  */
-export function JsonProperty(params?: DecoratorInput): PropertyDecorator
-{
-    return makeCustomDecorator(
-        opt => ({
-            serialize: opt?.serialize ?? _IDENTITY_FUNCTION,
-            deserialize: opt?.deserialize ?? _IDENTITY_FUNCTION,
-        })
-    )(params);
+export function JsonProperty(params?: DecoratorInput): PropertyDecorator {
+    return makeCustomDecorator(opt => ({
+        serialize: opt?.serialize ?? _IDENTITY_FUNCTION,
+        deserialize: opt?.deserialize ?? _IDENTITY_FUNCTION,
+    }))(params);
 }

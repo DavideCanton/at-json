@@ -1,24 +1,25 @@
-
 import each from 'jest-each';
-import { JsonArrayOfComplexProperty, JsonClass, JsonMapper, JsonProperty, mappingMetadataKey } from '../../lib';
+import {
+    JsonArrayOfComplexProperty,
+    JsonClass,
+    JsonMapper,
+    JsonProperty,
+    mappingMetadataKey,
+} from '../../lib';
 
 @JsonClass()
-class X
-{
+class X {
     @JsonProperty()
     s: string;
 }
 
-describe('JsonArrayOfComplexProperty', () =>
-{
+describe('JsonArrayOfComplexProperty', () => {
     each([
         ['basic params', undefined],
-        ['custom name', { name: 'bar' }]
-    ]).it('should work [%s]', (_name, args) =>
-    {
+        ['custom name', { name: 'bar' }],
+    ]).it('should work [%s]', (_name, args) => {
         @JsonClass()
-        class C
-        {
+        class C {
             @JsonArrayOfComplexProperty(X, args)
             foo: X[];
         }
@@ -29,26 +30,26 @@ describe('JsonArrayOfComplexProperty', () =>
         // TODO add more tests
     });
 
-    each([
-        true, false
-    ]).it('should handle throwIfNotArray correctly [%s]', (throwIfNotArray) =>
-    {
-        @JsonClass()
-        class C
-        {
-            @JsonArrayOfComplexProperty(X, undefined, throwIfNotArray)
-            foo: X[];
-        }
+    each([true, false]).it(
+        'should handle throwIfNotArray correctly [%s]',
+        throwIfNotArray => {
+            @JsonClass()
+            class C {
+                @JsonArrayOfComplexProperty(X, undefined, throwIfNotArray)
+                foo: X[];
+            }
 
-        if(throwIfNotArray)
-            expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
-        else
-        {
-            const c = JsonMapper.deserialize(C, { foo: 'bar' });
-            expect(c.foo).toBeNull();
-        }
+            if (throwIfNotArray)
+                expect(() =>
+                    JsonMapper.deserialize(C, { foo: 'bar' })
+                ).toThrowError('Expected array, got string');
+            else {
+                const c = JsonMapper.deserialize(C, { foo: 'bar' });
+                expect(c.foo).toBeNull();
+            }
 
-        const c2 = JsonMapper.deserialize(C, {});
-        expect(c2.foo).toBeUndefined();
-    });
+            const c2 = JsonMapper.deserialize(C, {});
+            expect(c2.foo).toBeUndefined();
+        }
+    );
 });

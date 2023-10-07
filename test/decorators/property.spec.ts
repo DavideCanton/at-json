@@ -6,39 +6,32 @@ const f1 = (v: number) => v.toString();
 const f2 = (v: string) => parseInt(v, 10);
 const _id = _IDENTITY_FUNCTION;
 
-describe('JsonProperty', () =>
-{
+describe('JsonProperty', () => {
     each([
-        [
-            'basic params',
-            undefined,
-            { serialize: _id, deserialize: _id }
-        ],
+        ['basic params', undefined, { serialize: _id, deserialize: _id }],
         [
             'custom name',
             { name: 'bar' },
-            { name: 'bar', serialize: _id, deserialize: _id }
+            { name: 'bar', serialize: _id, deserialize: _id },
         ],
         [
             'custom serialize',
             { serialize: f1 },
-            { serialize: f1, deserialize: _id }
+            { serialize: f1, deserialize: _id },
         ],
         [
             'custom deserialize',
             { deserialize: f2 },
-            { deserialize: f2, serialize: _id }
+            { deserialize: f2, serialize: _id },
         ],
         [
             'custom all',
             { name: 'bar', serialize: f1, deserialize: f2 },
-            { name: 'bar', serialize: f1, deserialize: f2 }
-        ]
-    ]).it('should work [%s]', (_name, args, expected) =>
-    {
+            { name: 'bar', serialize: f1, deserialize: f2 },
+        ],
+    ]).it('should work [%s]', (_name, args, expected) => {
         @JsonClass()
-        class C
-        {
+        class C {
             @JsonProperty(args)
             foo: string;
         }

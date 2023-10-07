@@ -1,30 +1,30 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ release ]
+    push:
+        branches: [release]
 
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment: NPM
-    steps:
-      - uses: actions/checkout@v2
-        id: checkout-repo
-        name: Checkout Repository
-        
-      - uses: actions/setup-node@v2
-        name: Setup node
-        with:
-          node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
+    build:
+        runs-on: ubuntu-latest
+        environment: NPM
+        steps:
+            - uses: actions/checkout@v2
+              id: checkout-repo
+              name: Checkout Repository
 
-      - run: npm install
-        name: Install dependencies
+            - uses: actions/setup-node@v2
+              name: Setup node
+              with:
+                  node-version: '16.x'
+                  registry-url: 'https://registry.npmjs.org'
 
-      - run: npm publish --access public --verbose
-        name: Deploy
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - run: npm install
+              name: Install dependencies
+
+            - run: npm publish --access public --verbose
+              name: Deploy
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

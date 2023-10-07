@@ -12,13 +12,7 @@
         "strictPropertyInitialization": false,
         "sourceMap": true,
         "outDir": "./dist",
-        "lib": [
-            "es6"
-        ]
+        "lib": ["es6"]
     },
-    "exclude": [
-        "test",
-        "dist",
-        "./setupJest.ts"
-    ]
+    "exclude": ["test", "dist", "./setupJest.ts"]
 }

@@ -1,26 +1,28 @@
 import each from 'jest-each';
-import { JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, mappingMetadataKey } from '../../lib';
+import {
+    JsonClass,
+    JsonComplexProperty,
+    JsonMapper,
+    JsonProperty,
+    mappingMetadataKey,
+} from '../../lib';
 
 @JsonClass()
-class X
-{
+class X {
     @JsonProperty()
     s: string;
 }
 
-describe('JsonComplexProperty', () =>
-{
+describe('JsonComplexProperty', () => {
     each([
         ['basic params', undefined],
-        ['custom name', { name: 'bar' }]
-    ]).it('should work [%s]', (_name, args) =>
-    {
+        ['custom name', { name: 'bar' }],
+    ]).it('should work [%s]', (_name, args) => {
         const spyD = jest.spyOn(JsonMapper, 'deserialize');
         const spyS = jest.spyOn(JsonMapper, 'serialize');
 
         @JsonClass()
-        class C
-        {
+        class C {
             @JsonComplexProperty(X, args)
             foo: X;
         }
