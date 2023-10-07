@@ -1,22 +1,18 @@
-import {
-    DecoratorInput,
-    fieldsMetadataKey,
-    IMappingOptions,
-    mappingMetadataKey,
-} from '../interfaces';
+import { DecoratorInput, fieldsMetadataKey, IMappingOptions, mappingMetadataKey } from '../interfaces';
 
 function normalizeParams(params: DecoratorInput): IMappingOptions {
     let resolvedParams: IMappingOptions;
 
-    if (typeof params === 'string') resolvedParams = { name: params };
-    else resolvedParams = params || {};
+    if (typeof params === 'string') {
+        resolvedParams = { name: params };
+    } else {
+        resolvedParams = params || {};
+    }
 
     return resolvedParams;
 }
 
-export type CustomDecoratorFunctions = NonNullable<
-    Pick<IMappingOptions, 'serialize' | 'deserialize'>
->;
+export type CustomDecoratorFunctions = NonNullable<Pick<IMappingOptions, 'serialize' | 'deserialize'>>;
 
 /**
  * A custom decorator factory function, in order to allow defining custom reusable decorators.
@@ -29,8 +25,11 @@ export function makeCustomDecorator(
 ): (params?: DecoratorInput) => PropertyDecorator {
     return params => {
         let normalizedParams: IMappingOptions;
-        if (params) normalizedParams = normalizeParams(params);
-        else normalizedParams = {};
+        if (params) {
+            normalizedParams = normalizeParams(params);
+        } else {
+            normalizedParams = {};
+        }
 
         const { serialize, deserialize } = fn(normalizedParams);
 
@@ -42,18 +41,10 @@ export function makeCustomDecorator(
 
         // eslint-disable-next-line @typescript-eslint/ban-types
         return function (target: Object, propertyKey: string | symbol) {
-            const { constructor: ctor } = target;
-            const objMetadata =
-                Reflect.getMetadata(fieldsMetadataKey, ctor) || [];
-            Reflect.defineMetadata(
-                fieldsMetadataKey,
-                [...objMetadata, propertyKey],
-                ctor
-            );
-            return Reflect.metadata(mappingMetadataKey, actualParams)(
-                ctor,
-                propertyKey
-            );
+            const { constructor } = target;
+            const objMetadata = Reflect.getMetadata(fieldsMetadataKey, constructor) || [];
+            Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], constructor);
+            return Reflect.metadata(mappingMetadataKey, actualParams)(constructor, propertyKey);
         };
     };
 }
@@ -66,12 +57,11 @@ export function mapArray<T>(
 ): T[] | null {
     if (Array.isArray(propertyValue)) {
         // map deserialize on the array
-        return propertyValue.map(item =>
-            deserializeItem ? deserializeItem(item) : item
-        );
+        return propertyValue.map(item => (deserializeItem ? deserializeItem(item) : item));
     } else {
-        if (throwIfNotArray)
+        if (throwIfNotArray) {
             throw new Error(`Expected array, got ${typeof propertyValue}`);
+        }
 
         // if marked as array, but not an array, set the value to null
         return null;

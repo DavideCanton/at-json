@@ -1,8 +1,4 @@
-import {
-    Constructable,
-    JsonSerializable,
-    NoCustomFunctionsDecoratorInput,
-} from '../interfaces';
+import { Constructable, JsonSerializable, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator, mapArray } from './common';
 
@@ -78,19 +74,11 @@ export function JsonArrayOfComplexProperty<T extends JsonSerializable>(
     throwIfNotArray?: boolean
 ): PropertyDecorator {
     return makeCustomDecorator(() => ({
-        serialize: (array: any) =>
-            mapArray<T>(
-                array,
-                item => JsonMapper.serialize(item),
-                throwIfNotArray
-            ),
+        serialize: (array: any) => mapArray<T>(array, item => JsonMapper.serialize(item), throwIfNotArray),
         deserialize: (array: any) =>
             mapArray<T>(
                 array,
-                item =>
-                    item === null || item === undefined
-                        ? item
-                        : JsonMapper.deserialize(constructor, item),
+                item => (item === null || item === undefined ? item : JsonMapper.deserialize(constructor, item)),
                 throwIfNotArray
             ),
     }))(params);

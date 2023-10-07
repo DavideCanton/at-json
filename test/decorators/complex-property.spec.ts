@@ -1,11 +1,5 @@
 import each from 'jest-each';
-import {
-    JsonClass,
-    JsonComplexProperty,
-    JsonMapper,
-    JsonProperty,
-    mappingMetadataKey,
-} from '../../lib';
+import { JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, mappingMetadataKey } from '../../lib';
 
 @JsonClass()
 class X {

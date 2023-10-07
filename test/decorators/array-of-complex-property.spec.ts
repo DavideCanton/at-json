@@ -1,11 +1,5 @@
 import each from 'jest-each';
-import {
-    JsonArrayOfComplexProperty,
-    JsonClass,
-    JsonMapper,
-    JsonProperty,
-    mappingMetadataKey,
-} from '../../lib';
+import { JsonArrayOfComplexProperty, JsonClass, JsonMapper, JsonProperty, mappingMetadataKey } from '../../lib';
 
 @JsonClass()
 class X {
@@ -30,26 +24,21 @@ describe('JsonArrayOfComplexProperty', () => {
         // TODO add more tests
     });
 
-    each([true, false]).it(
-        'should handle throwIfNotArray correctly [%s]',
-        throwIfNotArray => {
-            @JsonClass()
-            class C {
-                @JsonArrayOfComplexProperty(X, undefined, throwIfNotArray)
-                foo: X[];
-            }
-
-            if (throwIfNotArray)
-                expect(() =>
-                    JsonMapper.deserialize(C, { foo: 'bar' })
-                ).toThrowError('Expected array, got string');
-            else {
-                const c = JsonMapper.deserialize(C, { foo: 'bar' });
-                expect(c.foo).toBeNull();
-            }
-
-            const c2 = JsonMapper.deserialize(C, {});
-            expect(c2.foo).toBeUndefined();
+    each([true, false]).it('should handle throwIfNotArray correctly [%s]', throwIfNotArray => {
+        @JsonClass()
+        class C {
+            @JsonArrayOfComplexProperty(X, undefined, throwIfNotArray)
+            foo: X[];
         }
-    );
+
+        if (throwIfNotArray) {
+            expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
+        } else {
+            const c = JsonMapper.deserialize(C, { foo: 'bar' });
+            expect(c.foo).toBeNull();
+        }
+
+        const c2 = JsonMapper.deserialize(C, {});
+        expect(c2.foo).toBeUndefined();
+    });
 });

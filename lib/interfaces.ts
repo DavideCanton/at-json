@@ -59,9 +59,7 @@ export interface AfterDeserialize {
  * @returns if the parameter is a CustomSerialize interface
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function hasCustomSerializeExport(
-    mapValue: any
-): mapValue is CustomSerialize {
+export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize {
     const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
     return typeof fn === 'function';
 }
@@ -73,9 +71,7 @@ export function hasCustomSerializeExport(
  * @returns if the parameter is a AfterDeserialize interface
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function hasAfterDeserialize(
-    mapValue: any
-): mapValue is AfterDeserialize {
+export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize {
     const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
     return typeof fn === 'function';
 }
@@ -120,10 +116,7 @@ export interface IMappingOptions {
  * Decorator input
  */
 export type DecoratorInput = string | IMappingOptions | undefined;
-export type NoCustomFunctionsDecoratorInput =
-    | string
-    | Omit<IMappingOptions, 'serialize' | 'deserialize'>
-    | undefined;
+export type NoCustomFunctionsDecoratorInput = string | Omit<IMappingOptions, 'serialize' | 'deserialize'> | undefined;
 
 /** helper */
 function nameOf<T>(k: keyof T): string {

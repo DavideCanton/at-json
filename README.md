@@ -13,13 +13,7 @@ npm install @mdcc/at-json
 ## Usage
 
 ```typescript
-import {
-    JsonClass,
-    JsonProperty,
-    JsonArray,
-    JsonComplexProperty,
-    JsonMapper,
-} from '@mdcc/at-json';
+import { JsonClass, JsonProperty, JsonArray, JsonComplexProperty, JsonMapper } from '@mdcc/at-json';
 
 @JsonClass()
 class Payload {
@@ -57,10 +51,7 @@ const payloadObject = {
 
 // you can deserialize objects, or JSON strings too!
 const mapped = JsonMapper.deserialize(Payload, payloadObject);
-const mappedFromString = JsonMapper.deserialize(
-    Payload,
-    JSON.stringify(payloadObject)
-);
+const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
 expect(mapped instanceof Payload).toBe(true);

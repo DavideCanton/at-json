@@ -16,11 +16,11 @@ export function JsonMap(params?: MapDecoratorInput): PropertyDecorator {
         serialize: (map: Map<any, any>) => {
             const ret = {};
 
-            const serializeFn = params?.complexType
-                ? (v: any) => JsonMapper.serialize(v)
-                : (v: any) => v;
+            const serializeFn = params?.complexType ? (v: any) => JsonMapper.serialize(v) : (v: any) => v;
 
-            for (const [k, v] of map.entries()) ret[k] = serializeFn(v);
+            for (const [k, v] of map.entries()) {
+                ret[k] = serializeFn(v);
+            }
 
             return ret;
         },
@@ -31,7 +31,9 @@ export function JsonMap(params?: MapDecoratorInput): PropertyDecorator {
                 ? (v: any) => JsonMapper.deserialize(params.complexType!, v)
                 : (v: any) => v;
 
-            for (const key in obj) map.set(key, deserializeFn(obj[key]));
+            for (const key in obj) {
+                map.set(key, deserializeFn(obj[key]));
+            }
 
             return map;
         },

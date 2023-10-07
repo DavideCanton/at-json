@@ -2,13 +2,7 @@ module.exports = {
     env: {
         node: true,
     },
-    ignorePatterns: [
-        'dist/**/*.*',
-        'docs/**/*.*',
-        '.eslintrc.cjs',
-        'webpack.config.js',
-        'setupJest.ts',
-    ],
+    ignorePatterns: ['dist/**/*.*', 'docs/**/*.*', '.eslintrc.cjs', 'webpack.config.js', 'setupJest.ts'],
     root: true,
     parserOptions: {
         project: 'tsconfig.eslint.json',
@@ -67,7 +61,7 @@ module.exports = {
         'arrow-body-style': 'error',
         'brace-style': ['off', 'off'],
         'constructor-super': 'error',
-        curly: 'off',
+        curly: 'warn',
         'eol-last': 'error',
         eqeqeq: ['error', 'smart'],
         'guard-for-in': 'off',

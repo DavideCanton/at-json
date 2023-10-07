@@ -9,21 +9,9 @@ const _id = _IDENTITY_FUNCTION;
 describe('JsonProperty', () => {
     each([
         ['basic params', undefined, { serialize: _id, deserialize: _id }],
-        [
-            'custom name',
-            { name: 'bar' },
-            { name: 'bar', serialize: _id, deserialize: _id },
-        ],
-        [
-            'custom serialize',
-            { serialize: f1 },
-            { serialize: f1, deserialize: _id },
-        ],
-        [
-            'custom deserialize',
-            { deserialize: f2 },
-            { deserialize: f2, serialize: _id },
-        ],
+        ['custom name', { name: 'bar' }, { name: 'bar', serialize: _id, deserialize: _id }],
+        ['custom serialize', { serialize: f1 }, { serialize: f1, deserialize: _id }],
+        ['custom deserialize', { deserialize: f2 }, { deserialize: f2, serialize: _id }],
         [
             'custom all',
             { name: 'bar', serialize: f1, deserialize: f2 },

@@ -25,23 +25,22 @@ export class JsonMapper {
      */
     static serialize(source: I.JsonSerializable): any {
         // if val is nil no need to do anything
-        if (source === null || source === undefined) return source;
+        if (source === null || source === undefined) {
+            return source;
+        }
 
         // retrieve the object constructor in order to load the class decorator metadata
-        const ctor: I.Constructable<I.JsonSerializable> =
-            Object.getPrototypeOf(source).constructor;
-        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(
-            I.mappingOptionsKey,
-            ctor
-        );
-        if (!ctorOptions)
-            throw new Error(
-                `Class ${ctor.name} is not decorated with @JsonClass`
-            );
+        const ctor: I.Constructable<I.JsonSerializable> = Object.getPrototypeOf(source).constructor;
+        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
+        if (!ctorOptions) {
+            throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
+        }
 
         // let's try to call an eventual custom export before the standard one
         const customExport = exportCustom(source);
-        if (customExport.serialized) return customExport.value;
+        if (customExport.serialized) {
+            return customExport.value;
+        }
 
         // should missing properties be ignored
         const { ignoreUndecoratedProperties } = ctorOptions;
@@ -50,17 +49,15 @@ export class JsonMapper {
 
         Object.keys(source).forEach(propName => {
             // retrieve the serialization options in the decorator of the property
-            const options: I.IMappingOptions = Reflect.getMetadata(
-                I.mappingMetadataKey,
-                ctor,
-                propName
-            );
+            const options: I.IMappingOptions = Reflect.getMetadata(I.mappingMetadataKey, ctor, propName);
             const propValue = source[propName];
 
             // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
             // maybe here a clone should be used instead of a shallow copy
             if (options === undefined) {
-                if (!ignoreUndecoratedProperties) target[propName] = propValue;
+                if (!ignoreUndecoratedProperties) {
+                    target[propName] = propValue;
+                }
 
                 return;
             }
@@ -69,8 +66,11 @@ export class JsonMapper {
             // overridden in the decorator
             const name = options.name || propName;
 
-            if (options.serialize) target[name] = options.serialize(propValue);
-            else target[name] = propValue;
+            if (options.serialize) {
+                target[name] = options.serialize(propValue);
+            } else {
+                target[name] = propValue;
+            }
         });
 
         return target;
@@ -85,10 +85,7 @@ export class JsonMapper {
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
-    static deserializeArray<T>(
-        ctor: I.Constructable<T>,
-        jsonArray: any[]
-    ): T[] {
+    static deserializeArray<T>(ctor: I.Constructable<T>, jsonArray: any[]): T[] {
         return jsonArray.map(v => JsonMapper.deserialize(ctor, v));
     }
 
@@ -113,17 +110,15 @@ export class JsonMapper {
         source: string | object,
         stringParser: (s: string) => any = JSON.parse
     ): T {
-        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(
-            I.mappingOptionsKey,
-            ctor
-        );
-        if (!ctorOptions)
-            throw new Error(
-                `Class ${ctor.name} is not decorated with @JsonClass`
-            );
+        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
+        if (!ctorOptions) {
+            throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
+        }
 
         // automatic parse of strings
-        if (typeof source === 'string') source = stringParser(source);
+        if (typeof source === 'string') {
+            source = stringParser(source);
+        }
 
         const target = new ctor();
         const has = Object.prototype.hasOwnProperty;
@@ -135,26 +130,27 @@ export class JsonMapper {
 
         // extract the property names array from the metadata stored in the constructor
         // be careful: undecorated properties are NOT stored in this array
-        const propNames =
-            (Reflect.getMetadata(I.fieldsMetadataKey, ctor) as string[]) ?? [];
+        const propNames = (Reflect.getMetadata(I.fieldsMetadataKey, ctor) as string[]) ?? [];
 
         propNames.forEach(propName => {
-            const options: I.IMappingOptions = Reflect.getMetadata(
-                I.mappingMetadataKey,
-                ctor,
-                propName
-            );
+            const options: I.IMappingOptions = Reflect.getMetadata(I.mappingMetadataKey, ctor, propName);
 
             /* istanbul ignore next */
-            if (options === undefined) return;
+            if (options === undefined) {
+                return;
+            }
 
             const name = options.name || propName;
 
-            if (!has.call(source, name)) return;
+            if (!has.call(source, name)) {
+                return;
+            }
 
-            if (options.deserialize)
+            if (options.deserialize) {
                 target[propName] = options.deserialize(source[name]);
-            else target[propName] = source[name];
+            } else {
+                target[propName] = source[name];
+            }
 
             mapped.add(name);
         });
@@ -164,12 +160,16 @@ export class JsonMapper {
             Object.keys(source).forEach(propName => {
                 // copy over not mapped properties
                 // maybe here a clone should be performed?
-                if (!mapped.has(propName)) target[propName] = source[propName];
+                if (!mapped.has(propName)) {
+                    target[propName] = source[propName];
+                }
             });
         }
 
         // call eventual after deserialize callback to post-process values
-        if (I.hasAfterDeserialize(target)) target.afterDeserialize();
+        if (I.hasAfterDeserialize(target)) {
+            target.afterDeserialize();
+        }
 
         return target;
     }
@@ -183,16 +183,15 @@ export class JsonMapper {
  * @param mapValue the value to export
  * @returns the exported value decorated with a boolean
  */
-function exportCustom(
-    mapValue: any
-): { serialized: true; value: any } | { serialized: false } {
-    if (I.hasCustomSerializeExport(mapValue))
+function exportCustom(mapValue: any): { serialized: true; value: any } | { serialized: false } {
+    if (I.hasCustomSerializeExport(mapValue)) {
         return {
             serialized: true,
             value: mapValue.customSerialize(),
         };
-    else
+    } else {
         return {
             serialized: false,
         };
+    }
 }

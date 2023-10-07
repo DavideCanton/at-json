@@ -71,11 +71,7 @@ describe('JsonMapper', () => {
 
         expect(p.address).toEqual(obj.aa);
 
-        expect(p.prevAddresses).toEqual([
-            { ...obj.prevs[0], line4: undefined },
-            obj.prevs[1],
-            null,
-        ]);
+        expect(p.prevAddresses).toEqual([{ ...obj.prevs[0], line4: undefined }, obj.prevs[1], null]);
     });
 
     it('should deserialize with custom', () => {
@@ -197,18 +193,12 @@ describe('JsonMapper', () => {
             expect(p.age).toEqual(obj.eta);
             expect(p.gender).toEqual(obj.gender);
             expect(dateEquals(p.date, new Date(+obj.date, 2, 12))).toBeTrue();
-            expect(
-                dateEquals(p.date2, new Date(+obj.date22, 2, 12))
-            ).toBeTrue();
+            expect(dateEquals(p.date2, new Date(+obj.date22, 2, 12))).toBeTrue();
 
             expect(p.numbers).toEqual(obj.numbers);
             expect(p.address).toEqual(obj.aa);
 
-            expect(p.prevAddresses).toEqual([
-                { ...obj.prevs[0], line4: undefined },
-                obj.prevs[1],
-                null,
-            ]);
+            expect(p.prevAddresses).toEqual([{ ...obj.prevs[0], line4: undefined }, obj.prevs[1], null]);
         });
     });
 
@@ -498,9 +488,7 @@ describe('JsonMapper', () => {
 
         const x = new X();
         x.x = 10;
-        expect(() => M.JsonMapper.serialize(x)).toThrow(
-            'Expected array, got number'
-        );
+        expect(() => M.JsonMapper.serialize(x)).toThrow('Expected array, got number');
 
         @D.JsonClass()
         class Y {
@@ -510,9 +498,7 @@ describe('JsonMapper', () => {
 
         const y = new Y();
         y.Y = new X();
-        expect(() => M.JsonMapper.serialize(y)).toThrow(
-            'Expected array, got object'
-        );
+        expect(() => M.JsonMapper.serialize(y)).toThrow('Expected array, got object');
     });
 
     it('should not map fields with no metadata associated', () => {
@@ -621,15 +607,11 @@ describe('JsonMapper', () => {
         }
 
         const x = { x: 10 };
-        expect(() => M.JsonMapper.deserialize(X, x)).toThrow(
-            'Class X is not decorated with @JsonClass'
-        );
+        expect(() => M.JsonMapper.deserialize(X, x)).toThrow('Class X is not decorated with @JsonClass');
 
         const xc = new X();
         xc.x = 10;
-        expect(() => M.JsonMapper.serialize(xc)).toThrow(
-            'Class X is not decorated with @JsonClass'
-        );
+        expect(() => M.JsonMapper.serialize(xc)).toThrow('Class X is not decorated with @JsonClass');
     });
 
     it('should error if class of field is undecorated', () => {
@@ -641,14 +623,10 @@ describe('JsonMapper', () => {
         }
 
         const x = { x: 10, y: {} };
-        expect(() => M.JsonMapper.deserialize(X, x)).toThrow(
-            'Class Y is not decorated with @JsonClass'
-        );
+        expect(() => M.JsonMapper.deserialize(X, x)).toThrow('Class Y is not decorated with @JsonClass');
 
         const xc = new X();
         xc.y = new Y();
-        expect(() => M.JsonMapper.serialize(xc)).toThrow(
-            'Class Y is not decorated with @JsonClass'
-        );
+        expect(() => M.JsonMapper.serialize(xc)).toThrow('Class Y is not decorated with @JsonClass');
     });
 });

@@ -1,8 +1,4 @@
-import {
-    Constructable,
-    JsonSerializable,
-    mappingOptionsKey,
-} from '../interfaces';
+import { Constructable, JsonSerializable, mappingOptionsKey } from '../interfaces';
 
 export interface IJsonClassOptions {
     /**
@@ -25,9 +21,7 @@ export type JsonConstructor<T> = Constructable<T & JsonSerializable>;
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T>(
-    options?: IJsonClassOptions
-): <C extends JsonConstructor<T>>(ctor: C) => C {
+export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstructor<T>>(ctor: C) => C {
     const actualOptions: Required<IJsonClassOptions> = Object.assign(
         { ignoreUndecoratedProperties: true } as Required<IJsonClassOptions>,
         options

@@ -8,7 +8,7 @@ module.exports = env => {
     env = env || {};
 
     return {
-        mode: 'production',
+        mode: env.debug ? 'development' : 'production',
         entry: './lib/index.ts',
         output: {
             path: path.resolve(__dirname, pathParsed.dir),
