@@ -1,4 +1,5 @@
 import { DecoratorInput, fieldsMetadataKey, IMappingOptions, mappingMetadataKey } from '../interfaces';
+import { defineMetadata, getMetadata } from '../reflection';
 
 function normalizeParams(params: DecoratorInput): IMappingOptions {
     let resolvedParams: IMappingOptions;
@@ -41,10 +42,10 @@ export function makeCustomDecorator(
 
         // eslint-disable-next-line @typescript-eslint/ban-types
         return function (target: Object, propertyKey: string | symbol) {
-            const { constructor } = target;
-            const objMetadata = Reflect.getMetadata(fieldsMetadataKey, constructor) || [];
-            Reflect.defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], constructor);
-            return Reflect.metadata(mappingMetadataKey, actualParams)(constructor, propertyKey);
+            const constructor = target.constructor;
+            const objMetadata = getMetadata(fieldsMetadataKey, constructor) || [];
+            defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], constructor);
+            defineMetadata(mappingMetadataKey, actualParams, constructor, propertyKey);
         };
     };
 }

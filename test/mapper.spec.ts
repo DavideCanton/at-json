@@ -263,7 +263,7 @@ describe('JsonMapper', () => {
         expect(addr.line3).toEqual(addrDefault.line3);
     });
 
-    it('should not serialize missing fields in input object if @JsonClass(true)', () => {
+    it('should not serialize missing fields in input object if ignoreUndecoratedProperties = true', () => {
         const addr = new Address();
 
         addr.line1 = 'a';

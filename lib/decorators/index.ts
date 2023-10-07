@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 export { JsonArray } from './array';
 export { JsonArrayOfComplexProperty } from './array-of-complex-property';
 export { IJsonClassOptions, JsonClass, JsonConstructor } from './class';

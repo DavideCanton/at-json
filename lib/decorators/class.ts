@@ -1,4 +1,5 @@
 import { Constructable, JsonSerializable, mappingOptionsKey } from '../interfaces';
+import { defineMetadata } from '../reflection';
 
 export interface IJsonClassOptions {
     /**
@@ -28,7 +29,7 @@ export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstr
     );
 
     return ctor => {
-        Reflect.defineMetadata(mappingOptionsKey, actualOptions, ctor);
+        defineMetadata(mappingOptionsKey, actualOptions, ctor);
         return ctor;
     };
 }

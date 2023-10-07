@@ -31,9 +31,7 @@
         "url": "https://github.com/DavideCanton/at-json/issues"
     },
     "homepage": "https://github.com/DavideCanton/at-json#readme",
-    "dependencies": {
-        "reflect-metadata": "^0.1.13"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@types/babel__core": "^7.20.2",
         "@types/benchmark": "^1.0.31",

@@ -1,5 +1,6 @@
 import each from 'jest-each';
 import { JsonClass, JsonComplexProperty, JsonMapper, JsonProperty, mappingMetadataKey } from '../../lib';
+import { getMetadata } from '../../lib/reflection';
 
 @JsonClass()
 class X {
@@ -21,7 +22,7 @@ describe('JsonComplexProperty', () => {
             foo: X;
         }
 
-        const metadata = Reflect.getMetadata(mappingMetadataKey, C, 'foo');
+        const metadata = getMetadata(mappingMetadataKey, C, 'foo');
         expect(metadata.name).toEqual(args?.name);
 
         const x = new X();

@@ -1,6 +1,7 @@
 import each from 'jest-each';
 import { JsonClass, JsonProperty, mappingMetadataKey } from '../../lib';
 import { _IDENTITY_FUNCTION } from '../../lib/decorators/property';
+import { getMetadata } from '../../lib/reflection';
 
 const f1 = (v: number) => v.toString();
 const f2 = (v: string) => parseInt(v, 10);
@@ -24,7 +25,7 @@ describe('JsonProperty', () => {
             foo: string;
         }
 
-        const metadata = Reflect.getMetadata(mappingMetadataKey, C, 'foo');
+        const metadata = getMetadata(mappingMetadataKey, C, 'foo');
         expect(metadata).toEqual(expected);
     });
 });

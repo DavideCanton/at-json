@@ -2,6 +2,8 @@ export const mappingMetadataKey = Symbol('mappingMetadataKey');
 export const mappingOptionsKey = Symbol('mappingOptionsKey');
 export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
 
+export const metadataRootKey = Symbol('[[AtJsonMetadata]]');
+
 /**
  * Type alias for mapping function.
  */

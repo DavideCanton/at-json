@@ -1,6 +1,6 @@
-import 'reflect-metadata';
 import { IJsonClassOptions } from './decorators/class';
 import * as I from './interfaces';
+import { getMetadata } from './reflection';
 
 /**
  * Static class for JSON Mapping.
@@ -31,7 +31,7 @@ export class JsonMapper {
 
         // retrieve the object constructor in order to load the class decorator metadata
         const ctor: I.Constructable<I.JsonSerializable> = Object.getPrototypeOf(source).constructor;
-        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
+        const ctorOptions: IJsonClassOptions = getMetadata(I.mappingOptionsKey, ctor);
         if (!ctorOptions) {
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
         }
@@ -49,7 +49,7 @@ export class JsonMapper {
 
         Object.keys(source).forEach(propName => {
             // retrieve the serialization options in the decorator of the property
-            const options: I.IMappingOptions = Reflect.getMetadata(I.mappingMetadataKey, ctor, propName);
+            const options: I.IMappingOptions = getMetadata(I.mappingMetadataKey, ctor, propName);
             const propValue = source[propName];
 
             // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
@@ -110,7 +110,7 @@ export class JsonMapper {
         source: string | object,
         stringParser: (s: string) => any = JSON.parse
     ): T {
-        const ctorOptions: IJsonClassOptions = Reflect.getMetadata(I.mappingOptionsKey, ctor);
+        const ctorOptions: IJsonClassOptions = getMetadata(I.mappingOptionsKey, ctor);
         if (!ctorOptions) {
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
         }
@@ -130,10 +130,10 @@ export class JsonMapper {
 
         // extract the property names array from the metadata stored in the constructor
         // be careful: undecorated properties are NOT stored in this array
-        const propNames = (Reflect.getMetadata(I.fieldsMetadataKey, ctor) as string[]) ?? [];
+        const propNames = (getMetadata(I.fieldsMetadataKey, ctor) as string[]) ?? [];
 
         propNames.forEach(propName => {
-            const options: I.IMappingOptions = Reflect.getMetadata(I.mappingMetadataKey, ctor, propName);
+            const options: I.IMappingOptions = getMetadata(I.mappingMetadataKey, ctor, propName);
 
             /* istanbul ignore next */
             if (options === undefined) {
