@@ -36,7 +36,8 @@ import { makeCustomDecorator, mapArray } from './common';
  *   sub1: [{ foo: 'bar' }],
  *   extSub2: [{ foo: 'baz' }]
  * };
- * const deserialized = JsonMapper.deserialize<MyClass>(MyClass, backendObject);
+ * const mapper = new JsonMapper();
+ * const deserialized = mapper.deserialize<MyClass>(MyClass, backendObject);
  *
  * // sub1 keeps the same name
  * assert.isInstanceOf(deserialized.sub1, Array);
@@ -48,18 +49,18 @@ import { makeCustomDecorator, mapArray } from './common';
  * assert.isInstanceOf(deserialized.sub2[0], SubClass);
  * assert.equal(deserialized.sub2[0].foo, 'baz');
  *
- * const backendObjectSerialized = JsonMapper.serialize(deserialized);
+ * const backendObjectSerialized = mapper.serialize(deserialized);
  * // reverse conversion was performed
  * assert.deepEqual(backendObjectSerialized, backendObject);
  *
  * const errorObject = { sub1: {} };
- * const deserializedErrorObject = JsonMapper.deserialize<MyClass>(MyClass, errorObject);
+ * const deserializedErrorObject = mapper.deserialize<MyClass>(MyClass, errorObject);
  * // sub1 is null
  * assert.isNull(deserializedErrorObject.sub1);
  *
  * const errorObject2 = { sub1: [], sub2: {} };
  * // this throws because sub2 was decorated with `@JsonArrayOfComplexProperty(..., true)`
- * const deserializedErrorObject2 = JsonMapper.deserialize<MyClass>(MyClass, errorObject2);
+ * const deserializedErrorObject2 = mapper.deserialize<MyClass>(MyClass, errorObject2);
  * ```
  *
  * @export

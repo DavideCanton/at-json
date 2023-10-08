@@ -22,8 +22,8 @@ import { makeCustomDecorator, mapArray } from './common';
  *
  *    @JsonArray({
  *      name: 'custom',
- *      serialize: n => n.toString(),
- *      deserialize: n => parseInt(n, 10)
+ *      serialize: (mapper, n) => n.toString(),
+ *      deserialize: (mapper, n) => parseInt(n, 10)
  *    }, true)
  *    customProperty: number[];
  * }
@@ -33,7 +33,8 @@ import { makeCustomDecorator, mapArray } from './common';
  *   extName: [123, 456],
  *   customProperty: ['456', '789']
  * };
- * const deserialized = JsonMapper.deserialize<MyClass>(MyClass, backendObject);
+ * const mapper = new JsonMapper();
+ * const deserialized = mapper.deserialize<MyClass>(MyClass, backendObject);
  *
  * // basicProperty keeps the same name
  * assert.equal(deserialized.basicProperty, ['value', 'value2']);
@@ -42,18 +43,18 @@ import { makeCustomDecorator, mapArray } from './common';
  * // customProperty became custom, and the string was converted to number
  * assert.equal(deserialized.custom, [456, 789]);
  *
- * const backendObjectSerialized = JsonMapper.serialize(deserialized);
+ * const backendObjectSerialized = mapper.serialize(deserialized);
  * // reverse conversion was performed
  * assert.deepEqual(backendObjectSerialized, backendObject);
  *
  * const errorObject = { basicProperty: {} };
- * const deserializedErrorObject = JsonMapper.deserialize<MyClass>(MyClass, errorObject);
+ * const deserializedErrorObject = mapper.deserialize<MyClass>(MyClass, errorObject);
  * // basicProperty is null
  * assert.isNull(deserializedErrorObject.basicProperty);
  *
  * const errorObject2 = { basicProperty: [], renamedProperty: [], customProperty: {} };
  * // this throws because customProperty was decorated with `@JsonArray(..., true)`
- * const deserializedErrorObject2 = JsonMapper.deserialize<MyClass>(MyClass, errorObject2);
+ * const deserializedErrorObject2 = mapper.deserialize<MyClass>(MyClass, errorObject2);
 
  * ```
  *

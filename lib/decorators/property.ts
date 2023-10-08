@@ -31,14 +31,15 @@ export function _IDENTITY_FUNCTION<T>(_mapper: JsonMapper, v: T): T {
  *
  *    @JsonProperty({
  *      name: 'custom',
- *      serialize: n => n.toString(),
- *      deserialize: n => parseInt(n, 10)
+ *      serialize: (mapper, n) => n.toString(),
+ *      deserialize: (mapper, n) => parseInt(n, 10)
  *    })
  *    customProperty: number;
  * }
  *
+ * const mapper = new JsonMapper();
  * const backendObject = { basicProperty: 'value', extName: 123, customProperty: '456' };
- * const deserialized = JsonMapper.deserialize<MyClass>(MyClass, backendObject);
+ * const deserialized = mapper.deserialize<MyClass>(MyClass, backendObject);
  *
  * // basicProperty keeps the same name
  * assert.equal(deserialized.basicProperty, 'value');
@@ -47,7 +48,7 @@ export function _IDENTITY_FUNCTION<T>(_mapper: JsonMapper, v: T): T {
  * // customProperty became custom, and the string was converted to number
  * assert.equal(deserialized.custom, 456);
  *
- * const backendObjectSerialized = JsonMapper.serialize(deserialized);
+ * const backendObjectSerialized = mapper.serialize(deserialized);
  * // reverse conversion was performed
  * assert.deepEqual(backendObjectSerialized, backendObject);
  * ```

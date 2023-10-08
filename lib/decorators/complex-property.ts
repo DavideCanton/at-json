@@ -33,7 +33,8 @@ import { makeCustomDecorator } from './common';
  *   sub1: { foo: 'bar' },
  *   extSub2: { foo: 'baz' }
  * };
- * const deserialized = JsonMapper.deserialize<MyClass>(MyClass, backendObject);
+ * const mapper = new JsonMapper();
+ * const deserialized = mapper.deserialize<MyClass>(MyClass, backendObject);
  *
  * // sub1 keeps the same name
  * assert.isInstanceOf(deserialized.sub1, SubClass);
@@ -43,7 +44,7 @@ import { makeCustomDecorator } from './common';
  * assert.isInstanceOf(deserialized.sub2, SubClass);
  * assert.equal(deserialized.sub2.foo, 'baz');
  *
- * const backendObjectSerialized = JsonMapper.serialize(deserialized);
+ * const backendObjectSerialized = mapper.serialize(deserialized);
  * // reverse conversion was performed
  * assert.deepEqual(backendObjectSerialized, backendObject);
  * ```
