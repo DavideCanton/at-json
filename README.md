@@ -49,9 +49,12 @@ const payloadObject = {
     },
 };
 
+// create a mapper instance
+const mapper = new JsonMapper();
+
 // you can deserialize objects, or JSON strings too!
-const mapped = JsonMapper.deserialize(Payload, payloadObject);
-const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
+const mapped = mapper.deserialize(Payload, payloadObject);
+const mappedFromString = mapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
 expect(mapped instanceof Payload).toBe(true);
