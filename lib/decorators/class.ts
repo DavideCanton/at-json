@@ -1,4 +1,4 @@
-import { Constructable, JsonSerializable, mappingOptionsKey } from '../interfaces';
+import { Symbols } from '../interfaces';
 import { defineMetadata } from '../reflection';
 
 export interface IJsonClassOptions {
@@ -10,26 +10,21 @@ export interface IJsonClassOptions {
 }
 
 /**
- * Constructor of a class decorated with {@link JsonClass}.
- */
-export type JsonConstructor<T> = Constructable<T & JsonSerializable>;
-
-/**
- * Decorator that auto-implements {@link JsonSerializable} interface.
+ * Decorator for mapped classes.
  *
  * @export
  * @template T
  * @returns
  * @param ignoreMissingFields
  */
-export function JsonClass<T>(options?: IJsonClassOptions): <C extends JsonConstructor<T>>(ctor: C) => C {
+export function JsonClass(options?: IJsonClassOptions): ClassDecorator {
     const actualOptions: Required<IJsonClassOptions> = Object.assign(
         { ignoreUndecoratedProperties: true } as Required<IJsonClassOptions>,
         options
     );
 
     return ctor => {
-        defineMetadata(mappingOptionsKey, actualOptions, ctor);
+        defineMetadata(Symbols.mappingOptions, actualOptions, ctor);
         return ctor;
     };
 }

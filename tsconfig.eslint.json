@@ -1,3 +1,4 @@
+// required to run eslint on tests
 {
     "extends": "./tsconfig.json",
     "exclude": ["dist", "docs", "setupJest.ts"]

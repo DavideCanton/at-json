@@ -1,8 +1,10 @@
-export const mappingMetadataKey = Symbol('mappingMetadataKey');
-export const mappingOptionsKey = Symbol('mappingOptionsKey');
-export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
-
-export const metadataRootKey = Symbol('[[AtJsonMetadata]]');
+export const Symbols = {
+    mappingMetadata: Symbol('[[mapping]]'),
+    mappingOptions: Symbol('[[mappingOptions]]'),
+    fieldsMetadata: Symbol('[[fields]]'),
+    metadataRoot: Symbol('[[AtJsonMetadata]]'),
+};
+Object.freeze(Symbols);
 
 /**
  * Type alias for mapping function.
@@ -16,16 +18,7 @@ export type Mapping<T = any, R = any> = (val: T) => R;
  * @interface Constructable
  * @template T the constructed type
  */
-export type Constructable<T> = new (...args: any[]) => T;
-
-/**
- * Interface for serializable object. Auto-implemented by {@link JsonClass} Decorator.
- *
- * @export
- * @interface JsonSerializable
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface JsonSerializable {}
+export type Constructable<T, Args extends any[] = any[]> = new (...args: Args) => T;
 
 /**
  * Interface for classes that want to apply a custom serialization logic.
@@ -60,7 +53,6 @@ export interface AfterDeserialize {
  * @param mapValue value to check
  * @returns if the parameter is a CustomSerialize interface
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize {
     const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
     return typeof fn === 'function';
@@ -72,7 +64,6 @@ export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSeria
  * @param mapValue value to check
  * @returns if the parameter is a AfterDeserialize interface
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize {
     const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
     return typeof fn === 'function';

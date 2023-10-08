@@ -1,4 +1,4 @@
-import { DecoratorInput, fieldsMetadataKey, IMappingOptions, mappingMetadataKey } from '../interfaces';
+import { DecoratorInput, IMappingOptions, Symbols } from '../interfaces';
 import { defineMetadata, getMetadata } from '../reflection';
 
 function normalizeParams(params: DecoratorInput): IMappingOptions {
@@ -40,25 +40,27 @@ export function makeCustomDecorator(
             deserialize,
         };
 
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        return function (target: Object, propertyKey: string | symbol) {
+        return function (target: object, propertyKey: string | symbol) {
             const constructor = target.constructor;
-            const objMetadata = getMetadata(fieldsMetadataKey, constructor) || [];
-            defineMetadata(fieldsMetadataKey, [...objMetadata, propertyKey], constructor);
-            defineMetadata(mappingMetadataKey, actualParams, constructor, propertyKey);
+            const objMetadata = getMetadata(Symbols.fieldsMetadata, constructor) || [];
+            defineMetadata(Symbols.fieldsMetadata, [...objMetadata, propertyKey], constructor);
+            defineMetadata(Symbols.mappingMetadata, actualParams, constructor, propertyKey);
         };
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function mapArray<T>(
     propertyValue: any,
-    deserializeItem?: (t: T) => any,
+    deserializeItem?: (t: any) => T,
     throwIfNotArray?: boolean
 ): T[] | null {
     if (Array.isArray(propertyValue)) {
-        // map deserialize on the array
-        return propertyValue.map(item => (deserializeItem ? deserializeItem(item) : item));
+        if (deserializeItem) {
+            // map deserialize on the array
+            return propertyValue.map(item => deserializeItem(item));
+        } else {
+            return propertyValue;
+        }
     } else {
         if (throwIfNotArray) {
             throw new Error(`Expected array, got ${typeof propertyValue}`);

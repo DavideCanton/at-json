@@ -81,7 +81,7 @@ describe('JsonMapper', () => {
             @D.JsonProperty() ns: string;
             @D.JsonComplexProperty(Address) na: Address;
 
-            customSerialize() {
+            customSerialize(): string {
                 return 'ciao';
             }
         }
@@ -321,7 +321,7 @@ describe('JsonMapper', () => {
     });
 
     it('should serialize correctly with custom decorators', () => {
-        const dec = (ctor, params) =>
+        const dec = (ctor: IF.Constructable<any>, params: IF.DecoratorInput): PropertyDecorator =>
             D.makeCustomDecorator(() => ({
                 serialize: x => [M.JsonMapper.serialize(x)],
                 deserialize: x => M.JsonMapper.deserialize(ctor, x[0]),
@@ -523,7 +523,7 @@ describe('JsonMapper', () => {
         class X implements IF.AfterDeserialize {
             @D.JsonProperty() x: number;
 
-            afterDeserialize() {
+            afterDeserialize(): void {
                 this.x = this.x + 1;
             }
         }
@@ -537,7 +537,7 @@ describe('JsonMapper', () => {
         class Z extends X implements IF.AfterDeserialize {
             @D.JsonProperty() z: number;
 
-            afterDeserialize() {
+            override afterDeserialize(): void {
                 super.afterDeserialize();
                 this.z = this.z * 2;
             }

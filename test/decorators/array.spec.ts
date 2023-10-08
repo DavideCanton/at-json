@@ -1,10 +1,11 @@
 import * as common from '../../lib/decorators/common';
 import each from 'jest-each';
-import { JsonArray, JsonClass, JsonMapper, mappingMetadataKey } from '../../lib';
+import { JsonArray, JsonClass, JsonMapper } from '../../lib';
 import { getMetadata } from '../../lib/reflection';
+import { Symbols } from '../../lib/interfaces';
 
-const f1 = (v: number) => v.toString();
-const f2 = (v: string) => parseInt(v, 10);
+const f1 = (v: number): string => v.toString();
+const f2 = (v: string): number => parseInt(v, 10);
 
 describe('JsonArray', () => {
     each([
@@ -20,7 +21,7 @@ describe('JsonArray', () => {
             foo: number[];
         }
 
-        const metadata = getMetadata(mappingMetadataKey, C, 'foo');
+        const metadata = getMetadata(Symbols.mappingMetadata, C, 'foo');
         expect(metadata.name).toEqual(args?.name);
 
         const res = metadata.serialize(from);

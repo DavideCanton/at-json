@@ -5,7 +5,6 @@ export {
     JsonArrayOfComplexProperty,
     JsonClass,
     JsonComplexProperty,
-    JsonConstructor,
     JsonMap,
     JsonProperty,
     MapDecoratorInput,
@@ -17,11 +16,7 @@ export {
     CustomSerialize,
     DecoratorInput,
     IMappingOptions,
-    JsonSerializable,
     Mapping,
     NoCustomFunctionsDecoratorInput,
-    fieldsMetadataKey,
-    mappingMetadataKey,
-    mappingOptionsKey,
 } from './interfaces';
 export { JsonMapper } from './mapper';

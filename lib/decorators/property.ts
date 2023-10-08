@@ -1,7 +1,7 @@
 import { DecoratorInput } from '../interfaces';
 import { makeCustomDecorator } from './common';
 
-export function _IDENTITY_FUNCTION<T>(v: T) {
+export function _IDENTITY_FUNCTION<T>(v: T): T {
     return v;
 }
 

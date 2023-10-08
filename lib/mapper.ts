@@ -23,15 +23,15 @@ export class JsonMapper {
      * @throws An error if a class encountered while serializing has no {@link JsonClass} decorator.
      * @memberof JsonMapper
      */
-    static serialize(source: I.JsonSerializable): any {
+    static serialize(source: any): any {
         // if val is nil no need to do anything
         if (source === null || source === undefined) {
             return source;
         }
 
         // retrieve the object constructor in order to load the class decorator metadata
-        const ctor: I.Constructable<I.JsonSerializable> = Object.getPrototypeOf(source).constructor;
-        const ctorOptions: IJsonClassOptions = getMetadata(I.mappingOptionsKey, ctor);
+        const ctor: I.Constructable<any> = Object.getPrototypeOf(source).constructor;
+        const ctorOptions: IJsonClassOptions = getMetadata(I.Symbols.mappingOptions, ctor);
         if (!ctorOptions) {
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
         }
@@ -49,7 +49,7 @@ export class JsonMapper {
 
         Object.keys(source).forEach(propName => {
             // retrieve the serialization options in the decorator of the property
-            const options: I.IMappingOptions = getMetadata(I.mappingMetadataKey, ctor, propName);
+            const options: I.IMappingOptions = getMetadata(I.Symbols.mappingMetadata, ctor, propName);
             const propValue = source[propName];
 
             // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
@@ -106,11 +106,10 @@ export class JsonMapper {
      */
     static deserialize<T>(
         ctor: I.Constructable<T>,
-        // eslint-disable-next-line @typescript-eslint/ban-types
         source: string | object,
         stringParser: (s: string) => any = JSON.parse
     ): T {
-        const ctorOptions: IJsonClassOptions = getMetadata(I.mappingOptionsKey, ctor);
+        const ctorOptions: IJsonClassOptions = getMetadata(I.Symbols.mappingOptions, ctor);
         if (!ctorOptions) {
             throw new Error(`Class ${ctor.name} is not decorated with @JsonClass`);
         }
@@ -130,10 +129,10 @@ export class JsonMapper {
 
         // extract the property names array from the metadata stored in the constructor
         // be careful: undecorated properties are NOT stored in this array
-        const propNames = (getMetadata(I.fieldsMetadataKey, ctor) as string[]) ?? [];
+        const propNames = (getMetadata(I.Symbols.fieldsMetadata, ctor) as string[]) ?? [];
 
         propNames.forEach(propName => {
-            const options: I.IMappingOptions = getMetadata(I.mappingMetadataKey, ctor, propName);
+            const options: I.IMappingOptions = getMetadata(I.Symbols.mappingMetadata, ctor, propName);
 
             /* istanbul ignore next */
             if (options === undefined) {

@@ -6,6 +6,8 @@
         "emitDecoratorMetadata": true,
         "declaration": true,
         "downlevelIteration": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
         "strictBindCallApply": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
