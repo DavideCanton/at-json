@@ -33,14 +33,16 @@ describe('JsonArrayOfComplexProperty', () => {
             foo: X[];
         }
 
+        const mapper = new JsonMapper();
+
         if (throwIfNotArray) {
-            expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
+            expect(() => mapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
         } else {
-            const c = JsonMapper.deserialize(C, { foo: 'bar' });
+            const c = mapper.deserialize(C, { foo: 'bar' });
             expect(c.foo).toBeNull();
         }
 
-        const c2 = JsonMapper.deserialize(C, {});
+        const c2 = mapper.deserialize(C, {});
         expect(c2.foo).toBeUndefined();
     });
 });

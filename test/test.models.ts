@@ -34,7 +34,7 @@ export class Person {
     @JsonProperty()
     firstName: string;
 
-    @JsonProperty({ deserialize: Person.mapLastName })
+    @JsonProperty({ deserialize: (_m, n) => Person.mapLastName(n) })
     lastName: string;
 
     @JsonProperty('eta')
@@ -54,8 +54,8 @@ export class Person {
 
     @JsonArray({
         name: 'nums2',
-        serialize: n => n.toString(),
-        deserialize: n => parseInt(n, 10),
+        serialize: (_m, n) => n.toString(),
+        deserialize: (_m, n) => parseInt(n, 10),
     })
     numbers2: number[] | null;
 

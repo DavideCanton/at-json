@@ -1,4 +1,5 @@
-import { DecoratorInput, IMappingOptions, Symbols } from '../interfaces';
+import { DecoratorInput, IMappingOptions, Mapping, Symbols } from '../interfaces';
+import { JsonMapper } from '../mapper';
 import { defineMetadata, getMetadata } from '../reflection';
 
 function normalizeParams(params: DecoratorInput): IMappingOptions {
@@ -50,14 +51,15 @@ export function makeCustomDecorator(
 }
 
 export function mapArray<T>(
+    mapper: JsonMapper,
     propertyValue: any,
-    deserializeItem?: (t: any) => T,
+    deserializeItem?: Mapping<any, T>,
     throwIfNotArray?: boolean
 ): T[] | null {
     if (Array.isArray(propertyValue)) {
         if (deserializeItem) {
             // map deserialize on the array
-            return propertyValue.map(item => deserializeItem(item));
+            return propertyValue.map(item => deserializeItem(mapper, item));
         } else {
             return propertyValue;
         }

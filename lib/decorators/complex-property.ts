@@ -58,7 +58,7 @@ export function JsonComplexProperty<T>(
     params?: NoCustomFunctionsDecoratorInput
 ): PropertyDecorator {
     return makeCustomDecorator(() => ({
-        serialize: (value: T) => JsonMapper.serialize(value),
-        deserialize: (value: string | object) => JsonMapper.deserialize<T>(constructor, value),
+        serialize: (mapper: JsonMapper, value: T) => mapper.serialize(value),
+        deserialize: (mapper: JsonMapper, value: string | object) => mapper.deserialize<T>(constructor, value),
     }))(params);
 }

@@ -1,3 +1,5 @@
+import { JsonMapper } from './mapper';
+
 export const Symbols = {
     mappingMetadata: Symbol('[[mapping]]'),
     mappingOptions: Symbol('[[mappingOptions]]'),
@@ -9,7 +11,7 @@ Object.freeze(Symbols);
 /**
  * Type alias for mapping function.
  */
-export type Mapping<T = any, R = any> = (val: T) => R;
+export type Mapping<T = any, R = any> = (mapper: JsonMapper, val: T) => R;
 
 /**
  * Interface for constructor class.
@@ -31,7 +33,7 @@ export interface CustomSerialize {
     /**
      * Custom serialization logic.
      */
-    customSerialize(): any;
+    customSerialize(mapper: JsonMapper): any;
 }
 
 /**

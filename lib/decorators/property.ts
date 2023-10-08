@@ -1,7 +1,8 @@
 import { DecoratorInput } from '../interfaces';
+import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
-export function _IDENTITY_FUNCTION<T>(v: T): T {
+export function _IDENTITY_FUNCTION<T>(_mapper: JsonMapper, v: T): T {
     return v;
 }
 

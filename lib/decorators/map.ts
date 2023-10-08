@@ -1,6 +1,7 @@
 import { Constructable, NoCustomFunctionsDecoratorInput } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
+import { _IDENTITY_FUNCTION } from './property';
 
 export type MapDecoratorInput = NoCustomFunctionsDecoratorInput & {
     complexType?: Constructable<any>;
@@ -13,26 +14,28 @@ export type MapDecoratorInput = NoCustomFunctionsDecoratorInput & {
  */
 export function JsonMap(params?: MapDecoratorInput): PropertyDecorator {
     return makeCustomDecorator(() => ({
-        serialize: (map: Map<any, any>) => {
+        serialize: (mapper: JsonMapper, map: Map<any, any>) => {
             const ret = {};
 
-            const serializeFn = params?.complexType ? (v: any) => JsonMapper.serialize(v) : (v: any) => v;
+            const serializeFn = params?.complexType
+                ? (_mapper: JsonMapper, v: any) => mapper.serialize(v)
+                : _IDENTITY_FUNCTION;
 
             for (const [k, v] of map.entries()) {
-                ret[k] = serializeFn(v);
+                ret[k] = serializeFn(mapper, v);
             }
 
             return ret;
         },
-        deserialize: obj => {
+        deserialize: (mapper: JsonMapper, obj) => {
             const map = new Map();
 
             const deserializeFn = params?.complexType
-                ? (v: any) => JsonMapper.deserialize(params.complexType!, v)
-                : (v: any) => v;
+                ? (_mapper: JsonMapper, v: any) => mapper.deserialize(params.complexType!, v)
+                : _IDENTITY_FUNCTION;
 
             for (const key in obj) {
-                map.set(key, deserializeFn(obj[key]));
+                map.set(key, deserializeFn(mapper, obj[key]));
             }
 
             return map;

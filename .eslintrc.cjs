@@ -57,7 +57,7 @@ module.exports = {
         '@typescript-eslint/quotes': ['error', 'single'],
         '@typescript-eslint/semi': ['error', 'always'],
         '@typescript-eslint/type-annotation-spacing': 'error',
-        '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true,  }],
+        '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
         '@typescript-eslint/unified-signatures': 'error',
         'arrow-body-style': 'error',
         'brace-style': ['off', 'off'],

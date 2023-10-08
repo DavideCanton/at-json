@@ -14,8 +14,9 @@ describe('JsonComplexProperty', () => {
         ['basic params', undefined],
         ['custom name', { name: 'bar' }],
     ]).it('should work [%s]', (_name, args) => {
-        const spyD = jest.spyOn(JsonMapper, 'deserialize');
-        const spyS = jest.spyOn(JsonMapper, 'serialize');
+        const mapper = new JsonMapper();
+        const spyD = jest.spyOn(mapper, 'deserialize');
+        const spyS = jest.spyOn(mapper, 'serialize');
 
         @JsonClass()
         class C {
@@ -28,13 +29,13 @@ describe('JsonComplexProperty', () => {
 
         const x = new X();
         x.s = 'baz';
-        const res = metadata.serialize(x);
+        const res = metadata.serialize(mapper, x);
         expect(spyS).toHaveBeenCalledWith(x);
         expect(res).toBeInstanceOf(Object);
         expect(res.s).toBe('baz');
 
         const v = { s: 'baz' };
-        const res2 = metadata.deserialize(v);
+        const res2 = metadata.deserialize(mapper, v);
         expect(spyD).toHaveBeenCalledWith(X, v);
         expect(res2).toBeInstanceOf(X);
         expect(res2.s).toBe('baz');

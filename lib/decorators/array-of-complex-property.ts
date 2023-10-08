@@ -73,13 +73,16 @@ export function JsonArrayOfComplexProperty<T>(
     params?: NoCustomFunctionsDecoratorInput,
     throwIfNotArray?: boolean
 ): PropertyDecorator {
+    function serialize(m: JsonMapper, item: any): any {
+        return m.serialize(item);
+    }
+
+    function deserialize(m: JsonMapper, item: any): any {
+        return item === null || item === undefined ? item : m.deserialize(constructor, item);
+    }
+
     return makeCustomDecorator(() => ({
-        serialize: (array: any) => mapArray<T>(array, item => JsonMapper.serialize(item), throwIfNotArray),
-        deserialize: (array: any) =>
-            mapArray<T>(
-                array,
-                item => (item === null || item === undefined ? item : JsonMapper.deserialize(constructor, item)),
-                throwIfNotArray
-            ),
+        serialize: (mapper: JsonMapper, array: any) => mapArray<T>(mapper, array, serialize, throwIfNotArray),
+        deserialize: (mapper: JsonMapper, array: any) => mapArray<T>(mapper, array, deserialize, throwIfNotArray),
     }))(params);
 }

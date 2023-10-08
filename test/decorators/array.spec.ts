@@ -4,8 +4,8 @@ import { JsonArray, JsonClass, JsonMapper } from '../../lib';
 import { getMetadata } from '../../lib/reflection';
 import { Symbols } from '../../lib/interfaces';
 
-const f1 = (v: number): string => v.toString();
-const f2 = (v: string): number => parseInt(v, 10);
+const f1 = (_m: JsonMapper, v: number): string => v.toString();
+const f2 = (_m: JsonMapper, v: string): number => parseInt(v, 10);
 
 describe('JsonArray', () => {
     each([
@@ -21,15 +21,16 @@ describe('JsonArray', () => {
             foo: number[];
         }
 
+        const mapper = new JsonMapper();
         const metadata = getMetadata(Symbols.mappingMetadata, C, 'foo');
         expect(metadata.name).toEqual(args?.name);
 
-        const res = metadata.serialize(from);
-        expect(spy).toHaveBeenCalledWith(from, args?.serialize, undefined);
+        const res = metadata.serialize(mapper, from);
+        expect(spy).toHaveBeenCalledWith(mapper, from, args?.serialize, undefined);
         expect(res).toEqual(to);
 
-        const res2 = metadata.deserialize(to);
-        expect(spy).toHaveBeenCalledWith(to, args?.deserialize, undefined);
+        const res2 = metadata.deserialize(mapper, to);
+        expect(spy).toHaveBeenCalledWith(mapper, to, args?.deserialize, undefined);
         expect(res2).toEqual(from);
     });
 
@@ -54,14 +55,16 @@ describe('JsonArray', () => {
             foo: number[];
         }
 
+        const mapper = new JsonMapper();
+
         if (throwIfNotArray) {
-            expect(() => JsonMapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
+            expect(() => mapper.deserialize(C, { foo: 'bar' })).toThrowError('Expected array, got string');
         } else {
-            const c = JsonMapper.deserialize(C, { foo: 'bar' });
+            const c = mapper.deserialize(C, { foo: 'bar' });
             expect(c.foo).toBeNull();
         }
 
-        const c2 = JsonMapper.deserialize(C, {});
+        const c2 = mapper.deserialize(C, {});
         expect(c2.foo).toBeUndefined();
     });
 });

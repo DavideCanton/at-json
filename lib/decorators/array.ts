@@ -1,4 +1,5 @@
 import { DecoratorInput } from '../interfaces';
+import { JsonMapper } from '../mapper';
 import { makeCustomDecorator, mapArray } from './common';
 
 /**
@@ -68,7 +69,7 @@ export function JsonArray(params?: DecoratorInput, throwIfNotArray?: boolean): P
     }
 
     return makeCustomDecorator(opt => ({
-        serialize: array => mapArray(array, opt?.serialize, throwIfNotArray),
-        deserialize: array => mapArray(array, opt?.deserialize, throwIfNotArray),
+        serialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt?.serialize, throwIfNotArray),
+        deserialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt?.deserialize, throwIfNotArray),
     }))(params);
 }

@@ -3,27 +3,24 @@ import * as I from './interfaces';
 import { getMetadata } from './reflection';
 
 /**
- * Static class for JSON Mapping.
+ * Class for JSON Mapping.
  *
  * @export
  * @class JsonMapper
  */
 export class JsonMapper {
-    private constructor() {}
-
     /**
      * Serialization method.
      * Transforms `source` into a new JSON value by applying the "serialization" step for each property decorator.
      *
      * Annotated properties are serialized into a property using the `name` value as the destination name (defaults to the property name).
      *
-     * @static
      * @param {*} source the value to be serialized.
      * @returns {string} the transformed JSON value.
      * @throws An error if a class encountered while serializing has no {@link JsonClass} decorator.
      * @memberof JsonMapper
      */
-    static serialize(source: any): any {
+    serialize(source: any): any {
         // if val is nil no need to do anything
         if (source === null || source === undefined) {
             return source;
@@ -37,7 +34,7 @@ export class JsonMapper {
         }
 
         // let's try to call an eventual custom export before the standard one
-        const customExport = exportCustom(source);
+        const customExport = exportCustom(this, source);
         if (customExport.serialized) {
             return customExport.value;
         }
@@ -67,7 +64,7 @@ export class JsonMapper {
             const name = options.name || propName;
 
             if (options.serialize) {
-                target[name] = options.serialize(propValue);
+                target[name] = options.serialize(this, propValue);
             } else {
                 target[name] = propValue;
             }
@@ -78,15 +75,14 @@ export class JsonMapper {
 
     /**
      * Deserializes an array by applying {@link deserialize} to each element.
-     * @static
      * @template T the type of output object
      * @param {I.Constructable<T>} ctor the destination constructor
      * @param jsonArray the array to be deserialized
      * @returns {T} the deserialized object
      * @memberof JsonMapper
      */
-    static deserializeArray<T>(ctor: I.Constructable<T>, jsonArray: any[]): T[] {
-        return jsonArray.map(v => JsonMapper.deserialize(ctor, v));
+    deserializeArray<T>(ctor: I.Constructable<T>, jsonArray: any[]): T[] {
+        return jsonArray.map(v => this.deserialize(ctor, v));
     }
 
     /**
@@ -95,7 +91,6 @@ export class JsonMapper {
      *
      * Annotated properties are deserialized into a property using the `name` value as the source name (defaults to the property name).
      *
-     * @static
      * @template T the type of output object
      * @param {I.Constructable<T>} ctor the destination constructor
      * @param {*} source the value to be deserialized
@@ -104,7 +99,7 @@ export class JsonMapper {
      * @throws An error if a class encountered while deserializing has no {@link JsonClass} decorator.
      * @memberof JsonMapper
      */
-    static deserialize<T>(
+    deserialize<T>(
         ctor: I.Constructable<T>,
         source: string | object,
         stringParser: (s: string) => any = JSON.parse
@@ -146,7 +141,7 @@ export class JsonMapper {
             }
 
             if (options.deserialize) {
-                target[propName] = options.deserialize(source[name]);
+                target[propName] = options.deserialize(this, source[name]);
             } else {
                 target[propName] = source[name];
             }
@@ -179,14 +174,15 @@ export class JsonMapper {
  * If it is so, it calls the custom export function and returns its output in the `value` field
  * of the response.
  *
+ * @param {JsonMapper} mapper the mapper
  * @param mapValue the value to export
  * @returns the exported value decorated with a boolean
  */
-function exportCustom(mapValue: any): { serialized: true; value: any } | { serialized: false } {
+function exportCustom(mapper: JsonMapper, mapValue: any): { serialized: true; value: any } | { serialized: false } {
     if (I.hasCustomSerializeExport(mapValue)) {
         return {
             serialized: true,
-            value: mapValue.customSerialize(),
+            value: mapValue.customSerialize(mapper),
         };
     } else {
         return {
