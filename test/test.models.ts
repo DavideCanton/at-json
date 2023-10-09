@@ -22,11 +22,13 @@ export class Address {
 
 @JsonClass({ ignoreUndecoratedProperties: false })
 export class AddressExtended extends Address implements AfterDeserialize {
-    [other: string]: any;
-
     line3: string;
 
-    afterDeserialize(): void {}
+    afterDeserialize(): void {
+        if (this.line3) {
+            this.line3 = this.line3.toUpperCase();
+        }
+    }
 }
 
 @JsonClass()

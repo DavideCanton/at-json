@@ -1,32 +1,87 @@
 import each from 'jest-each';
-import { JsonClass, JsonProperty } from '../../lib';
-import { _IDENTITY_FUNCTION } from '../../lib/decorators/property';
-import { getMetadata } from '../../lib/reflection';
-import { Symbols } from '../../lib/interfaces';
-
-const f1 = (v: number): string => v.toString();
-const f2 = (v: string): number => parseInt(v, 10);
-const _id = _IDENTITY_FUNCTION;
+import { JsonClass, JsonMapper, JsonProperty } from '../../lib';
 
 describe('JsonProperty', () => {
-    each([
-        ['basic params', undefined, { serialize: _id, deserialize: _id }],
-        ['custom name', { name: 'bar' }, { name: 'bar', serialize: _id, deserialize: _id }],
-        ['custom serialize', { serialize: f1 }, { serialize: f1, deserialize: _id }],
-        ['custom deserialize', { deserialize: f2 }, { deserialize: f2, serialize: _id }],
-        [
-            'custom all',
-            { name: 'bar', serialize: f1, deserialize: f2 },
-            { name: 'bar', serialize: f1, deserialize: f2 },
-        ],
-    ]).it('should work [%s]', (_name, args, expected) => {
-        @JsonClass()
-        class C {
-            @JsonProperty(args)
-            foo: string;
+    each(['null', 'non-null', 'default']).it('should deserialize [%s]', val => {
+        const obj = {
+            basic: 'foo',
+            name: 'bar',
+            name2: 'baz',
+            code: '42',
+        } as any;
+
+        switch (val) {
+            case 'null':
+                obj.nullable = null;
+                break;
+            case 'non-null':
+                obj.nullable = 'abc';
+                break;
+        }
+        const des = new JsonMapper().deserialize(Class, obj);
+        expect(des).toBeInstanceOf(Class);
+        expect(des.basic).toBe('foo');
+        expect(des.customName).toBe('bar');
+        expect(des.customName2).toBe('baz');
+        expect(des.id).toBe(42);
+
+        if (val === 'null' || val === 'default') {
+            expect(des.nullable).toBeNull();
+        } else {
+            expect(des.nullable).toBe('abc');
+        }
+    });
+
+    each(['null', 'non-null', 'default']).it('should serialize [%s]', val => {
+        const obj = new Class();
+        obj.basic = 'foo';
+        obj.customName = 'bar';
+        obj.customName2 = 'baz';
+        obj.id = 42;
+
+        switch (val) {
+            case 'null':
+                obj.nullable = null;
+                break;
+            case 'non-null':
+                obj.nullable = 'abc';
+                break;
         }
 
-        const metadata = getMetadata(Symbols.mappingMetadata, C, 'foo');
-        expect(metadata).toEqual(expected);
+        const ser = new JsonMapper().serialize(obj);
+        const target = {
+            basic: 'foo',
+            name: 'bar',
+            name2: 'baz',
+            code: '42',
+        } as any;
+        if (val === 'null' || val === 'default') {
+            target.nullable = null;
+        } else {
+            target.nullable = 'abc';
+        }
+        expect(ser).toStrictEqual(target);
     });
 });
+
+@JsonClass()
+class Class {
+    @JsonProperty()
+    basic: string;
+
+    @JsonProperty()
+    nullable: string | null = null;
+
+    @JsonProperty('name')
+    customName: string;
+
+    @JsonProperty({ name: 'name2' })
+    customName2: string;
+
+    @JsonProperty({
+        name: 'code',
+        serialize: (_m, v) => v.toString(),
+        deserialize: (_m, v) => parseInt(v, 10),
+    })
+    id: number;
+}
