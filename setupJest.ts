@@ -1,9 +1,12 @@
+import * as matchers from 'jest-extended';
+
+expect.extend(matchers);
+
 expect.extend({
-    toBeWithinInclusive: function(received, min, max)
-    {
+    toBeWithinInclusive: function (received, min, max) {
         const pass = received < min || received > max;
         const middlePart = pass ? ' ' : ' not ';
         const message = () => `Expected ${received}${middlePart}to be between ${min} and ${max}`;
         return { pass, message };
-    }
+    },
 });

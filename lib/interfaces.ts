@@ -1,14 +1,17 @@
-import { JsonClass } from './decorators';
-export const mappingMetadataKey = Symbol('mappingMetadataKey');
-export const mappingOptionsKey = Symbol('mappingOptionsKey');
-export const fieldsMetadataKey = Symbol('fieldsMetadataKey');
+import { JsonMapper } from './mapper';
 
-export type MappingParams<T = any, R = any> = string | MappingFn<T, R> | IMappingOptions<T, R>;
+export const Symbols = {
+    mappingMetadata: Symbol('[[mapping]]'),
+    mappingOptions: Symbol('[[mappingOptions]]'),
+    fieldsMetadata: Symbol('[[fields]]'),
+    metadataRoot: Symbol('[[AtJsonMetadata]]'),
+};
+Object.freeze(Symbols);
 
 /**
- * Type alias for mapping function.
+ * Type alias for a mapping function.
  */
-export type MappingFn<T = any, R = any> = (val: T) => R;
+export type Mapping<T = any, R = any> = (mapper: JsonMapper, val: T) => R;
 
 /**
  * Interface for constructor class.
@@ -17,18 +20,7 @@ export type MappingFn<T = any, R = any> = (val: T) => R;
  * @interface Constructable
  * @template T the constructed type
  */
-export type Constructable<T> = new (...args: any[]) => T;
-
-/**
- * Interface for serializable object. Auto-implemented by {@link JsonClass} Decorator.
- *
- * @export
- * @interface JsonSerializable
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface JsonSerializable
-{
-}
+export type Constructable<T, Args extends any[] = any[]> = new (...args: Args) => T;
 
 /**
  * Interface for classes that want to apply a custom serialization logic.
@@ -37,12 +29,11 @@ export interface JsonSerializable
  * It is the responsibility of the implementation to recursively serialize
  * nested objects.
  */
-export interface CustomSerialize
-{
+export interface CustomSerialize {
     /**
      * Custom serialization logic.
      */
-    customSerialize(): any;
+    customSerialize(mapper: JsonMapper): any;
 }
 
 /**
@@ -51,8 +42,7 @@ export interface CustomSerialize
  * If a class implements this interface, its {@link afterDeserialize}
  * method will be called after the deserialization.
  */
-export interface AfterDeserialize
-{
+export interface AfterDeserialize {
     /**
      * Additional deserialization logic.
      */
@@ -60,69 +50,83 @@ export interface AfterDeserialize
 }
 
 /**
- * Mapping options.
+ * Type guard for {@link CustomSerialize} interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a CustomSerialize interface
+ */
+export function hasCustomSerializeExport(mapValue: any): mapValue is CustomSerialize {
+    const fn = mapValue[nameOf<CustomSerialize>('customSerialize')];
+    return typeof fn === 'function';
+}
+
+/**
+ * Type guard for {@link AfterDeserialize} interface.
+ *
+ * @param mapValue value to check
+ * @returns if the parameter is a AfterDeserialize interface
+ */
+export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize {
+    const fn = mapValue[nameOf<AfterDeserialize>('afterDeserialize')];
+    return typeof fn === 'function';
+}
+
+/**
+ * Mapping functions.
  *
  * @export
- * @interface IMappingOptions
- * @template T the source type of mapping
- * @template R the destination type of mapping
+ * @interface IMappingFunctions
+ * @template S the type of the deserialized property
+ * @template D the type of the serialized property
  */
-export interface IMappingOptions<T = any, R = any>
-{
+export interface IMappingFunctions<S = any, D = any> {
+    /**
+     * Custom deserialization function.
+     *
+     * @type {Mapping}
+     * @memberof IMappingOptions
+     */
+    deserialize?: Mapping<S, D>;
+
+    /**
+     * Custom serialization function.
+     *
+     * @type {Mapping}
+     * @memberof IMappingOptions
+     */
+    serialize?: Mapping<D, S>;
+}
+
+/**
+ * Mapping extra options.
+ *
+ * @export
+ * @interface IMappingOptionsExtra
+ */
+export interface IMappingOptionsExtra {
     /**
      * Property name.
+     * If specified, the serialize process will convert the class property name to this value, and
+     * the deserialize process will convert the other way.
      *
      * @type {string}
      * @memberof IMappingOptions
      */
     name?: string;
-
-    /**
-     * Deserialization function.
-     *
-     * @type {MappingFn<T, R>}
-     * @memberof IMappingOptions
-     */
-    mappingFn?: MappingFn<T, R>;
-
-    /**
-     * Serialization function.
-     *
-     * @type {MappingFn<T, any>}
-     * @memberof IMappingOptions
-     */
-    serializeFn?: MappingFn<T, any>;
-
-    /**
-     * Complex type constructor for complex properties.
-     *
-     * @type {Constructable<R>}
-     * @memberof IMappingOptions
-     */
-    complexType?: Constructable<R>;
-
-    /**
-     * If the property is an array.
-     *
-     * @type {boolean}
-     * @memberof IMappingOptions
-     */
-    isArray?: boolean;
-
-    /**
-     * If the property is a map.
-     *
-     * @type {boolean}
-     * @memberof IMappingOptions
-     */
-    isMap?: boolean;
 }
 
-export interface IJsonClassOptions
-{
-    /**
-     * If `true` (the default), undecorated properties are ignored by the serialization/deserialization process.
-     * If `false`, they are treated as if they were decorated with the {@link JsonProperty} decorator.
-     */
-    ignoreUndecoratedProperties?: boolean;
+export type IMappingOptions<S = any, D = any> = IMappingFunctions<S, D> & IMappingOptionsExtra;
+
+/**
+ * Decorator input for decorators that support custom serialize/deserialize functions.
+ */
+export type DecoratorInputWithCustomFunctions<S = any, D = any> = string | IMappingOptions<S, D> | undefined;
+/**
+ * Decorator input for decorators that don't support custom serialize/deserialize functions.
+ */
+export type DecoratorInputWithoutCustomFunctions = string | IMappingOptionsExtra | undefined;
+
+/** helper */
+function nameOf<T>(k: keyof T): string {
+    return k as string;
 }

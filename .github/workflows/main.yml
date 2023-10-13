@@ -1,35 +1,35 @@
 name: Build and run tests
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-        id: checkout-repo
-        name: Checkout Repository
-        
-      - uses: actions/setup-node@v2
-        name: Setup node
-        with:
-          node-version: '14.x'
+        steps:
+            - uses: actions/checkout@v2
+              id: checkout-repo
+              name: Checkout Repository
 
-      - run: npm install
-        name: Install dependencies
+            - uses: actions/setup-node@v2
+              name: Setup node
+              with:
+                  node-version: '14.x'
 
-      - run: npm run build
-        name: Build code
+            - run: npm install
+              name: Install dependencies
 
-      - run: npm run test
-        name: Run tests
-        
-      - run: npm run docs
-        name: Build docs
+            - run: npm run build
+              name: Build code
+
+            - run: npm run test
+              name: Run tests
+
+            - run: npm run docs
+              name: Build docs
