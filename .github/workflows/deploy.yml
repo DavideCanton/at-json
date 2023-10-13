@@ -18,10 +18,10 @@ jobs:
             - uses: actions/setup-node@v2
               name: Setup node
               with:
-                  node-version: '16.x'
+                  node-version: '18.x'
                   registry-url: 'https://registry.npmjs.org'
 
-            - run: npm install
+            - run: yarn
               name: Install dependencies
 
             - run: npm publish --access public --verbose

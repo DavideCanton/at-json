@@ -20,16 +20,16 @@ jobs:
             - uses: actions/setup-node@v2
               name: Setup node
               with:
-                  node-version: '14.x'
+                  node-version: '18.x'
 
-            - run: npm install
+            - run: yarn
               name: Install dependencies
 
-            - run: npm run build
+            - run: yarn build
               name: Build code
 
-            - run: npm run test
+            - run: yarn test
               name: Run tests
 
-            - run: npm run docs
+            - run: yarn docs
               name: Build docs
