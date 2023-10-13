@@ -4,16 +4,17 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const pathParsed = path.parse(pkg.main);
 
-module.exports = (env) => {
+module.exports = env => {
     env = env || {};
 
     return {
-        mode: 'production',
+        mode: env.debug ? 'development' : 'production',
         entry: './lib/index.ts',
         output: {
             path: path.resolve(__dirname, pathParsed.dir),
             filename: pathParsed.base,
-            libraryTarget: 'umd'
+            libraryTarget: 'umd',
+            globalObject: 'this',
         },
         plugins: [...(env.analyze ? [new BundleAnalyzerPlugin()] : [])],
         devtool: 'source-map',

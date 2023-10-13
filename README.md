@@ -42,16 +42,19 @@ class SubClass {
 const payloadObject = {
     name: 'name',
     SN: 'surname',
-    numbers: [1,2,3],
+    numbers: [1, 2, 3],
     sub: {
         x: 1,
-        y: 2
-    }
+        y: 2,
+    },
 };
 
+// create a mapper instance
+const mapper = new JsonMapper();
+
 // you can deserialize objects, or JSON strings too!
-const mapped = JsonMapper.deserialize(Payload, payloadObject);
-const mappedFromString = JsonMapper.deserialize(Payload, JSON.stringify(payloadObject));
+const mapped = mapper.deserialize(Payload, payloadObject);
+const mappedFromString = mapper.deserialize(Payload, JSON.stringify(payloadObject));
 
 // mapped is a Payload instance
 expect(mapped instanceof Payload).toBe(true);

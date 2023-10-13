@@ -3,14 +3,12 @@
 const config = {
     testEnvironment: 'node',
     preset: 'ts-jest',
-    setupFilesAfterEnv: ['jest-extended'],
     restoreMocks: true,
-    globals: {
-        'ts-jest': {}
+    setupFilesAfterEnv: ['./setupJest.ts'],
+    transform: {
+        '^.+\\.tsx?$': ['ts-jest', {}],
     },
-    collectCoverageFrom: [
-        'lib/**/*.ts'
-    ]
+    collectCoverageFrom: ['lib/**/*.ts'],
 };
 
 module.exports = config;
