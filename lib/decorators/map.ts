@@ -1,9 +1,8 @@
-import { Constructable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, DecoratorInputWithoutCustomFunctions } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
-import { _IDENTITY_FUNCTION } from './property';
 
-export type MapDecoratorInput = NoCustomFunctionsDecoratorInput & {
+export type MapDecoratorInput = DecoratorInputWithoutCustomFunctions & {
     complexType?: Constructable<any>;
 };
 
@@ -17,12 +16,14 @@ export function JsonMap(params?: MapDecoratorInput): PropertyDecorator {
         serialize: (mapper: JsonMapper, map: Map<any, any>) => {
             const ret = {};
 
-            const serializeFn = params?.complexType
-                ? (_mapper: JsonMapper, v: any) => mapper.serialize(v)
-                : _IDENTITY_FUNCTION;
-
-            for (const [k, v] of map.entries()) {
-                ret[k] = serializeFn(mapper, v);
+            if (params?.complexType) {
+                for (const [k, v] of map.entries()) {
+                    ret[k] = mapper.serialize(v);
+                }
+            } else {
+                for (const [k, v] of map.entries()) {
+                    ret[k] = v;
+                }
             }
 
             return ret;
@@ -30,12 +31,14 @@ export function JsonMap(params?: MapDecoratorInput): PropertyDecorator {
         deserialize: (mapper: JsonMapper, obj) => {
             const map = new Map();
 
-            const deserializeFn = params?.complexType
-                ? (_mapper: JsonMapper, v: any) => mapper.deserialize(params.complexType!, v)
-                : _IDENTITY_FUNCTION;
-
-            for (const key in obj) {
-                map.set(key, deserializeFn(mapper, obj[key]));
+            if (params?.complexType) {
+                for (const key in obj) {
+                    map.set(key, mapper.deserialize(params.complexType!, obj[key]));
+                }
+            } else {
+                for (const key in obj) {
+                    map.set(key, obj[key]);
+                }
             }
 
             return map;

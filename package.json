@@ -13,7 +13,8 @@
         "test": "jest",
         "docs": "typedoc lib/index.ts",
         "lint": "eslint .",
-        "test:coverage": "yarn test -- --collect-coverage",
+        "test:coverage": "yarn test --collect-coverage",
+        "test:watch": "yarn test --watch",
         "show:coverage": "http-server ./coverage/lcov-report -o",
         "show:docs": "http-server ./docs -o"
     },

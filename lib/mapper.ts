@@ -49,7 +49,7 @@ export class JsonMapper {
             const options: I.IMappingOptions = getMetadata(I.Symbols.mappingMetadata, ctor, propName);
             const propValue = source[propName];
 
-            // if no decorator is provided, map the property by copy if "ignoreMissingFields" is false
+            // if no decorator is provided, map the property by copy if "ignoreUndecoratedProperties" is false
             // maybe here a clone should be used instead of a shallow copy
             if (options === undefined) {
                 if (!ignoreUndecoratedProperties) {
@@ -119,7 +119,7 @@ export class JsonMapper {
 
         const { ignoreUndecoratedProperties } = ctorOptions;
 
-        // keep track of mapped properties, so we can copy not mapped ones if "ignoreMissingFields" is false
+        // keep track of mapped properties, so we can copy not mapped ones if "ignoreUndecoratedProperties" is false
         const mapped = new Set<string>();
 
         // extract the property names array from the metadata stored in the constructor

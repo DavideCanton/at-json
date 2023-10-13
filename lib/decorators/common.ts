@@ -1,8 +1,8 @@
-import { DecoratorInput, IMappingOptions, Mapping, Symbols } from '../interfaces';
+import { IMappingFunctionsOpt, IMappingOptions, IMappingOptionsExtra, Mapping, Symbols } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { defineMetadata, getMetadata } from '../reflection';
 
-function normalizeParams(params: DecoratorInput): IMappingOptions {
+function normalizeParams(params?: string | IMappingOptionsExtra | undefined): IMappingOptions {
     let resolvedParams: IMappingOptions;
 
     if (typeof params === 'string') {
@@ -14,25 +14,32 @@ function normalizeParams(params: DecoratorInput): IMappingOptions {
     return resolvedParams;
 }
 
-export type CustomDecoratorFunctions = NonNullable<Pick<IMappingOptions, 'serialize' | 'deserialize'>>;
-
 /**
  * A custom decorator factory function, in order to allow defining custom reusable decorators.
  *
  * @param serializeFn the function used for serializing the value.
  * @param deserializeFn the function used for deserializing the value.
  */
-export function makeCustomDecorator(
-    fn: (opt: IMappingOptions) => CustomDecoratorFunctions
-): (params?: DecoratorInput) => PropertyDecorator {
+export function makeCustomDecorator<S = any, D = any>(
+    fn: () => IMappingFunctionsOpt<S, D>
+): (params?: string | IMappingOptionsExtra | undefined) => PropertyDecorator {
     return params => {
-        let normalizedParams: IMappingOptions;
-        if (params) {
-            normalizedParams = normalizeParams(params);
-        } else {
-            normalizedParams = {};
-        }
+        const actualParams: IMappingOptions = {
+            ...normalizeParams(params),
+            ...fn(),
+        };
+        return _createPropertyDecorator(actualParams);
+    };
+}
 
+/**
+ * A decorator transforming function, used internally.
+ */
+export function transformDecorator<S = any, D = any>(
+    fn: (opt: IMappingFunctionsOpt<S, D>) => IMappingFunctionsOpt<S, D>
+): (params?: string | IMappingOptionsExtra | undefined) => PropertyDecorator {
+    return params => {
+        const normalizedParams = normalizeParams(params);
         const { serialize, deserialize } = fn(normalizedParams);
 
         const actualParams: IMappingOptions = {
@@ -40,22 +47,25 @@ export function makeCustomDecorator(
             serialize,
             deserialize,
         };
-
-        return function (target: object, propertyKey: string | symbol) {
-            const constructor = target.constructor;
-            const objMetadata = getMetadata(Symbols.fieldsMetadata, constructor) || [];
-            defineMetadata(Symbols.fieldsMetadata, [...objMetadata, propertyKey], constructor);
-            defineMetadata(Symbols.mappingMetadata, actualParams, constructor, propertyKey);
-        };
+        return _createPropertyDecorator(actualParams);
     };
 }
 
-export function mapArray<T>(
+function _createPropertyDecorator(actualParams: IMappingOptions): PropertyDecorator {
+    return function (target: object, propertyKey: string | symbol) {
+        const constructor = target.constructor;
+        const objMetadata = getMetadata(Symbols.fieldsMetadata, constructor) || [];
+        defineMetadata(Symbols.fieldsMetadata, [...objMetadata, propertyKey], constructor);
+        defineMetadata(Symbols.mappingMetadata, actualParams, constructor, propertyKey);
+    };
+}
+
+export function mapArray<D, S = any>(
     mapper: JsonMapper,
-    propertyValue: any,
-    deserializeItem?: Mapping<any, T>,
+    propertyValue: S,
+    deserializeItem?: Mapping<S, D>,
     throwIfNotArray?: boolean
-): T[] | null {
+): D[] | null {
     if (Array.isArray(propertyValue)) {
         if (deserializeItem) {
             // map deserialize on the array

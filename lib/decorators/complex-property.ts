@@ -1,4 +1,4 @@
-import { Constructable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, DecoratorInputWithoutCustomFunctions } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator } from './common';
 
@@ -56,7 +56,7 @@ import { makeCustomDecorator } from './common';
  */
 export function JsonComplexProperty<T>(
     constructor: Constructable<T>,
-    params?: NoCustomFunctionsDecoratorInput
+    params?: DecoratorInputWithoutCustomFunctions
 ): PropertyDecorator {
     return makeCustomDecorator(() => ({
         serialize: (mapper: JsonMapper, value: T) => mapper.serialize(value),

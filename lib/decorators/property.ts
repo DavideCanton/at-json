@@ -1,10 +1,5 @@
-import { DecoratorInput } from '../interfaces';
-import { JsonMapper } from '../mapper';
-import { makeCustomDecorator } from './common';
-
-export function _IDENTITY_FUNCTION<T>(_mapper: JsonMapper, v: T): T {
-    return v;
-}
+import { DecoratorInputWithCustomFunctions } from '../interfaces';
+import { transformDecorator } from './common';
 
 /**
  * The basic decorator for simple properties.
@@ -54,12 +49,12 @@ export function _IDENTITY_FUNCTION<T>(_mapper: JsonMapper, v: T): T {
  * ```
  *
  * @export
- * @param {DecoratorInput} [params] the params
+ * @param {DecoratorInputWithCustomFunctions} [params] the params
  * @returns the decorator for the property.
  */
-export function JsonProperty(params?: DecoratorInput): PropertyDecorator {
-    return makeCustomDecorator(opt => ({
-        serialize: opt?.serialize ?? _IDENTITY_FUNCTION,
-        deserialize: opt?.deserialize ?? _IDENTITY_FUNCTION,
+export function JsonProperty(params?: DecoratorInputWithCustomFunctions): PropertyDecorator {
+    return transformDecorator(opt => ({
+        serialize: opt.serialize,
+        deserialize: opt.deserialize,
     }))(params);
 }

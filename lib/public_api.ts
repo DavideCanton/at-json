@@ -1,5 +1,4 @@
 export {
-    CustomDecoratorFunctions,
     IJsonClassOptions,
     JsonArray,
     JsonArrayOfComplexProperty,
@@ -14,9 +13,9 @@ export {
     AfterDeserialize,
     Constructable,
     CustomSerialize,
-    DecoratorInput,
+    DecoratorInputWithCustomFunctions,
+    DecoratorInputWithoutCustomFunctions,
     IMappingOptions,
     Mapping,
-    NoCustomFunctionsDecoratorInput,
 } from './interfaces';
 export { JsonMapper } from './mapper';

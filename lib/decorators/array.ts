@@ -1,6 +1,6 @@
-import { DecoratorInput } from '../interfaces';
+import { DecoratorInputWithCustomFunctions } from '../interfaces';
 import { JsonMapper } from '../mapper';
-import { makeCustomDecorator, mapArray } from './common';
+import { mapArray, transformDecorator } from './common';
 
 /**
  * The basic decorator for array of simple properties.
@@ -59,18 +59,14 @@ import { makeCustomDecorator, mapArray } from './common';
  * ```
  *
  * @export
- * @param {DecoratorInput<T>} [params] the params
+ * @param {DecoratorInputWithCustomFunctions<T>} [params] the params
  * @param {NoCustomFunctionsDecoratorInput} params params
  * @param {boolean} throwIfNotArray if true, throws an error if the property is not an array.
  * @returns the decorator for the property.
  */
-export function JsonArray(params?: DecoratorInput, throwIfNotArray?: boolean): PropertyDecorator {
-    if (typeof params === 'object' && !!params.serialize !== !!params.deserialize) {
-        throw new Error('serialize and deserialize must be defined together');
-    }
-
-    return makeCustomDecorator(opt => ({
-        serialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt?.serialize, throwIfNotArray),
-        deserialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt?.deserialize, throwIfNotArray),
+export function JsonArray(params?: DecoratorInputWithCustomFunctions, throwIfNotArray?: boolean): PropertyDecorator {
+    return transformDecorator(opt => ({
+        serialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt.serialize, throwIfNotArray),
+        deserialize: (mapper: JsonMapper, array) => mapArray(mapper, array, opt.deserialize, throwIfNotArray),
     }))(params);
 }

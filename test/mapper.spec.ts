@@ -3,9 +3,70 @@ import 'jest-extended';
 import { JsonClass, JsonProperty, JsonComplexProperty, JsonArray, JsonArrayOfComplexProperty } from '../lib/decorators';
 import { CustomSerialize, AfterDeserialize } from '../lib/interfaces';
 import { JsonMapper } from '../lib/mapper';
-import { AddressExtended, Address } from './test.models';
+import each from 'jest-each';
 
 describe('JsonMapper', () => {
+    each([null, undefined]).it('should handle %s value when serializing', val => {
+        expect(new JsonMapper().serialize(val)).toStrictEqual(val);
+    });
+
+    each(['default', 'custom']).it('should deserialize strings with parser [%s]', parser => {
+        const mapper = new JsonMapper();
+        const obj = JSON.stringify({
+            line1: 'foo',
+            line2: 'bar',
+        });
+
+        let addr: Address;
+        if (parser === 'default') {
+            addr = mapper.deserialize(Address, obj);
+        } else {
+            const parserFn = jest.spyOn(JSON, 'parse') as any;
+            addr = mapper.deserialize(Address, obj, parserFn);
+            expect(parserFn).toHaveBeenCalledWith(obj);
+        }
+        expect(addr).toBeInstanceOf(Address);
+        expect(addr.line1).toBe('foo');
+        expect(addr.line2).toBe('bar');
+    });
+
+    it('should deserialize value', () => {
+        @JsonClass()
+        class C {
+            @JsonProperty()
+            name: string;
+            @JsonProperty('years')
+            age: number;
+        }
+
+        const des = new JsonMapper().deserialize(C, { name: 'foo', years: 42 });
+        expect(des).toBeInstanceOf(C);
+        expect(des.name).toBe('foo');
+        expect(des.age).toBe(42);
+    });
+
+    it('should deserialize arrays', () => {
+        @JsonClass()
+        class C {
+            @JsonProperty()
+            name: string;
+            @JsonProperty()
+            age: number;
+        }
+
+        const array = new JsonMapper().deserializeArray(C, [
+            { name: 'foo', age: 42 },
+            { name: 'bar', age: 30 },
+        ]);
+        expect(array.every(x => x instanceof C)).toBeTrue();
+
+        expect(array[0].name).toBe('foo');
+        expect(array[0].age).toBe(42);
+
+        expect(array[1].name).toBe('bar');
+        expect(array[1].age).toBe(30);
+    });
+
     it('should deserialize with custom', () => {
         @JsonClass()
         class Inner implements CustomSerialize {
@@ -80,6 +141,37 @@ describe('JsonMapper', () => {
         expect(s.line2).toEqual(addr.line2);
         expect(s.line3).toBeUndefined();
     });
+
+    each([true, false, null]).it(
+        'should handle missing fields in input object in serialize if ignoreUndecoratedProperties = %s',
+        value => {
+            let dec: ClassDecorator;
+            if (value === null) {
+                dec = JsonClass();
+            } else {
+                dec = JsonClass({ ignoreUndecoratedProperties: value });
+            }
+
+            @dec
+            class C {
+                @JsonProperty()
+                line1: string;
+                line2: string;
+            }
+            const addr = new C();
+            addr.line1 = 'a';
+            addr.line2 = 'b';
+
+            const s = new JsonMapper().serialize(addr);
+
+            expect(s.line1).toEqual(addr.line1);
+            if (value !== false) {
+                expect(s.line2).toBeUndefined();
+            } else {
+                expect(s.line2).toEqual(addr.line2);
+            }
+        }
+    );
 
     it('should call afterDeserialize if implemented', () => {
         const obj = { line1: 'foo', line2: 'bar', line3: 'baz' };
@@ -272,3 +364,21 @@ describe('JsonMapper', () => {
         expect(() => mapper.serialize(xc)).toThrow('Class Y is not decorated with @JsonClass');
     });
 });
+
+@JsonClass({ ignoreUndecoratedProperties: true })
+export class Address {
+    @JsonProperty() line1: string;
+
+    @JsonProperty() line2: string;
+}
+
+@JsonClass({ ignoreUndecoratedProperties: false })
+export class AddressExtended extends Address implements AfterDeserialize {
+    line3: string;
+
+    afterDeserialize(): void {
+        if (this.line3) {
+            this.line3 = this.line3.toUpperCase();
+        }
+    }
+}

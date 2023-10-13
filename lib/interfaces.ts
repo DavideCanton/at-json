@@ -9,7 +9,7 @@ export const Symbols = {
 Object.freeze(Symbols);
 
 /**
- * Type alias for mapping function.
+ * Type alias for a mapping function.
  */
 export type Mapping<T = any, R = any> = (mapper: JsonMapper, val: T) => R;
 
@@ -72,14 +72,38 @@ export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
 }
 
 /**
- * Mapping options.
+ * Mapping functions.
  *
  * @export
- * @interface IMappingOptions
- * @template T the source type of mapping
- * @template R the destination type of mapping
+ * @interface IMappingFunctions
+ * @template S the type of the deserialized property
+ * @template D the type of the serialized property
  */
-export interface IMappingOptions {
+export interface IMappingFunctionsOpt<S = any, D = any> {
+    /**
+     * Custom deserialization function.
+     *
+     * @type {Mapping}
+     * @memberof IMappingOptions
+     */
+    deserialize?: Mapping<S, D>;
+
+    /**
+     * Custom serialization function.
+     *
+     * @type {Mapping}
+     * @memberof IMappingOptions
+     */
+    serialize?: Mapping<D, S>;
+}
+
+/**
+ * Mapping extra options.
+ *
+ * @export
+ * @interface IMappingOptionsExtra
+ */
+export interface IMappingOptionsExtra {
     /**
      * Property name.
      * If specified, the serialize process will convert the class property name to this value, and
@@ -89,29 +113,19 @@ export interface IMappingOptions {
      * @memberof IMappingOptions
      */
     name?: string;
-
-    /**
-     * Custom deserialization function.
-     *
-     * @type {Mapping}
-     * @memberof IMappingOptions
-     */
-    deserialize?: Mapping;
-
-    /**
-     * Custom serialization function.
-     *
-     * @type {Mapping}
-     * @memberof IMappingOptions
-     */
-    serialize?: Mapping;
 }
 
+export type IMappingOptions<S = any, D = any> = IMappingFunctionsOpt<S, D> & IMappingOptionsExtra;
+
+type _DecInput<T> = string | T | undefined;
 /**
- * Decorator input
+ * Decorator input for decorators that support custom serialize/deserialize functions.
  */
-export type DecoratorInput = string | IMappingOptions | undefined;
-export type NoCustomFunctionsDecoratorInput = string | Omit<IMappingOptions, 'serialize' | 'deserialize'> | undefined;
+export type DecoratorInputWithCustomFunctions<S = any, D = any> = _DecInput<IMappingOptions<S, D>>;
+/**
+ * Decorator input for decorators that don't support custom serialize/deserialize functions.
+ */
+export type DecoratorInputWithoutCustomFunctions = _DecInput<IMappingOptionsExtra>;
 
 /** helper */
 function nameOf<T>(k: keyof T): string {

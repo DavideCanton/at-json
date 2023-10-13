@@ -1,4 +1,4 @@
-import { Constructable, NoCustomFunctionsDecoratorInput } from '../interfaces';
+import { Constructable, DecoratorInputWithoutCustomFunctions } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { makeCustomDecorator, mapArray } from './common';
 
@@ -65,13 +65,13 @@ import { makeCustomDecorator, mapArray } from './common';
  *
  * @export
  * @param {Constructable<any>} constructor the constructor type of the array items.
- * @param {NoCustomFunctionsDecoratorInput} params params
+ * @param {DecoratorInputWithoutCustomFunctions} params params
  * @param {boolean} throwIfNotArray if true, throws an error if the property is not an array.
  * @returns the decorator for the property.
  */
 export function JsonArrayOfComplexProperty<T>(
     constructor: Constructable<T>,
-    params?: NoCustomFunctionsDecoratorInput,
+    params?: DecoratorInputWithoutCustomFunctions,
     throwIfNotArray?: boolean
 ): PropertyDecorator {
     function serialize(m: JsonMapper, item: any): any {
