@@ -1,4 +1,4 @@
-import { IMappingFunctionsOpt, IMappingOptions, IMappingOptionsExtra, Mapping, Symbols } from '../interfaces';
+import { IMappingFunctions, IMappingOptions, IMappingOptionsExtra, Mapping, Symbols } from '../interfaces';
 import { JsonMapper } from '../mapper';
 import { defineMetadata, getMetadata } from '../reflection';
 
@@ -21,7 +21,7 @@ function normalizeParams(params?: string | IMappingOptionsExtra | undefined): IM
  * @param deserializeFn the function used for deserializing the value.
  */
 export function makeCustomDecorator<S = any, D = any>(
-    fn: () => IMappingFunctionsOpt<S, D>
+    fn: () => IMappingFunctions<S, D>
 ): (params?: string | IMappingOptionsExtra | undefined) => PropertyDecorator {
     return params => {
         const actualParams: IMappingOptions = {
@@ -36,7 +36,7 @@ export function makeCustomDecorator<S = any, D = any>(
  * A decorator transforming function, used internally.
  */
 export function transformDecorator<S = any, D = any>(
-    fn: (opt: IMappingFunctionsOpt<S, D>) => IMappingFunctionsOpt<S, D>
+    fn: (opt: IMappingFunctions<S, D>) => IMappingFunctions<S, D>
 ): (params?: string | IMappingOptionsExtra | undefined) => PropertyDecorator {
     return params => {
         const normalizedParams = normalizeParams(params);

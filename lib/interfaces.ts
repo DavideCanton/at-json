@@ -79,7 +79,7 @@ export function hasAfterDeserialize(mapValue: any): mapValue is AfterDeserialize
  * @template S the type of the deserialized property
  * @template D the type of the serialized property
  */
-export interface IMappingFunctionsOpt<S = any, D = any> {
+export interface IMappingFunctions<S = any, D = any> {
     /**
      * Custom deserialization function.
      *
@@ -115,17 +115,16 @@ export interface IMappingOptionsExtra {
     name?: string;
 }
 
-export type IMappingOptions<S = any, D = any> = IMappingFunctionsOpt<S, D> & IMappingOptionsExtra;
+export type IMappingOptions<S = any, D = any> = IMappingFunctions<S, D> & IMappingOptionsExtra;
 
-type _DecInput<T> = string | T | undefined;
 /**
  * Decorator input for decorators that support custom serialize/deserialize functions.
  */
-export type DecoratorInputWithCustomFunctions<S = any, D = any> = _DecInput<IMappingOptions<S, D>>;
+export type DecoratorInputWithCustomFunctions<S = any, D = any> = string | IMappingOptions<S, D> | undefined;
 /**
  * Decorator input for decorators that don't support custom serialize/deserialize functions.
  */
-export type DecoratorInputWithoutCustomFunctions = _DecInput<IMappingOptionsExtra>;
+export type DecoratorInputWithoutCustomFunctions = string | IMappingOptionsExtra | undefined;
 
 /** helper */
 function nameOf<T>(k: keyof T): string {

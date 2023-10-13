@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>NoCustomFunctionsDecoratorInput | @mdcc/at-json</title><meta name="description" content="Documentation for @mdcc/at-json"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>DecoratorInputWithCustomFunctions | @mdcc/at-json</title><meta name="description" content="Documentation for @mdcc/at-json"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -13,11 +13,21 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb">
 <li><a href="../modules.html">@mdcc/at-json</a></li>
-<li><a href="NoCustomFunctionsDecoratorInput.html">NoCustomFunctionsDecoratorInput</a></li></ul>
-<h1>Type alias NoCustomFunctionsDecoratorInput</h1></div>
-<div class="tsd-signature"><span class="tsd-kind-type-alias">No<wbr/>Custom<wbr/>Functions<wbr/>Decorator<wbr/>Input</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">Omit</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IMappingOptions.html" class="tsd-signature-type tsd-kind-interface">IMappingOptions</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;serialize&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;deserialize&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div><aside class="tsd-sources">
+<li><a href="DecoratorInputWithCustomFunctions.html">DecoratorInputWithCustomFunctions</a></li></ul>
+<h1>Type alias DecoratorInputWithCustomFunctions&lt;S, D&gt;</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">Decorator<wbr/>Input<wbr/>With<wbr/>Custom<wbr/>Functions</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="IMappingOptions.html" class="tsd-signature-type tsd-kind-type-alias">IMappingOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
+<div class="tsd-comment tsd-typography"><p>Decorator input for decorators that support custom serialize/deserialize functions.</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">S</span> = <span class="tsd-signature-type">any</span></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">D</span> = <span class="tsd-signature-type">any</span></h4></li></ul></section>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/DavideCanton/at-json/blob/8621e09/lib/interfaces.ts#L114">interfaces.ts:114</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/DavideCanton/at-json/blob/fb39658/lib/interfaces.ts#L123">interfaces.ts:123</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -41,12 +51,13 @@
 <li><a href="../interfaces/Constructable.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>Constructable</a></li>
 <li><a href="../interfaces/CustomSerialize.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>CustomSerialize</a></li>
 <li><a href="../interfaces/IJsonClassOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IJsonClassOptions</a></li>
-<li><a href="../interfaces/IMappingOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingOptions</a></li>
-<li><a href="CustomDecoratorFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>CustomDecoratorFunctions</a></li>
-<li><a href="DecoratorInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInput</a></li>
+<li><a href="../interfaces/IMappingFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingFunctions</a></li>
+<li><a href="../interfaces/IMappingOptionsExtra.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingOptionsExtra</a></li>
+<li><a href="DecoratorInputWithCustomFunctions.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInputWithCustomFunctions</a></li>
+<li><a href="DecoratorInputWithoutCustomFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInputWithoutCustomFunctions</a></li>
+<li><a href="IMappingOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>IMappingOptions</a></li>
 <li><a href="MapDecoratorInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>MapDecoratorInput</a></li>
 <li><a href="Mapping.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>Mapping</a></li>
-<li><a href="NoCustomFunctionsDecoratorInput.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NoCustomFunctionsDecoratorInput</a></li>
 <li><a href="../functions/JsonArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonArray</a></li>
 <li><a href="../functions/JsonArrayOfComplexProperty.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonArrayOfComplexProperty</a></li>
 <li><a href="../functions/JsonClass.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonClass</a></li>

@@ -15,7 +15,9 @@ export {
     CustomSerialize,
     DecoratorInputWithCustomFunctions,
     DecoratorInputWithoutCustomFunctions,
+    IMappingFunctions,
     IMappingOptions,
+    IMappingOptionsExtra,
     Mapping,
 } from './interfaces';
 export { JsonMapper } from './mapper';

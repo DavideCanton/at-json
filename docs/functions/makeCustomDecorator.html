@@ -17,26 +17,28 @@
 <h1>Function makeCustomDecorator</h1></div>
 <section class="tsd-panel">
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="makeCustomDecorator"><span class="tsd-kind-call-signature">make<wbr/>Custom<wbr/>Decorator</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type ">PropertyDecorator</span><span class="tsd-signature-symbol">)</span><a href="#makeCustomDecorator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="makeCustomDecorator"><span class="tsd-kind-call-signature">make<wbr/>Custom<wbr/>Decorator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type ">PropertyDecorator</span><span class="tsd-signature-symbol">)</span><a href="#makeCustomDecorator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>A custom decorator factory function, in order to allow defining custom reusable decorators.</p>
 </div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">S</span> = <span class="tsd-signature-type">any</span></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">D</span> = <span class="tsd-signature-type">any</span></h4></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">fn</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">opt</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type ">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IMappingOptions.html" class="tsd-signature-type tsd-kind-interface">IMappingOptions</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;serialize&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;deserialize&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></h5>
+<h5><span class="tsd-kind-parameter">fn</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../interfaces/IMappingFunctions.html" class="tsd-signature-type tsd-kind-interface">IMappingFunctions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></h5>
 <ul class="tsd-parameters">
 <li class="tsd-parameter-signature">
 <ul class="tsd-signatures">
-<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">opt</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IMappingOptions.html" class="tsd-signature-type tsd-kind-interface">IMappingOptions</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;serialize&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;deserialize&quot;</span><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/IMappingFunctions.html" class="tsd-signature-type tsd-kind-interface">IMappingFunctions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">opt</span>: <a href="../interfaces/IMappingOptions.html" class="tsd-signature-type tsd-kind-interface">IMappingOptions</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IMappingOptions.html" class="tsd-signature-type tsd-kind-interface">IMappingOptions</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;serialize&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;deserialize&quot;</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/IMappingFunctions.html" class="tsd-signature-type tsd-kind-interface">IMappingFunctions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">D</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type ">PropertyDecorator</span><span class="tsd-signature-symbol">)</span></h4>
 <ul class="tsd-parameters">
 <li class="tsd-parameter-signature">
@@ -47,11 +49,11 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">params</span>: <a href="../types/DecoratorInput.html" class="tsd-signature-type tsd-kind-type-alias">DecoratorInput</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">params</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/IMappingOptionsExtra.html" class="tsd-signature-type tsd-kind-interface">IMappingOptionsExtra</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">PropertyDecorator</span></h4></li></ul></li></ul>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/DavideCanton/at-json/blob/8621e09/lib/decorators/common.ts#L25">decorators/common.ts:25</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/DavideCanton/at-json/blob/fb39658/lib/decorators/common.ts#L23">decorators/common.ts:23</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -75,12 +77,13 @@
 <li><a href="../interfaces/Constructable.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>Constructable</a></li>
 <li><a href="../interfaces/CustomSerialize.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>CustomSerialize</a></li>
 <li><a href="../interfaces/IJsonClassOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IJsonClassOptions</a></li>
-<li><a href="../interfaces/IMappingOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingOptions</a></li>
-<li><a href="../types/CustomDecoratorFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>CustomDecoratorFunctions</a></li>
-<li><a href="../types/DecoratorInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInput</a></li>
+<li><a href="../interfaces/IMappingFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingFunctions</a></li>
+<li><a href="../interfaces/IMappingOptionsExtra.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>IMappingOptionsExtra</a></li>
+<li><a href="../types/DecoratorInputWithCustomFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInputWithCustomFunctions</a></li>
+<li><a href="../types/DecoratorInputWithoutCustomFunctions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>DecoratorInputWithoutCustomFunctions</a></li>
+<li><a href="../types/IMappingOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>IMappingOptions</a></li>
 <li><a href="../types/MapDecoratorInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>MapDecoratorInput</a></li>
 <li><a href="../types/Mapping.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>Mapping</a></li>
-<li><a href="../types/NoCustomFunctionsDecoratorInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NoCustomFunctionsDecoratorInput</a></li>
 <li><a href="JsonArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonArray</a></li>
 <li><a href="JsonArrayOfComplexProperty.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonArrayOfComplexProperty</a></li>
 <li><a href="JsonClass.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>JsonClass</a></li>
