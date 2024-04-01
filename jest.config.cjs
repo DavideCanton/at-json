@@ -2,11 +2,15 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
     testEnvironment: 'node',
-    preset: 'ts-jest',
     restoreMocks: true,
     setupFilesAfterEnv: ['./setupJest.ts'],
     transform: {
-        '^.+\\.tsx?$': ['ts-jest', {}],
+        '^.+\\.tsx?$': [
+            'ts-jest',
+            {
+                tsconfig: 'tsconfig.test.json',
+            },
+        ],
     },
     collectCoverageFrom: ['lib/**/*.ts'],
 };
