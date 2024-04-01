@@ -34,6 +34,9 @@
         "url": "https://github.com/DavideCanton/at-json/issues"
     },
     "homepage": "https://github.com/DavideCanton/at-json#readme",
+    "files": [
+        "dist/"
+    ],
     "dependencies": {},
     "devDependencies": {
         "@types/babel__core": "^7.20.2",
