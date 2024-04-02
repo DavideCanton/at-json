@@ -2,22 +2,13 @@
 const { merge } = require('webpack-merge');
 
 const path = require('path');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const isDev = process.env.NODE_ENV == 'development';
+// const isDev = process.env.NODE_ENV == 'development';
 
 /**@type {import('webpack').Configuration}*/
 const common = {
     entry: './lib/index.ts',
     mode: 'none',
-    plugins: [
-        isDev
-            ? new BundleAnalyzerPlugin({
-                  openAnalyzer: false,
-                  analyzerMode: 'static',
-              })
-            : false,
-    ],
     devtool: 'source-map',
     module: {
         rules: [
