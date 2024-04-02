@@ -47,7 +47,6 @@ const cjs = {
 
 /**@type {import('webpack').Configuration}*/
 const esm = {
-    // make the user bundle it
     output: {
         filename: 'index.mjs',
         path: path.resolve(__dirname, 'dist/esm'),
