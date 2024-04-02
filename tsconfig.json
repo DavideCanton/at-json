@@ -5,6 +5,7 @@
         "moduleResolution": "Bundler",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "useDefineForClassFields": true,
         "declaration": true,
         "downlevelIteration": true,
         "noImplicitOverride": true,

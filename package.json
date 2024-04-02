@@ -7,9 +7,9 @@
     "types": "dist/index.d.ts",
     "type": "module",
     "scripts": {
-        "prepack": "webpack --config=webpack.prod.cjs",
+        "prepack": "yarn build",
         "prebuild": "yarn clean",
-        "build": "webpack  --config=webpack.dev.cjs",
+        "build": "webpack",
         "clean": "rimraf dist coverage",
         "fmt": "prettier . --write",
         "test": "jest",

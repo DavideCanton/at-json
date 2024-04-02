@@ -1,14 +1,15 @@
 //@ts-check
+const { merge } = require('webpack-merge');
 
 const path = require('path');
-const pkg = require('./package.json');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const isDev = process.env.NODE_ENV == 'development';
 
 /**@type {import('webpack').Configuration}*/
-module.exports.common = {
+const common = {
     entry: './lib/index.ts',
+    mode: 'none',
     plugins: [
         isDev
             ? new BundleAnalyzerPlugin({
@@ -33,7 +34,7 @@ module.exports.common = {
 };
 
 /**@type {import('webpack').Configuration}*/
-module.exports.cjs = {
+const cjs = {
     output: {
         filename: 'index.cjs',
         path: path.resolve(__dirname, 'dist/cjs'),
@@ -45,9 +46,8 @@ module.exports.cjs = {
 };
 
 /**@type {import('webpack').Configuration}*/
-module.exports.esm = {
+const esm = {
     // make the user bundle it
-    mode: "development",
     output: {
         filename: 'index.mjs',
         path: path.resolve(__dirname, 'dist/esm'),
@@ -59,3 +59,5 @@ module.exports.esm = {
         outputModule: true,
     },
 };
+
+module.exports = [merge(common, cjs), merge(common, esm)];
