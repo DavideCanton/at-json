@@ -1,9 +1,11 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "module": "CommonJS",
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "Bundler",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "useDefineForClassFields": true,
         "declaration": true,
         "downlevelIteration": true,
         "noImplicitOverride": true,
@@ -14,7 +16,7 @@
         "strictPropertyInitialization": false,
         "sourceMap": true,
         "outDir": "./dist",
-        "lib": ["es6"]
+        "lib": ["es2022"]
     },
     "exclude": ["test", "dist", "./setupJest.ts"]
 }

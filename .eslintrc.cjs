@@ -2,7 +2,7 @@ module.exports = {
     env: {
         node: true,
     },
-    ignorePatterns: ['dist/**/*.*', 'docs/**/*.*', '.eslintrc.cjs', 'webpack.config.js', 'setupJest.ts'],
+    ignorePatterns: ['dist/**/*.*', 'docs/**/*.*', '.eslintrc.cjs', 'webpack.*.cjs', 'setupJest.ts'],
     root: true,
     parserOptions: {
         project: 'tsconfig.eslint.json',
